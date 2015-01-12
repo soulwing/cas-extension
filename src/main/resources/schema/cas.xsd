@@ -1,0 +1,108 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:soulwing.org:cas:1.0" xmlns="urn:soulwing.org:cas:1.0"
+  elementFormDefault="qualified" attributeFormDefault="unqualified"
+  version="1.0">
+
+  <!-- The subsystem root element -->
+  <xs:element name="subsystem" type="SubsystemType" />
+
+  <xs:complexType name="SubsystemType">
+    <xs:all>
+      <xs:element name="authentication" type="AuthenticationType" />
+      <xs:element name="authorization" type="AuthorizationType" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="AuthenticationType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="allowed-proxy-chain" type="ProxyChainType"/>
+    </xs:choice>
+    <xs:attribute name="name" use="optional" default="default"/>
+    <xs:attribute name="protocol" type="AuthenticationProtocolType" 
+      use="optional" default="CAS-2.0"/>
+    <xs:attribute name="server-url" type="xs:anyURI" use="required"/> 
+    <xs:attribute name="service-url" type="xs:anyURI" use="required"/>
+    <xs:attribute name="proxy-callback-path" type="xs:anyURI" use="optional"/>   
+  </xs:complexType>
+  
+  <xs:simpleType name="AuthenticationProtocolType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CAS-1.0"/>
+      <xs:enumeration value="CAS-2.0"/>
+      <xs:enumeration value="SAML-1.1"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="ProxyChainType">
+    <xs:sequence>
+      <xs:element name="proxy" type="ProxyType" minOccurs="0" 
+        maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" use="optional" default="default"/>
+  </xs:complexType>
+
+  <xs:complexType name="ProxyType">
+    <xs:attribute name="name" use="required" type="xs:anyURI"/>
+  </xs:complexType>
+
+  <xs:complexType name="AuthorizationType">
+    <xs:choice minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="ldap" type="LdapAuthorizationType"/>
+      <xs:element name="properties" type="PropertiesAuthorizationType"/>
+    </xs:choice>
+    <xs:attribute name="name" use="optional" default="default"/>
+  </xs:complexType>
+  
+  <xs:complexType name="LdapAuthorizationType">
+    <xs:sequence>
+      <xs:element name="user-search" type="LdapUserSearchType"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="user-search" type="LdapUserSearchType"/>
+        <xs:element name="group-search" type="LdapGroupSearchType"/>
+      </xs:choice>      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="PropertiesAuthorizationType">
+    <xs:attribute name="path" use="required"/>
+    <xs:attribute name="relative-to" use="optional"/>
+  </xs:complexType>
+  
+  <xs:complexType name="LdapUserSearchType">
+    <xs:attributeGroup ref="LdapSearchAttributes"/>
+    <xs:attribute name="filter" use="optional"/>
+  </xs:complexType>
+  
+  <xs:complexType name="LdapGroupSearchType">
+    <xs:attributeGroup ref="LdapSearchAttributes"/>
+    <xs:attribute name="user-member-attribute" use="required"/>
+    <xs:attribute name="user-member-type" type="LdapSearchArgumentType"
+      use="optional" default="simple"/>
+    <xs:attribute name="group-member-attribute" use="optional"/>
+    <xs:attribute name="group-member-type" type="LdapSearchArgumentType"
+      use="optional" default="simple"/>
+  </xs:complexType>
+  
+  <xs:simpleType name="LdapSearchArgumentType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="simple"/>
+      <xs:enumeration value="dn"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:attributeGroup name="LdapSearchAttributes">
+    <xs:attribute name="name" use="optional" default="default"/>
+    <xs:attribute name="base" use="required"/>
+    <xs:attribute name="scope" type="LdapScopeType" use="optional" default="subtree"/>
+    <xs:attribute name="role-attributes" use="required"/>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="LdapScopeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="base"/>
+      <xs:enumeration value="onelevel"/>
+      <xs:enumeration value="subtree"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+</xs:schema>

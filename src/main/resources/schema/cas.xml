@@ -1,0 +1,29 @@
+<subsystem xmlns="urn:soulwing.org:cas:1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:soulwing.org:cas:1.0 cas.xsd">
+
+  <authentication name="cas-production"
+    service-url="https://summit.research.vt.edu"
+    server-url="https://auth.vt.edu/cas">
+    <allowed-proxy-chain name="summit-proxies">
+      <proxy url="https://summit.research.vt.edu/"/>
+    </allowed-proxy-chain>
+  </authentication>
+  
+  <authorization name="edid-with-override">
+    <!-- 
+    <properties path="cas-roles.properties"/>
+    <ldap>
+      <user-search name="EdPeople" base="ou=People,dc=vt,dc=edu" filter="(authId={0})"
+        role-attributes="eduPersonAffiliation groupMembership" />
+      <group-search name="EdGroups" base="ou=Groups,dc=vt,dc=edu" 
+        role-attributes="uugid" user-member-attribute="member"
+        group-member-attribute="groupMembership"
+        scope="subtree"/>
+      <group-search name="EdEntitlements" base="ou=Entitlements,dc=vt,dc=edu" 
+        role-attributes="entitlement" user-member-attribute="entitled" />
+    </ldap>
+    -->
+  </authorization>
+  
+</subsystem>
