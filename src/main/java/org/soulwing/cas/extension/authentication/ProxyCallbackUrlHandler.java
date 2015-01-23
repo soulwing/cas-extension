@@ -18,18 +18,17 @@
  */
 package org.soulwing.cas.extension.authentication;
 
-import org.jboss.as.controller.AbstractWriteAttributeHandler;
-import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
-import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authentication.MutableConfiguration;
 
 /** 
  * A write attribute handler for proxy callback URL attribute.
  *
  * @author Carl Harris
  */
-class ProxyCallbackUrlHandler extends AbstractWriteAttributeHandler<Void> {
+class ProxyCallbackUrlHandler 
+    extends AbstractAuthenticationAttributeHandler<Void> {
 
   static final ProxyCallbackUrlHandler INSTANCE =
       new ProxyCallbackUrlHandler();
@@ -38,25 +37,25 @@ class ProxyCallbackUrlHandler extends AbstractWriteAttributeHandler<Void> {
     super(AuthenticationDefinition.PROXY_CALLBACK_URL);
   }
   
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected boolean applyUpdateToRuntime(
-      OperationContext context,
-      ModelNode operation,
-      String attributeName,
-      ModelNode resolvedValue,
-      ModelNode currentValue,
-      AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
+  protected Void applyUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config)
       throws OperationFailedException {
-
-    SubsystemExtension.logger.info("setting attribute " + attributeName);
-    return false;
+    config.setProxyCallbackUrl(value.resolve().asString());
+    return null;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected void revertUpdateToRuntime(OperationContext context,
-      ModelNode operation, String attributeName, ModelNode valueToRestore,
-      ModelNode valueToRevert, Void handback) throws OperationFailedException {
-
+  protected void revertUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config, Void handback)
+      throws OperationFailedException {
+    config.setProxyCallbackUrl(value.resolve().asString());
   }
 
 }

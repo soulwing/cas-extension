@@ -24,8 +24,16 @@ import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
+import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authentication.AuthenticationProtocol;
+import org.soulwing.cas.service.authentication.AuthenticationService;
+import org.soulwing.cas.service.authentication.AuthenticationServiceFactory;
+import org.soulwing.cas.service.authentication.MutableConfiguration;
 
 /**
  * An add step handler for the authentication resource.
@@ -46,12 +54,14 @@ class AuthenticationAdd extends AbstractAddStepHandler {
   @Override
   protected void populateModel(ModelNode operation, ModelNode model)
       throws OperationFailedException {
+    SubsystemExtension.logger.info("populating model for authentication resource");
     AuthenticationDefinition.PROTOCOL.validateAndSet(operation, model);
     AuthenticationDefinition.SERVICE_URL.validateAndSet(operation, model);
     AuthenticationDefinition.SERVER_URL.validateAndSet(operation, model);
     AuthenticationDefinition.PROXY_CALLBACK_URL.validateAndSet(operation, model);
     AuthenticationDefinition.ACCEPT_ANY_PROXY.validateAndSet(operation, model);
     AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN.validateAndSet(operation, model);
+    AuthenticationDefinition.RENEW.validateAndSet(operation, model);
     super.populateModel(operation, model);
   }
 
@@ -64,8 +74,46 @@ class AuthenticationAdd extends AbstractAddStepHandler {
       ServiceVerificationHandler verificationHandler,
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
+    
+    ServiceName serviceName = AuthenticationServiceControl.name(
+        operation.get(ModelDescriptionConstants.ADDRESS));
+    
+    AuthenticationService service = AuthenticationServiceFactory.newInstance();
+    MutableConfiguration config = service.getConfiguration().clone();
+    applyConfiguration(context, model, config);
+    service.reconfigure(config);
+    
+    ServiceController<AuthenticationService> controller = context
+        .getServiceTarget()
+        .addService(serviceName, new AuthenticationServiceControl(service))
+        .addListener(verificationHandler)
+        .setInitialMode(Mode.ACTIVE)
+        .install();
+    
+    SubsystemExtension.logger.info("added authentication service " + serviceName);
+
+    newControllers.add(controller);
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
+  }
+
+  private MutableConfiguration applyConfiguration(OperationContext context,
+      ModelNode model, MutableConfiguration config) 
+          throws OperationFailedException {
+    config.setProtocol(AuthenticationProtocol.toObject(AuthenticationDefinition.PROTOCOL.resolveModelAttribute(context, model).asString()));
+    config.setServerUrl(AuthenticationDefinition.SERVER_URL
+        .resolveModelAttribute(context, model).asString());
+    config.setServiceUrl(AuthenticationDefinition.SERVICE_URL
+        .resolveModelAttribute(context, model).asString());
+    config.setProxyCallbackUrl(AuthenticationDefinition.PROXY_CALLBACK_URL
+        .resolveModelAttribute(context, model).asString());
+    config.setAcceptAnyProxy(AuthenticationDefinition.ACCEPT_ANY_PROXY
+        .resolveModelAttribute(context, model).asBoolean());
+    config.setAllowEmptyProxyChain(AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN
+        .resolveModelAttribute(context, model).asBoolean());
+    config.setRenew(AuthenticationDefinition.RENEW
+        .resolveModelAttribute(context, model).asBoolean());
+    return config;
   }
   
 }

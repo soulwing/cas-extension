@@ -18,18 +18,18 @@
  */
 package org.soulwing.cas.extension.authentication;
 
-import org.jboss.as.controller.AbstractWriteAttributeHandler;
-import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
-import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authentication.AuthenticationProtocol;
+import org.soulwing.cas.service.authentication.MutableConfiguration;
 
 /** 
  * A write attribute handler for the authentication protocol attribute.
  *
  * @author Carl Harris
  */
-class AuthenticationProtocolHandler extends AbstractWriteAttributeHandler<Void> {
+class AuthenticationProtocolHandler 
+    extends AbstractAuthenticationAttributeHandler<Void> {
 
   static final AuthenticationProtocolHandler INSTANCE =
       new AuthenticationProtocolHandler();
@@ -38,25 +38,26 @@ class AuthenticationProtocolHandler extends AbstractWriteAttributeHandler<Void> 
     super(AuthenticationDefinition.PROTOCOL);
   }
   
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected boolean applyUpdateToRuntime(
-      OperationContext context,
-      ModelNode operation,
-      String attributeName,
-      ModelNode resolvedValue,
-      ModelNode currentValue,
-      AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
+  protected Void applyUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config)
       throws OperationFailedException {
-
-    SubsystemExtension.logger.info("setting attribute " + attributeName);
-    return false;
+    config.setProtocol(AuthenticationProtocol.toObject(value.resolve().asString()));
+    return null;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected void revertUpdateToRuntime(OperationContext context,
-      ModelNode operation, String attributeName, ModelNode valueToRestore,
-      ModelNode valueToRevert, Void handback) throws OperationFailedException {
-
+  protected void revertUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config, Void handback)
+      throws OperationFailedException {
+    config.setProtocol(AuthenticationProtocol.toObject(value.resolve().asString()));
   }
+
 
 }

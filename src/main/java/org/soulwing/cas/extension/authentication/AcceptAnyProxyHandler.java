@@ -18,18 +18,17 @@
  */
 package org.soulwing.cas.extension.authentication;
 
-import org.jboss.as.controller.AbstractWriteAttributeHandler;
-import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
-import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authentication.MutableConfiguration;
 
 /** 
  * A write attribute handler for the accept any proxy attribute.
  *
  * @author Carl Harris
  */
-class AcceptAnyProxyHandler extends AbstractWriteAttributeHandler<Void> {
+class AcceptAnyProxyHandler 
+    extends AbstractAuthenticationAttributeHandler<Void> {
 
   static final AcceptAnyProxyHandler INSTANCE =
       new AcceptAnyProxyHandler();
@@ -37,26 +36,26 @@ class AcceptAnyProxyHandler extends AbstractWriteAttributeHandler<Void> {
   private AcceptAnyProxyHandler() {
     super(AuthenticationDefinition.ACCEPT_ANY_PROXY);
   }
-  
-  @Override
-  protected boolean applyUpdateToRuntime(
-      OperationContext context,
-      ModelNode operation,
-      String attributeName,
-      ModelNode resolvedValue,
-      ModelNode currentValue,
-      AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
-      throws OperationFailedException {
 
-    SubsystemExtension.logger.info("setting attribute " + attributeName);
-    return false;
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected Void applyUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config)
+      throws OperationFailedException {
+    config.setAcceptAnyProxy(value.resolve().asBoolean());
+    return null;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected void revertUpdateToRuntime(OperationContext context,
-      ModelNode operation, String attributeName, ModelNode valueToRestore,
-      ModelNode valueToRevert, Void handback) throws OperationFailedException {
-
+  protected void revertUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableConfiguration config, Void handback)
+      throws OperationFailedException {
+    config.setAcceptAnyProxy(value.resolve().asBoolean());
   }
 
 }
