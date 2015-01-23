@@ -29,7 +29,6 @@ import org.jboss.dmr.ModelType;
 import org.soulwing.cas.extension.Names;
 import org.soulwing.cas.extension.Paths;
 import org.soulwing.cas.extension.ResourceUtil;
-import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.authentication.AuthenticationProtocol;
 
 /**
@@ -101,6 +100,16 @@ public class AuthenticationDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition RENEW =
+      new SimpleAttributeDefinitionBuilder(Names.RENEW,
+          ModelType.BOOLEAN)
+              .setAllowExpression(false)
+              .setAllowNull(true)
+              .setDefaultValue(new ModelNode(false))
+              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+              .build();
+
   private AuthenticationDefinition() {
     super(Paths.AUTHENTICATION, 
         ResourceUtil.getResolver(
@@ -128,6 +137,8 @@ public class AuthenticationDefinition extends SimpleResourceDefinition {
         AcceptAnyProxyHandler.INSTANCE);
     resourceRegistration.registerReadWriteAttribute(ALLOW_EMPTY_PROXY_CHAIN, null, 
         AllowEmptyProxyChainHandler.INSTANCE);
+    resourceRegistration.registerReadWriteAttribute(RENEW, null, 
+        RenewHandler.INSTANCE);
   }
 
   /**
@@ -137,7 +148,6 @@ public class AuthenticationDefinition extends SimpleResourceDefinition {
   public void registerChildren(
       ManagementResourceRegistration resourceRegistration) {
     super.registerChildren(resourceRegistration);
-    SubsystemExtension.logger.info("registering proxy chain submodel");
     resourceRegistration.registerSubModel(ProxyChainDefinition.INSTANCE);
   }
  
