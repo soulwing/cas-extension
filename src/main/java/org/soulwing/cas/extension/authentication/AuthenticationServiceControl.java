@@ -16,9 +16,13 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.service.authentication;
+package org.soulwing.cas.extension.authentication;
 
+import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.AbstractService;
+import org.jboss.msc.service.ServiceName;
+import org.soulwing.cas.extension.Names;
+import org.soulwing.cas.service.authentication.AuthenticationService;
 
 /**
  * A JBoss MSC service that manages an {@link AuthenticationService}.
@@ -47,4 +51,15 @@ public class AuthenticationServiceControl
     return delegate;
   }
 
+  public static ServiceName name(ModelNode address) {    
+    String target = address.asPropertyList().get(address.asInt() - 1)
+        .getValue().asString();  
+    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.AUTHENTICATION, target);
+  }
+
+  public static ServiceName name(String resourceName) {
+    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.AUTHENTICATION, 
+        resourceName);
+  }
+  
 }
