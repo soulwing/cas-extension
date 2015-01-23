@@ -47,4 +47,21 @@ public enum AuthenticationProtocol {
     return displayName;
   }
 
+  /**
+   * Converts a display name for a protocol into an instance from the 
+   * enumeration.
+   * @param displayName the subject display name
+   * @return enum value
+   * @throws IllegalArgumentException if {@code displayName} does not 
+   *    correspond to a known value in the enumeration
+   */
+  public static AuthenticationProtocol toObject(String displayName) {
+    for (AuthenticationProtocol protocol : values()) {
+      if (protocol.toString().equals(displayName)) {
+        return protocol;
+      }
+    }
+    throw new IllegalArgumentException("invalid name");
+  }
+
 }

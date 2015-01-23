@@ -1,5 +1,5 @@
 /*
- * File created on Dec 24, 2014 
+ * File created on Jan 23, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,33 +18,21 @@
  */
 package org.soulwing.cas.service.authentication;
 
-import java.util.List;
-
 /**
- * An (immutable) configuration for an {@link AuthenticationService}.
+ * A service object that validates CAS authentication tickets.
  *
  * @author Carl Harris
  */
-public interface Configuration extends Cloneable {
+public interface AuthenticationTicketValidator {
 
-  AuthenticationProtocol getProtocol();  
-
-  String getServerUrl();
-  
-  String getServiceUrl();
-  
-  String getProxyCallbackUrl();
-  
-  boolean isAcceptAnyProxy();
-  
-  boolean isAllowEmptyProxyChain();
-  
-  List<String[]> getAllowedProxyChains();
-  
-  boolean isRenew();
-  
-  AuthenticationTicketValidator getValidator();
-  
-  MutableConfiguration clone();
+  /**
+   * Validates a CAS authentication ticket for a given service.
+   * @param ticket the subject ticket
+   * @param service the target service
+   * @return identity assertion describing the authentic ticket holder
+   * @throws AuthenticationException if the ticket cannot be validated
+   */
+  IdentityAssertion validate(String ticket, String service)
+      throws AuthenticationException;
   
 }

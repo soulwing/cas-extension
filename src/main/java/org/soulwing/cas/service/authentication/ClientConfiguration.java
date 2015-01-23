@@ -27,14 +27,13 @@ import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Saml11TicketValidator;
-import org.jasig.cas.client.validation.TicketValidator;
 
 /**
  * A {@link Configuration} for a CAS client.
  *
  * @author Carl Harris
  */
-public class ClientConfiguration implements Configuration {
+public class ClientConfiguration implements MutableConfiguration {
 
   private AuthenticationProtocol protocol;
 
@@ -56,6 +55,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code protocol} property.
    * @return property value
    */
+  @Override
   public AuthenticationProtocol getProtocol() {
     return protocol;
   }
@@ -64,6 +64,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code protocol} property.
    * @param protocol the value to set
    */
+  @Override
   public void setProtocol(AuthenticationProtocol protocol) {
     this.protocol = protocol;
   }
@@ -72,6 +73,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code serverUrl} property.
    * @return property value
    */
+  @Override
   public String getServerUrl() {
     return serverUrl;
   }
@@ -80,6 +82,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code serverUrl} property.
    * @param serverUrl the value to set
    */
+  @Override
   public void setServerUrl(String serverUrl) {
     this.serverUrl = serverUrl;
   }
@@ -88,6 +91,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code serviceUrl} property.
    * @return property value
    */
+  @Override
   public String getServiceUrl() {
     return serviceUrl;
   }
@@ -96,6 +100,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code serviceUrl} property.
    * @param serviceUrl the value to set
    */
+  @Override
   public void setServiceUrl(String serviceUrl) {
     this.serviceUrl = serviceUrl;
   }
@@ -104,6 +109,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code proxyCallbackUrl} property.
    * @return property value
    */
+  @Override
   public String getProxyCallbackUrl() {
     return proxyCallbackUrl;
   }
@@ -112,6 +118,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code proxyCallbackUrl} property.
    * @param proxyCallbackUrl the value to set
    */
+  @Override
   public void setProxyCallbackUrl(String proxyCallbackUrl) {
     this.proxyCallbackUrl = proxyCallbackUrl;
   }
@@ -120,6 +127,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code acceptAnyProxy} property.
    * @return property value
    */
+  @Override
   public boolean isAcceptAnyProxy() {
     return acceptAnyProxy;
   }
@@ -128,6 +136,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code acceptAnyProxy} property.
    * @param acceptAnyProxy the value to set
    */
+  @Override
   public void setAcceptAnyProxy(boolean acceptAnyProxy) {
     this.acceptAnyProxy = acceptAnyProxy;
   }
@@ -136,6 +145,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code allowEmptyProxyChain} property.
    * @return property value
    */
+  @Override
   public boolean isAllowEmptyProxyChain() {
     return allowEmptyProxyChain;
   }
@@ -144,6 +154,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code allowEmptyProxyChain} property.
    * @param allowEmptyProxyChain the value to set
    */
+  @Override
   public void setAllowEmptyProxyChain(boolean allowEmptyProxyChain) {
     this.allowEmptyProxyChain = allowEmptyProxyChain;
   }
@@ -152,6 +163,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code allowedProxyChains} property.
    * @return property value
    */
+  @Override
   public List<String[]> getAllowedProxyChains() {
     return allowedProxyChains;
   }
@@ -160,6 +172,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code allowedProxyChains} property.
    * @param allowedProxyChains the value to set
    */
+  @Override
   public void setAllowedProxyChains(List<String[]> allowedProxyChains) {
     this.allowedProxyChains = Collections.unmodifiableList(allowedProxyChains);
   }
@@ -168,6 +181,7 @@ public class ClientConfiguration implements Configuration {
    * Gets the {@code renew} property.
    * @return property value
    */
+  @Override
   public boolean isRenew() {
     return renew;
   }
@@ -176,6 +190,7 @@ public class ClientConfiguration implements Configuration {
    * Sets the {@code renew} property.
    * @param renew the value to set
    */
+  @Override
   public void setRenew(boolean renew) {
     this.renew = renew;
   }
@@ -184,10 +199,10 @@ public class ClientConfiguration implements Configuration {
    * {@inheritDoc}
    */
   @Override
-  public TicketValidator getValidator() {
+  public AuthenticationTicketValidator getValidator() {
     AbstractUrlBasedTicketValidator validator = newValidator();
     validator.setRenew(isRenew());
-    return validator;
+    return new JasigTicketValidator(validator);
   }
 
   private AbstractUrlBasedTicketValidator newValidator() {
@@ -220,17 +235,32 @@ public class ClientConfiguration implements Configuration {
    * {@inheritDoc}
    */
   @Override
-  public ClientConfiguration clone() {
+  public MutableConfiguration clone() {
     try {
-      ClientConfiguration clone = (ClientConfiguration) super.clone();
-      List<String[]> allowedProxyChains = new ArrayList<>();
-      allowedProxyChains.addAll(getAllowedProxyChains());
-      clone.setAllowedProxyChains(allowedProxyChains);
+      MutableConfiguration clone = (MutableConfiguration) super.clone();
+      if (getAllowedProxyChains() != null) {
+        List<String[]> allowedProxyChains = new ArrayList<>();
+        allowedProxyChains.addAll(getAllowedProxyChains());
+        clone.setAllowedProxyChains(allowedProxyChains);
+      }
       return clone;
     }
     catch (CloneNotSupportedException ex) {
       throw new RuntimeException(ex);
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return String.format("%s::protocol=%s"
+        + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
+        + " acceptAnyProxy=%s allowEmptyProxyChain=%s renew=%s",
+        getClass().getSimpleName(), 
+        protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
+        acceptAnyProxy, allowEmptyProxyChain, renew);
   }
  
   

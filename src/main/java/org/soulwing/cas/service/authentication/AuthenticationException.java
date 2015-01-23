@@ -1,5 +1,5 @@
 /*
- * File created on Dec 24, 2014 
+ * File created on Jan 23, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,33 +18,22 @@
  */
 package org.soulwing.cas.service.authentication;
 
-import java.util.List;
-
 /**
- * An (immutable) configuration for an {@link AuthenticationService}.
+ * An exception thrown when an authentication request fails.
  *
  * @author Carl Harris
  */
-public interface Configuration extends Cloneable {
+public class AuthenticationException extends Exception {
 
-  AuthenticationProtocol getProtocol();  
+  private static final long serialVersionUID = -4749539724370810640L;
 
-  String getServerUrl();
-  
-  String getServiceUrl();
-  
-  String getProxyCallbackUrl();
-  
-  boolean isAcceptAnyProxy();
-  
-  boolean isAllowEmptyProxyChain();
-  
-  List<String[]> getAllowedProxyChains();
-  
-  boolean isRenew();
-  
-  AuthenticationTicketValidator getValidator();
-  
-  MutableConfiguration clone();
-  
+  /**
+   * Constructs a new instance.
+   * @param message
+   * @param cause
+   */
+  public AuthenticationException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
 }

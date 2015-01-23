@@ -1,5 +1,5 @@
 /*
- * File created on Dec 24, 2014 
+ * File created on Jan 22, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -21,30 +21,26 @@ package org.soulwing.cas.service.authentication;
 import java.util.List;
 
 /**
- * An (immutable) configuration for an {@link AuthenticationService}.
+ * A mutable configuration.
  *
  * @author Carl Harris
  */
-public interface Configuration extends Cloneable {
+public interface MutableConfiguration extends Configuration {
 
-  AuthenticationProtocol getProtocol();  
+  void setProtocol(AuthenticationProtocol protocol);
+  
+  void setServerUrl(String serverUrl);
+  
+  void setServiceUrl(String serviceUrl);
+  
+  void setProxyCallbackUrl(String proxyCallbackUrl);
 
-  String getServerUrl();
+  void setAcceptAnyProxy(boolean acceptAnyProxy);
+
+  void setAllowEmptyProxyChain(boolean allowEmptyProxyChain);
   
-  String getServiceUrl();
-  
-  String getProxyCallbackUrl();
-  
-  boolean isAcceptAnyProxy();
-  
-  boolean isAllowEmptyProxyChain();
-  
-  List<String[]> getAllowedProxyChains();
-  
-  boolean isRenew();
-  
-  AuthenticationTicketValidator getValidator();
-  
-  MutableConfiguration clone();
-  
+  void setAllowedProxyChains(List<String[]> allowedProxyChains);
+
+  void setRenew(boolean renew);
+
 }
