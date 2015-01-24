@@ -18,7 +18,7 @@
   </description>
 
   <properties>
-    <wildfly.version>8.0.0.Final</wildfly.version>
+    <wildfly.version>8.2.0.Final</wildfly.version>
     <undertow.version>1.0.14.Final</undertow.version>
     <module.name>cas</module.name>
   </properties>
@@ -44,6 +44,61 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>de.smartics.maven.plugin</groupId>
+        <artifactId>smartics-jboss-modules-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-modules-archive</id>
+            <goals>
+              <goal>create-modules-archive</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <attach>true</attach>
+          <dependencyExcludes>
+            <exclude>
+              <artifactId>commons-codec</artifactId>
+            </exclude>           
+            <exclude>
+              <artifactId>opensaml</artifactId>
+            </exclude>           
+            <exclude>
+              <artifactId>javax.servlet-api</artifactId>
+            </exclude>           
+            <exclude>
+              <artifactId>slf4j-api</artifactId>
+            </exclude>           
+            <exclude>
+              <artifactId>xmlsec</artifactId>
+            </exclude>           
+            <exclude>
+              <groupId>org.wildfly</groupId>
+              <artifactId>wildfly-controller</artifactId>
+            </exclude> 
+            <exclude>
+              <groupId>org.wildfly</groupId>
+              <artifactId>wildfly-server</artifactId>
+            </exclude> 
+            <exclude>
+              <groupId>org.wildfly</groupId>
+              <artifactId>wildfly-undertow</artifactId>
+            </exclude> 
+            <exclude>
+              <groupId>io.undertow</groupId>
+            </exclude> 
+            <exclude>
+              <groupId>org.wildfly</groupId>
+              <artifactId>wildfly-subsystem-test</artifactId>
+            </exclude>
+            <exclude>
+              <groupId>org.springframework</groupId>
+            </exclude>
+          </dependencyExcludes>
+        </configuration>
+      </plugin>      
+      <!--  plugin>      
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <inherited>false</inherited>
@@ -57,8 +112,6 @@
             <phase>package</phase>
             <configuration>
               <target>
-                <!-- Replace the '.' in ${module.name} with '/' to get its 
-                  path -->
                 <tempfile property="temp.file" />
                 <echo message="${project.groupId}/${module.name}"
                   file="${temp.file}" />
@@ -82,7 +135,7 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin -->
     </plugins>
     <resources>
       <resource>
@@ -118,6 +171,11 @@
       </dependency>
       <dependency>
         <groupId>org.wildfly</groupId>
+        <artifactId>wildfly-undertow</artifactId>
+        <version>${wildfly.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.wildfly</groupId>
         <artifactId>wildfly-subsystem-test</artifactId>
         <type>pom</type>
         <scope>test</scope>
@@ -145,10 +203,17 @@
     <dependency>
       <groupId>org.wildfly</groupId>
       <artifactId>wildfly-controller</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.wildfly</groupId>
       <artifactId>wildfly-server</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-undertow</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jasig.cas.client</groupId>
@@ -157,10 +222,12 @@
     <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-core</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-servlet</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.wildfly</groupId>
