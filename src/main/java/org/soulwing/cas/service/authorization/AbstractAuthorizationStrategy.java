@@ -25,11 +25,23 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author Carl Harris
  */
-abstract class AbstractAuthorizationStrategy<T> 
-    implements AuthorizationStrategy<T> {
+abstract class AbstractAuthorizationStrategy
+    <T extends AuthorizationStrategyConfig<T>> implements AuthorizationStrategy<T> {
 
   protected AtomicReference<T> configuration = new AtomicReference<T>();
   
+  protected AbstractAuthorizationStrategy(T configuration) {
+    this.configuration.set(configuration);
+  }
+    
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public final T getConfiguration() {
+    return configuration.get();
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -42,4 +54,10 @@ abstract class AbstractAuthorizationStrategy<T>
   protected void onReconfigure(T configuration) {    
   }
   
+  protected void start() {    
+  }
+  
+  protected void stop() {     
+  }
+
 }

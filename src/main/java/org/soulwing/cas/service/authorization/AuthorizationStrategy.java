@@ -27,7 +27,7 @@ import org.soulwing.cas.service.authentication.IdentityAssertion;
  *
  * @author Carl Harris
  */
-interface AuthorizationStrategy<T> {
+interface AuthorizationStrategy<T extends AuthorizationStrategyConfig<T>> {
 
   /**
    * Gets the set of roles that are applicable for a given user.
@@ -37,7 +37,13 @@ interface AuthorizationStrategy<T> {
   Set<String> getApplicableRoles(IdentityAssertion assertion);
   
   /**
-   * Reconfigures this service.
+   * Gets the configuration of this strategy.
+   * @return configuration
+   */
+  T getConfiguration();
+  
+  /**
+   * Reconfigures this strategy.
    * @param configuration the configuration to apply
    */
   void reconfigure(T configuration);

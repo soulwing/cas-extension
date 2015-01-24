@@ -18,32 +18,18 @@
  */
 package org.soulwing.cas.service.authorization;
 
-import java.util.Set;
-
 /**
- * A configuration for SAML-assertion-based authorization.
+ * A configuration for an authorization strategy.
  *
  * @author Carl Harris
  */
-public interface SamlAuthorizationConfig 
-    extends AuthorizationStrategyConfig<SamlAuthorizationConfig> {
+public interface AuthorizationStrategyConfig
+    <T extends AuthorizationStrategyConfig<?>> extends Cloneable {
 
   /**
-   * Gets the set of role attributes.
-   * @return attribute names
-   */
-  Set<String> getRoleAttributes();
- 
-  /**
-   * Sets the collection of role attribute names.
-   * @param roleAttributes set of attribute names
-   */
-  void setRoleAttributes(Set<String> roleAttributes);
-  
-  /**
    * Clones this configuration.
-   * @return clone of this configuration
+   * @return configuration clone
    */
-  SamlAuthorizationConfig clone();
+  T clone();
   
 }

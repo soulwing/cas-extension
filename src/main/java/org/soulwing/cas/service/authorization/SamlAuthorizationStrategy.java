@@ -36,6 +36,13 @@ public class SamlAuthorizationStrategy
     extends AbstractAuthorizationStrategy<SamlAuthorizationConfig> {
 
   /**
+   * Constructs a new instance.
+   */
+  public SamlAuthorizationStrategy() {
+    super(new ConcreteSamlAuthorizationConfig());
+  }
+  
+  /**
    * {@inheritDoc}
    */
   @Override
