@@ -27,6 +27,9 @@ class ConcreteAuthorizationConfig implements AuthorizationConfig {
 
   private String defaultRole;
   
+  private SamlAuthorizationConfig samlConfig = 
+      new ConcreteSamlAuthorizationConfig();
+  
   /**
    * {@inheritDoc}
    */
@@ -47,9 +50,27 @@ class ConcreteAuthorizationConfig implements AuthorizationConfig {
    * {@inheritDoc}
    */
   @Override
+  public SamlAuthorizationConfig getSamlConfig() {
+    return samlConfig;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setSamlConfig(SamlAuthorizationConfig samlConfig) {
+    this.samlConfig = samlConfig;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public AuthorizationConfig clone() {
     try {
-      return (AuthorizationConfig) super.clone();
+      AuthorizationConfig clone = (AuthorizationConfig) super.clone();
+      clone.setSamlConfig(samlConfig.clone());
+      return clone;
     }
     catch (CloneNotSupportedException ex) {
       throw new RuntimeException(ex);

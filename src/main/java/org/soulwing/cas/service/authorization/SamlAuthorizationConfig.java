@@ -18,41 +18,31 @@
  */
 package org.soulwing.cas.service.authorization;
 
+import java.util.Set;
+
 /**
- * A configuration for an {@link AuthorizationService}.
+ * A configuration for SAML-assertion-based authorization.
  *
  * @author Carl Harris
  */
-public interface AuthorizationConfig extends Cloneable {
+public interface SamlAuthorizationConfig extends Cloneable {
 
   /**
-   * Gets the role that is assigned to every user. 
-   * @return role name
+   * Gets the set of role attributes.
+   * @return attribute names
    */
-  String getDefaultRole();
-  
+  Set<String> getRoleAttributes();
+ 
   /**
-   * Sets the role that is assigned to all users.
-   * @param defaultRole the role name to set
+   * Sets the collection of role attribute names.
+   * @param roleAttributes set of attribute names
    */
-  void setDefaultRole(String defaultRole);
-  
-  /**
-   * Gets the SAML configuration.
-   * @return SAML configuration
-   */
-  SamlAuthorizationConfig getSamlConfig();
-  
-  /**
-   * Sets the SAML configuration.
-   * @param samlConfig the configuration to set
-   */
-  void setSamlConfig(SamlAuthorizationConfig samlConfig);
+  void setRoleAttributes(Set<String> roleAttributes);
   
   /**
    * Clones this configuration.
-   * @return mutable copy of this configuration
+   * @return clone of this configuration
    */
-  AuthorizationConfig clone();
+  SamlAuthorizationConfig clone();
   
 }
