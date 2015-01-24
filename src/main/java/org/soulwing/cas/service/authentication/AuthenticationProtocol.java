@@ -27,16 +27,42 @@ public enum AuthenticationProtocol {
 
   CAS1_0("CAS-1.0"),
   CAS2_0("CAS-2.0"),
-  SAML1_1("SAML-1.1");
+  SAML1_1("SAML-1.1", "TARGET", "SAMLart");
   
-  private final String displayName;
 
+  private final String displayName;
+  private final String serviceParameterName;
+  private final String ticketParameterName;
+
+  private AuthenticationProtocol(String displayName) {
+    this(displayName, "service", "ticket");
+  }
+  
   /**
    * Constructs a new instance.
    * @param displayName
    */
-  private AuthenticationProtocol(String displayName) {
+  private AuthenticationProtocol(String displayName, 
+      String serviceParameterName, String ticketParameterName) {
     this.displayName = displayName;
+    this.serviceParameterName = serviceParameterName;
+    this.ticketParameterName = ticketParameterName;
+  }
+
+  /**
+   * Gets the {@code serviceParameterName} property.
+   * @return property value
+   */
+  public String getServiceParameterName() {
+    return serviceParameterName;
+  }
+  
+  /**
+   * Gets the {@code ticketParameterName} property.
+   * @return property value
+   */
+  public String getTicketParameterName() {
+    return ticketParameterName;
   }
 
   /**

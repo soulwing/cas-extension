@@ -29,20 +29,21 @@ public interface AuthenticationService {
   /**
    * Validates a service ticket.
    * @param ticket the subject ticket
-   * @param service the target service
    * @return an assertion describing the validation result
    * @throws AuthenticationException if the ticket cannot be validated
    */
-  IdentityAssertion validateTicket(String ticket, String service)
+  IdentityAssertion validateTicket(String ticket)
       throws AuthenticationException;
 
   /**
    * Produces the URL for the CAS server's login function.
-   * @param requestUrl the URL of the request that requires authentication 
+   * @param requestPath the path of the request that requires authentication 
    *    for access
+   * @param queryString the query string of the request that requires 
+   *    authentication
    * @return CAS server login URL
    */
-  String loginUrl(String requestUrl);
+  String loginUrl(String requestPath, String queryString);
   
   /**
    * Gets the current configuration of this service.

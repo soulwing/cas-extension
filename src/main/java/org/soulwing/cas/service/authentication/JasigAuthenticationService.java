@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.service.authentication;
 
+import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jasig.cas.client.util.CommonUtils;
@@ -37,34 +38,39 @@ class JasigAuthenticationService implements AuthenticationService {
    * {@inheritDoc}
    */
   @Override
-  public IdentityAssertion validateTicket(String ticket, String service) 
+  public IdentityAssertion validateTicket(String ticket) 
       throws AuthenticationException {
-    return getConfiguration().getValidator().validate(ticket, service);
+    Configuration config = getConfiguration();
+    return config.getValidator().validate(ticket, config.getServiceUrl());
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public String loginUrl(String requestUrl) {
+  public String loginUrl(String requestPath, String queryString) {
     Configuration config = getConfiguration();
-    
-    // TODO -- need to replace the path in the service URL with the path of
-    // the request URL
-    String serviceUrl = requestUrl;
-    
-    return CommonUtils.constructRedirectUrl(config.getServerUrl(), 
-        serviceParameterName(config), serviceUrl, config.isRenew(), 
-        false);
+    String serviceUrl = constructServiceUrl(requestPath, queryString, config);
+    return CommonUtils.constructRedirectUrl(config.getServerUrl(),
+        config.getProtocol().getServiceParameterName(),
+        serviceUrl, config.isRenew(), false);
   }
 
-  private static String serviceParameterName(Configuration config) {
-    if (config.getProtocol() == AuthenticationProtocol.SAML1_1) {
-      return "TARGET";
-    }
-    return "service";
+  private String constructServiceUrl(String requestPath, String queryString,
+      Configuration config) {
+    URI uri = URI.create(config.getServiceUrl());
+    StringBuilder sb = new StringBuilder();
+    sb.append(uri.getScheme());
+    sb.append(':');
+    sb.append(uri.getAuthority());
+    sb.append(requestPath);
+    sb.append('?');
+    sb.append(queryString);
+
+    String serviceUrl = sb.toString();
+    return serviceUrl;
   }
-  
+
   /**
    * {@inheritDoc}
    */
