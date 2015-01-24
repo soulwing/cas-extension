@@ -1,5 +1,5 @@
 /*
- * File created on Dec 22, 2014 
+ * File created on Jan 24, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,33 +18,23 @@
  */
 package org.soulwing.cas.service.authorization;
 
-import org.jboss.msc.service.AbstractService;
-
 /**
- * A JBoss MSC service that manages an {@link AuthorizationService}.
+ * A configuration for an {@link AuthorizationService}.
  *
  * @author Carl Harris
  */
-public class AuthorizationServiceControl 
-    extends AbstractService<AuthorizationService> {
+public interface AuthorizationConfig extends Cloneable {
 
-  private final AuthorizationService delegate;
+  /**
+   * Gets the role that is assigned to every user. 
+   * @return role name
+   */
+  String getDefaultRole();
   
   /**
-   * Constructs a new instance.
-   * @param delegate
+   * Clones this configuration.
+   * @return mutable copy of this configuration
    */
-  public AuthorizationServiceControl(AuthorizationService delegate) {
-    this.delegate = delegate;
-  }
-
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public AuthorizationService getValue() throws IllegalStateException {
-    return delegate;
-  }
-
+  MutableAuthorizationConfig clone();
+  
 }

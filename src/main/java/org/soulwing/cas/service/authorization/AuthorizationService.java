@@ -18,13 +18,41 @@
  */
 package org.soulwing.cas.service.authorization;
 
+import java.util.Set;
+
+import org.soulwing.cas.service.authentication.IdentityAssertion;
+
 /**
- * DESCRIBE THE TYPE HERE.
+ * A service that supports authorization by using various resources/strategies 
+ * to produce a set of roles that apply to a user. 
  *
  * @author Carl Harris
  */
 public interface AuthorizationService {
 
-  String getId();
+  /**
+   * Gets the name of this authorization service.
+   * @return unqualified service name
+   */
+  String getName();
   
+  /**
+   * Gets the set of roles that are applicable for a given user.
+   * @param assertion an identity assertion for the subject user
+   * @return set of role names
+   */
+  Set<String> getApplicableRoles(IdentityAssertion assertion);
+  
+  /**
+   * Gets the configuration of this service.
+   * @return configuration
+   */
+  MutableAuthorizationConfig getConfiguration();
+
+  /**
+   * Reconfigures this service.
+   * @param configuration the configuration to apply
+   */
+  void reconfigure(AuthorizationConfig configuration);
+
 }
