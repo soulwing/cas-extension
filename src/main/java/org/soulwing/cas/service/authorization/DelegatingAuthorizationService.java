@@ -93,6 +93,9 @@ class DelegatingAuthorizationService implements AuthorizationService {
    */
   @Override
   public void putStrategy(String name, AuthorizationStrategy<?> strategy) {
+    if (strategy instanceof AbstractAuthorizationStrategy<?>) {
+      ((AbstractAuthorizationStrategy<?>) strategy).start();
+    }
     strategies.put(name, strategy);
   }
 
@@ -101,7 +104,10 @@ class DelegatingAuthorizationService implements AuthorizationService {
    */
   @Override
   public void removeStrategy(String name) {
-    strategies.remove(name);
+    AuthorizationStrategy<?> strategy = strategies.remove(name);
+    if (strategy instanceof AbstractAuthorizationStrategy<?>) {
+      ((AbstractAuthorizationStrategy<?>) strategy).stop();
+    }
   }
   
 }
