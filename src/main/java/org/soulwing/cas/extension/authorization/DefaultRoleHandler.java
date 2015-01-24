@@ -18,11 +18,10 @@
  */
 package org.soulwing.cas.extension.authorization;
 
-import org.jboss.as.controller.AbstractWriteAttributeHandler;
-import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
-import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authorization.MutableAuthorizationConfig;
+
 
 /** 
  * A write attribute handler for the default role attribute.
@@ -30,7 +29,7 @@ import org.soulwing.cas.extension.SubsystemExtension;
  * @author Carl Harris
  */
 public class DefaultRoleHandler
-    extends AbstractWriteAttributeHandler<Void> {
+    extends AbstractAuthorizationAttributeHandler<Void> {
 
   static final DefaultRoleHandler INSTANCE =
       new DefaultRoleHandler();
@@ -38,26 +37,26 @@ public class DefaultRoleHandler
   private DefaultRoleHandler() {
     super(AuthorizationDefinition.DEFAULT_ROLE);
   }
-  
-  @Override
-  protected boolean applyUpdateToRuntime(
-      OperationContext context,
-      ModelNode operation,
-      String attributeName,
-      ModelNode resolvedValue,
-      ModelNode currentValue,
-      AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
-      throws OperationFailedException {
 
-    SubsystemExtension.logger.info("setting attribute " + attributeName);
-    return false;
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected Void applyUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableAuthorizationConfig config)
+      throws OperationFailedException {
+    config.setDefaultRole(value.resolve().asString());
+    return null;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  protected void revertUpdateToRuntime(OperationContext context,
-      ModelNode operation, String attributeName, ModelNode valueToRestore,
-      ModelNode valueToRevert, Void handback) throws OperationFailedException {
-
+  protected void revertUpdateToConfiguration(String attributeName,
+      ModelNode value, MutableAuthorizationConfig config, Void handback)
+      throws OperationFailedException {
+    config.setDefaultRole(value.resolve().asString());
   }
 
 }

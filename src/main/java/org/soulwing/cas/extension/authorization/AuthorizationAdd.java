@@ -24,8 +24,16 @@ import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
+import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authorization.AuthorizationConfig;
+import org.soulwing.cas.service.authorization.AuthorizationService;
+import org.soulwing.cas.service.authorization.AuthorizationServiceFactory;
+import org.soulwing.cas.service.authorization.MutableAuthorizationConfig;
 
 /**
  * An add step handler for the authorization resource.
@@ -58,8 +66,45 @@ public class AuthorizationAdd extends AbstractAddStepHandler {
       ServiceVerificationHandler verificationHandler,
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
+    
+    ModelNode localName = operation.get(ModelDescriptionConstants.ADDRESS);
+    ServiceName serviceName = AuthorizationServiceControl.name(localName);
+    
+    AuthorizationService service = AuthorizationServiceFactory.newInstance(
+        localName.asString());
+    
+    service.reconfigure(applyConfiguration(context, model,
+        service.getConfiguration()));
+    
+    ServiceController<AuthorizationService> controller = context
+        .getServiceTarget()
+        .addService(serviceName, new AuthorizationServiceControl(service))
+        .addListener(verificationHandler)
+        .setInitialMode(Mode.ACTIVE)
+        .install();
+    
+    SubsystemExtension.logger.info("added authorization service " + serviceName);
+
+    newControllers.add(controller);
+
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
+  }
+
+  /**
+   * Applies the model configuration to the given authorization config.
+   * @param context operation context
+   * @param model model containing the configuration to apply
+   * @param config target authorization configuration
+   * @return configuration with model configuration applied
+   * @throws OperationFailedException
+   */
+  private AuthorizationConfig applyConfiguration(
+      OperationContext context, ModelNode model,
+      MutableAuthorizationConfig config) throws OperationFailedException {
+    config.setDefaultRole(AuthorizationDefinition.DEFAULT_ROLE
+        .resolveModelAttribute(context, model).asString());
+    return config;
   }
   
 }

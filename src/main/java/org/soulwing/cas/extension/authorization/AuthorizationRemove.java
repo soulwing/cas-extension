@@ -21,7 +21,10 @@ package org.soulwing.cas.extension.authorization;
 import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
+import org.jboss.msc.service.ServiceName;
+import org.soulwing.cas.extension.SubsystemExtension;
 
 /**
  * A remove step handler for the authorization resource.
@@ -42,6 +45,11 @@ public class AuthorizationRemove extends AbstractRemoveStepHandler {
   @Override
   protected void performRuntime(OperationContext context,
       ModelNode operation, ModelNode model) throws OperationFailedException {
+    ServiceName serviceName = AuthorizationServiceControl.name(
+        operation.get(ModelDescriptionConstants.ADDRESS));
+    context.removeService(serviceName);
+    SubsystemExtension.logger.info("removed authorization service " 
+        + serviceName);
     super.performRuntime(context, operation, model);
   }
   
