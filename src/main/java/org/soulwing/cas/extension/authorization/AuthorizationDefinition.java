@@ -18,8 +18,13 @@
  */
 package org.soulwing.cas.extension.authorization;
 
+import org.jboss.as.controller.SimpleAttributeDefinition;
+import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
+import org.jboss.as.controller.registry.AttributeAccess;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.ModelType;
 import org.soulwing.cas.extension.Names;
 import org.soulwing.cas.extension.Paths;
 import org.soulwing.cas.extension.ResourceUtil;
@@ -35,6 +40,15 @@ public class AuthorizationDefinition extends SimpleResourceDefinition {
   public static final AuthorizationDefinition INSTANCE =
       new AuthorizationDefinition();
   
+  static final SimpleAttributeDefinition DEFAULT_ROLE =
+      new SimpleAttributeDefinitionBuilder(Names.DEFAULT_ROLE, ModelType.STRING)
+              .setAllowExpression(true)
+              .setAllowNull(true)
+              .setDefaultValue(new ModelNode("valid-user"))
+              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+              .build();
+
   private AuthorizationDefinition() {
     super(Paths.AUTHORIZATION, 
         ResourceUtil.getResolver(Names.AUTHORIZATION),
@@ -49,6 +63,8 @@ public class AuthorizationDefinition extends SimpleResourceDefinition {
   public void registerAttributes(
       ManagementResourceRegistration resourceRegistration) {
     super.registerAttributes(resourceRegistration);
+    resourceRegistration.registerReadWriteAttribute(DEFAULT_ROLE, 
+        null, DefaultRoleHandler.INSTANCE);
   }
 
   /**

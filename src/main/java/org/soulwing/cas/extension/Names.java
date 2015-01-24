@@ -50,6 +50,7 @@ public interface Names {
   String PROXY = "proxy";
   
   String AUTHORIZATION = "authorization";
+  String DEFAULT_ROLE = "default-role";
   String SAML = "saml";
   String LDAP = "ldap";
   String PROPERTIES = "properties";

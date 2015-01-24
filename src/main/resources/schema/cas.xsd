@@ -55,6 +55,7 @@
       <xs:element name="properties" type="PropertiesAuthorizationType"/>
     </xs:choice>
     <xs:attribute name="name" use="optional" default="default"/>
+    <xs:attribute name="default-role" use="optional" default="valid-user"/>
   </xs:complexType>
   
   <xs:complexType name="SamlAuthorizationType">

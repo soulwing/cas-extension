@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.extension.authorization;
 
+import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.soulwing.cas.extension.AbstractResourceReaderWriter;
 import org.soulwing.cas.extension.Names;
 
@@ -34,6 +35,16 @@ public class AuthorizationReaderWriter extends AbstractResourceReaderWriter {
         new SamlReaderWriter(),
         new LdapReaderWriter(),
         new PropertiesReaderWriter());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected SimpleAttributeDefinition[] attributes() {
+    return new SimpleAttributeDefinition[] { 
+      AuthorizationDefinition.DEFAULT_ROLE  
+    };
   }
   
 }

@@ -46,6 +46,7 @@ public class AuthorizationAdd extends AbstractAddStepHandler {
   @Override
   protected void populateModel(ModelNode operation, ModelNode model)
       throws OperationFailedException {
+    AuthorizationDefinition.DEFAULT_ROLE.validateAndSet(operation, model);
   }
 
   /**
