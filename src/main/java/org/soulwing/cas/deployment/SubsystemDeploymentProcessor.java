@@ -1,6 +1,6 @@
 package org.soulwing.cas.deployment;
 
-import static org.soulwing.cas.extension.SubsystemExtension.logger;
+import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
 
@@ -12,7 +12,15 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.vfs.VirtualFile;
+import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.extension.authentication.AuthenticationServiceControl;
+import org.soulwing.cas.extension.authorization.AuthorizationServiceControl;
+import org.soulwing.cas.service.authentication.AuthenticationService;
+import org.soulwing.cas.service.authorization.AuthorizationService;
+import org.soulwing.cas.undertow.CasServletExtension;
+import org.wildfly.extension.undertow.deployment.UndertowAttachments;
 
 /**
  * An example deployment unit processor that does nothing. To add more
@@ -40,19 +48,48 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
   public void deploy(DeploymentPhaseContext phaseContext)
       throws DeploymentUnitProcessingException {
     DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
-
-    logger.info("deploy " + deploymentUnit.getName());
+    
     ResourceRoot root = deploymentUnit.getAttachment(Attachments.DEPLOYMENT_ROOT);
     VirtualFile descriptor = root.getRoot().getChild("WEB-INF/cas.xml");
-    AppConfiguration config = null;
-    if (descriptor.exists()) {
-      config = parseDescriptor(descriptor);
-    }
+    if (!descriptor.exists()) return;
+    
+    AppConfiguration config = parseDescriptor(descriptor);
+    ServletExtension extension = new CasServletExtension(
+        findAuthenticationService(phaseContext, config), 
+        findAuthorizationService(phaseContext, config));
+    
+    deploymentUnit.addToAttachmentList(        
+        UndertowAttachments.UNDERTOW_SERVLET_EXTENSIONS, extension);
+    
+    SubsystemExtension.logger.info(
+        "attached CAS servlet extension for deployment " 
+            + deploymentUnit.getName());
+  }
 
-    if (config != null) {
-      logger.info("CAS authentication resource: " + config.getAuthenticationId());
-      logger.info("CAS authorization resource: " + config.getAuthorizationId());
+  private AuthenticationService findAuthenticationService(
+      DeploymentPhaseContext phaseContext, AppConfiguration config)
+      throws DeploymentUnitProcessingException {
+    ServiceController<?> controller = phaseContext.getServiceRegistry().getService(
+        AuthenticationServiceControl.name(config.getAuthenticationId()));
+    if (controller == null) {
+      throw new DeploymentUnitProcessingException(
+          "cannot find a CAS authentication resource named '"
+          + config.getAuthenticationId() + "'");
     }
+    return (AuthenticationService) controller.getService().getValue();
+  }
+
+  private AuthorizationService findAuthorizationService(
+      DeploymentPhaseContext phaseContext, AppConfiguration config)
+      throws DeploymentUnitProcessingException {
+    ServiceController<?> controller = phaseContext.getServiceRegistry().getService(
+        AuthorizationServiceControl.name(config.getAuthorizationId()));
+    if (controller == null) {
+      throw new DeploymentUnitProcessingException(
+          "cannot find a CAS authorization resource named '"
+          + config.getAuthorizationId() + "'");
+    }
+    return (AuthorizationService) controller.getService().getValue();
   }
 
   private AppConfiguration parseDescriptor(VirtualFile descriptor) 
