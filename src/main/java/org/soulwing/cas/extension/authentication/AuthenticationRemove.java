@@ -48,8 +48,8 @@ class AuthenticationRemove extends AbstractRemoveStepHandler {
     
     ServiceName serviceName = AuthenticationServiceControl.name(
         operation.get(ModelDescriptionConstants.ADDRESS));
-    SubsystemExtension.logger.info("removed authentication service " + serviceName);
     context.removeService(serviceName);
+    SubsystemExtension.logger.info("removed authentication service " + serviceName);
     
     super.performRuntime(context, operation, model);
   }

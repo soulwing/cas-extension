@@ -49,7 +49,7 @@ public interface AuthenticationService {
    * Gets the current configuration of this service.
    * @return configuration
    */
-  Configuration getConfiguration();
+  MutableConfiguration getConfiguration();
   
   /**
    * Replaces the current configuration of this service with the given

@@ -75,8 +75,8 @@ class JasigAuthenticationService implements AuthenticationService {
    * {@inheritDoc}
    */
   @Override
-  public Configuration getConfiguration() {
-    return configuration.get();
+  public MutableConfiguration getConfiguration() {
+    return configuration.get().clone();
   }
 
   /**
@@ -84,7 +84,7 @@ class JasigAuthenticationService implements AuthenticationService {
    */
   @Override
   public void reconfigure(Configuration configuration) {
-    this.configuration.set(configuration);
+    this.configuration.set(configuration.clone());
   }
 
 }

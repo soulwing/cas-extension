@@ -57,7 +57,7 @@ abstract class AbstractAuthenticationAttributeHandler<T>
       throws OperationFailedException {
 
     AuthenticationService service = findTargetService(context, operation);
-    MutableConfiguration config = service.getConfiguration().clone();
+    MutableConfiguration config = service.getConfiguration();
     T handback = applyUpdateToConfiguration(attributeName, resolvedValue, config);
     handbackHolder.setHandback(handback);
     service.reconfigure(config);
@@ -75,7 +75,7 @@ abstract class AbstractAuthenticationAttributeHandler<T>
       ModelNode valueToRevert, T handback) throws OperationFailedException {
     
     AuthenticationService service = findTargetService(context, operation);
-    MutableConfiguration config = service.getConfiguration().clone();
+    MutableConfiguration config = service.getConfiguration();
     revertUpdateToConfiguration(attributeName, valueToRestore, config, handback);
     service.reconfigure(config);
     context.stepCompleted();   
@@ -91,17 +91,12 @@ abstract class AbstractAuthenticationAttributeHandler<T>
 
   private AuthenticationService findTargetService(OperationContext context,
       ModelNode operation) throws OperationFailedException {
-    ModelNode address = operation.get(ModelDescriptionConstants.ADDRESS);
-    String target = address.asPropertyList().get(address.asInt() - 1)
-        .getValue().asString();
-    
-    ServiceName serviceName = AuthenticationServiceControl.name(target);
+    ServiceName serviceName = AuthenticationServiceControl.name(
+        operation.get(ModelDescriptionConstants.ADDRESS));
     ServiceController<?> controller = context.getServiceRegistry(true)
         .getRequiredService(serviceName);    
-    AuthenticationService service = (AuthenticationService) 
+    return (AuthenticationService) 
         controller.getService().getValue();
-    
-    return service;
   }
 
 

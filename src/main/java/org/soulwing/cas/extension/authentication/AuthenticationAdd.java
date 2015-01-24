@@ -33,6 +33,7 @@ import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.authentication.AuthenticationProtocol;
 import org.soulwing.cas.service.authentication.AuthenticationService;
 import org.soulwing.cas.service.authentication.AuthenticationServiceFactory;
+import org.soulwing.cas.service.authentication.Configuration;
 import org.soulwing.cas.service.authentication.MutableConfiguration;
 
 /**
@@ -79,9 +80,8 @@ class AuthenticationAdd extends AbstractAddStepHandler {
         operation.get(ModelDescriptionConstants.ADDRESS));
     
     AuthenticationService service = AuthenticationServiceFactory.newInstance();
-    MutableConfiguration config = service.getConfiguration().clone();
-    applyConfiguration(context, model, config);
-    service.reconfigure(config);
+    service.reconfigure(applyConfiguration(context, model, 
+        service.getConfiguration()));
     
     ServiceController<AuthenticationService> controller = context
         .getServiceTarget()
@@ -97,10 +97,12 @@ class AuthenticationAdd extends AbstractAddStepHandler {
         newControllers);
   }
 
-  private MutableConfiguration applyConfiguration(OperationContext context,
+  private Configuration applyConfiguration(OperationContext context,
       ModelNode model, MutableConfiguration config) 
           throws OperationFailedException {
-    config.setProtocol(AuthenticationProtocol.toObject(AuthenticationDefinition.PROTOCOL.resolveModelAttribute(context, model).asString()));
+    config.setProtocol(AuthenticationProtocol.toObject(
+        AuthenticationDefinition.PROTOCOL.resolveModelAttribute(context, model)
+            .asString()));
     config.setServerUrl(AuthenticationDefinition.SERVER_URL
         .resolveModelAttribute(context, model).asString());
     config.setServiceUrl(AuthenticationDefinition.SERVICE_URL
