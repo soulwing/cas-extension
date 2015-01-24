@@ -47,7 +47,7 @@ public interface AuthorizationService {
    * Gets the configuration of this service.
    * @return configuration
    */
-  MutableAuthorizationConfig getConfiguration();
+  AuthorizationConfig getConfiguration();
 
   /**
    * Reconfigures this service.

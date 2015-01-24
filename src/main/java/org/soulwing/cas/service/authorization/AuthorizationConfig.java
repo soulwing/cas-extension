@@ -32,9 +32,16 @@ public interface AuthorizationConfig extends Cloneable {
   String getDefaultRole();
   
   /**
+   * Sets the role that is assigned to all users.
+   * @param defaultRole the role name to set
+   */
+  void setDefaultRole(String defaultRole);
+  
+
+  /**
    * Clones this configuration.
    * @return mutable copy of this configuration
    */
-  MutableAuthorizationConfig clone();
+  AuthorizationConfig clone();
   
 }

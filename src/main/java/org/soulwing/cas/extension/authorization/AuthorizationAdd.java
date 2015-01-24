@@ -33,7 +33,6 @@ import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.authorization.AuthorizationConfig;
 import org.soulwing.cas.service.authorization.AuthorizationService;
 import org.soulwing.cas.service.authorization.AuthorizationServiceFactory;
-import org.soulwing.cas.service.authorization.MutableAuthorizationConfig;
 
 /**
  * An add step handler for the authorization resource.
@@ -100,8 +99,8 @@ public class AuthorizationAdd extends AbstractAddStepHandler {
    * @throws OperationFailedException
    */
   private AuthorizationConfig applyConfiguration(
-      OperationContext context, ModelNode model,
-      MutableAuthorizationConfig config) throws OperationFailedException {
+      OperationContext context, ModelNode model, AuthorizationConfig config) 
+          throws OperationFailedException {
     config.setDefaultRole(AuthorizationDefinition.DEFAULT_ROLE
         .resolveModelAttribute(context, model).asString());
     return config;

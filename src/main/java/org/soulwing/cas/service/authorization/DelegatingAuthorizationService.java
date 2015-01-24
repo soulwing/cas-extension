@@ -71,7 +71,7 @@ class DelegatingAuthorizationService implements AuthorizationService {
    * {@inheritDoc}
    */
   @Override
-  public MutableAuthorizationConfig getConfiguration() {
+  public AuthorizationConfig getConfiguration() {
     return configuration.get().clone();
   }
 

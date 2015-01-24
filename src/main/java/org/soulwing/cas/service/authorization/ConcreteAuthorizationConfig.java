@@ -19,11 +19,11 @@
 package org.soulwing.cas.service.authorization;
 
 /**
- * A concrete {@link MutableAuthorizationConfig} implementation.
+ * A concrete {@link AuthorizationConfig} implementation.
  *
  * @author Carl Harris
  */
-class ConcreteAuthorizationConfig implements MutableAuthorizationConfig {
+class ConcreteAuthorizationConfig implements AuthorizationConfig {
 
   private String defaultRole;
   
@@ -47,9 +47,9 @@ class ConcreteAuthorizationConfig implements MutableAuthorizationConfig {
    * {@inheritDoc}
    */
   @Override
-  public MutableAuthorizationConfig clone() {
+  public AuthorizationConfig clone() {
     try {
-      return (MutableAuthorizationConfig) super.clone();
+      return (AuthorizationConfig) super.clone();
     }
     catch (CloneNotSupportedException ex) {
       throw new RuntimeException(ex);

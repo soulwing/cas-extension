@@ -27,8 +27,8 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.authorization.AuthorizationConfig;
 import org.soulwing.cas.service.authorization.AuthorizationService;
-import org.soulwing.cas.service.authorization.MutableAuthorizationConfig;
 
 /**
  * An abstract base for writable authentication resource attributes.
@@ -57,7 +57,7 @@ abstract class AbstractAuthorizationAttributeHandler<T>
       throws OperationFailedException {
 
     AuthorizationService service = findTargetService(context, operation);
-    MutableAuthorizationConfig config = service.getConfiguration();
+    AuthorizationConfig config = service.getConfiguration();
     T handback = applyUpdateToConfiguration(attributeName, resolvedValue, config);
     handbackHolder.setHandback(handback);
     service.reconfigure(config);
@@ -75,18 +75,18 @@ abstract class AbstractAuthorizationAttributeHandler<T>
       ModelNode valueToRevert, T handback) throws OperationFailedException {
     
     AuthorizationService service = findTargetService(context, operation);
-    MutableAuthorizationConfig config = service.getConfiguration();
+    AuthorizationConfig config = service.getConfiguration();
     revertUpdateToConfiguration(attributeName, valueToRestore, config, handback);
     service.reconfigure(config);
     context.stepCompleted();   
   }
 
   protected abstract T applyUpdateToConfiguration(String attributeName, 
-      ModelNode value, MutableAuthorizationConfig config) 
+      ModelNode value, AuthorizationConfig config) 
           throws OperationFailedException;
 
   protected abstract void revertUpdateToConfiguration(String attributeName, 
-      ModelNode value, MutableAuthorizationConfig config, T handback) 
+      ModelNode value, AuthorizationConfig config, T handback) 
           throws OperationFailedException;
 
   private AuthorizationService findTargetService(OperationContext context,

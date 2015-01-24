@@ -20,7 +20,7 @@ package org.soulwing.cas.extension.authorization;
 
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
-import org.soulwing.cas.service.authorization.MutableAuthorizationConfig;
+import org.soulwing.cas.service.authorization.AuthorizationConfig;
 
 
 /** 
@@ -43,7 +43,7 @@ public class DefaultRoleHandler
    */
   @Override
   protected Void applyUpdateToConfiguration(String attributeName,
-      ModelNode value, MutableAuthorizationConfig config)
+      ModelNode value, AuthorizationConfig config)
       throws OperationFailedException {
     config.setDefaultRole(value.resolve().asString());
     return null;
@@ -54,7 +54,7 @@ public class DefaultRoleHandler
    */
   @Override
   protected void revertUpdateToConfiguration(String attributeName,
-      ModelNode value, MutableAuthorizationConfig config, Void handback)
+      ModelNode value, AuthorizationConfig config, Void handback)
       throws OperationFailedException {
     config.setDefaultRole(value.resolve().asString());
   }
