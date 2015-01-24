@@ -38,18 +38,6 @@ public interface AuthorizationConfig extends Cloneable {
   void setDefaultRole(String defaultRole);
   
   /**
-   * Gets the SAML configuration.
-   * @return SAML configuration
-   */
-  SamlAuthorizationConfig getSamlConfig();
-  
-  /**
-   * Sets the SAML configuration.
-   * @param samlConfig the configuration to set
-   */
-  void setSamlConfig(SamlAuthorizationConfig samlConfig);
-  
-  /**
    * Clones this configuration.
    * @return mutable copy of this configuration
    */

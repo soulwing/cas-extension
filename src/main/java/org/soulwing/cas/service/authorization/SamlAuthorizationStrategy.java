@@ -32,14 +32,15 @@ import org.soulwing.cas.service.authentication.IdentityAssertion;
  *
  * @author Carl Harris
  */
-public class SamlAuthorizationStrategy extends AbstractAuthorizationStrategy {
+public class SamlAuthorizationStrategy 
+    extends AbstractAuthorizationStrategy<SamlAuthorizationConfig> {
 
   /**
    * {@inheritDoc}
    */
   @Override
   public Set<String> getApplicableRoles(IdentityAssertion assertion) {
-    SamlAuthorizationConfig config = configuration.get().getSamlConfig();
+    SamlAuthorizationConfig config = configuration.get();
     Map<String, Object> attributes = assertion.getAttributes();
     Set<String> roles = new LinkedHashSet<>();
     for (String roleAttribute : config.getRoleAttributes()) {

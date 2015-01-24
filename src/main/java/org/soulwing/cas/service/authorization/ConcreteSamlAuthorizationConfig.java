@@ -30,7 +30,7 @@ import java.util.Set;
 class ConcreteSamlAuthorizationConfig implements SamlAuthorizationConfig {
 
   private final Set<String> roleAttributes = new LinkedHashSet<>();
-  
+
   /**
    * {@inheritDoc}
    */

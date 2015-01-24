@@ -40,6 +40,8 @@ public class DelegatingAuthorizationServiceTest {
 
   private static final String SERVICE_NAME = "someServiceName";
   
+  private static final String STRATEGY_NAME = "someStrategyName";
+  
   private static final String DEFAULT_ROLE = "defaultRole";
   
   private static final String OTHER_ROLE = "otherRole";
@@ -48,37 +50,28 @@ public class DelegatingAuthorizationServiceTest {
   public final JUnitRuleMockery context = new JUnitRuleMockery();
   
   @Mock
-  private AuthorizationStrategy strategy;
-  
-  @Mock
-  private AuthorizationConfig config;
+  private AuthorizationStrategy<?> strategy;
   
   @Mock
   private IdentityAssertion assertion;
+
+  private ConcreteAuthorizationConfig config = 
+      new ConcreteAuthorizationConfig();
   
-  private DelegatingAuthorizationService service;
+  private DelegatingAuthorizationService service = 
+      new DelegatingAuthorizationService(SERVICE_NAME);
   
   @Before
   public void setUp() throws Exception {
-    context.checking(new Expectations() {
-      {
-        oneOf(config).clone();
-        will(returnValue(config));
-        oneOf(strategy).reconfigure(config);        
-      }
-    });
-
-    service = new DelegatingAuthorizationService(SERVICE_NAME, 
-        Collections.singletonList(strategy));
+    config.setDefaultRole(DEFAULT_ROLE);
     service.reconfigure(config);
+    service.putStrategy(STRATEGY_NAME, strategy);
   }
 
   @Test
   public void testGetApplicableRoles() throws Exception {
     context.checking(new Expectations() {
       {
-        oneOf(config).getDefaultRole();
-        will(returnValue(DEFAULT_ROLE));
         oneOf(strategy).getApplicableRoles(assertion);
         will(returnValue(Collections.singleton(OTHER_ROLE)));
       }

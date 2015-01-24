@@ -55,4 +55,17 @@ public interface AuthorizationService {
    */
   void reconfigure(AuthorizationConfig configuration);
 
+  /**
+   * Adds a strategy to this service.
+   * @param name name of the strategy
+   * @param strategy strategy implementation
+   */
+  void putStrategy(String name, AuthorizationStrategy<?> strategy);
+  
+  /**
+   * Removes a strategy from this service.
+   * @param name name of the strategy to remove
+   */
+  void removeStrategy(String name);
+  
 }

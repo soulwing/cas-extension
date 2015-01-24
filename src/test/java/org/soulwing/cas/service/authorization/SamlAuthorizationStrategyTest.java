@@ -47,34 +47,24 @@ public class SamlAuthorizationStrategyTest {
   public final JUnitRuleMockery context = new JUnitRuleMockery();
   
   @Mock
-  private SamlAuthorizationConfig samlConfig;
-  
-  @Mock
-  private AuthorizationConfig config;
-  
-  @Mock
   private IdentityAssertion assertion;
-  
+
+  private SamlAuthorizationConfig config = 
+      new ConcreteSamlAuthorizationConfig();      
+
   private SamlAuthorizationStrategy strategy = 
       new SamlAuthorizationStrategy();
 
   @Before
   public void setUp() throws Exception {
+    config.setRoleAttributes(Collections.singleton(ATTRIBUTE_NAME));
     strategy.reconfigure(config);
-    context.checking(new Expectations() {
-      {
-        allowing(config).getSamlConfig();
-        will(returnValue(samlConfig));
-      }
-    });
   }
 
   @Test
   public void testWhenAttributeValueIsNotCollection() throws Exception {
     context.checking(new Expectations() {
       {
-        oneOf(samlConfig).getRoleAttributes();
-        will(returnValue(Collections.singleton(ATTRIBUTE_NAME)));
         oneOf(assertion).getAttributes();
         will(returnValue(Collections.singletonMap(ATTRIBUTE_NAME, 
             ATTRIBUTE_VALUE)));        
@@ -89,8 +79,6 @@ public class SamlAuthorizationStrategyTest {
   public void testWhenAttributeValueCollection() throws Exception {
     context.checking(new Expectations() {
       {
-        oneOf(samlConfig).getRoleAttributes();
-        will(returnValue(Collections.singleton(ATTRIBUTE_NAME)));
         oneOf(assertion).getAttributes();
         will(returnValue(Collections.singletonMap(ATTRIBUTE_NAME, 
             Collections.singleton(ATTRIBUTE_VALUE))));        

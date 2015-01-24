@@ -18,11 +18,10 @@
  */
 package org.soulwing.cas.service.authorization;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.soulwing.cas.service.authentication.IdentityAssertion;
@@ -39,29 +38,15 @@ class DelegatingAuthorizationService implements AuthorizationService {
       new AtomicReference<AuthorizationConfig>(new ConcreteAuthorizationConfig());
   
   private final String name;
-  private final List<AuthorizationStrategy> strategies;
+  private final ConcurrentMap<String, AuthorizationStrategy<?>> strategies =
+      new ConcurrentHashMap<String, AuthorizationStrategy<?>>();
   
   /**
    * Constructs a new instance.
    * @param name unqualified service name
    */
   public DelegatingAuthorizationService(String name) {
-    this(name, loadStrategies());
-  }
-
-  protected DelegatingAuthorizationService(String name, 
-      List<AuthorizationStrategy> strategies) {
     this.name = name;
-    this.strategies = strategies;
-  }
-  
-  private static List<AuthorizationStrategy> loadStrategies() {
-    List<AuthorizationStrategy> strategies = new ArrayList<>();
-    for (AuthorizationStrategy strategy : 
-      ServiceLoader.load(AuthorizationStrategy.class)) {
-      strategies.add(strategy);
-    }
-    return strategies;
   }
   
   /**
@@ -72,6 +57,7 @@ class DelegatingAuthorizationService implements AuthorizationService {
     return name;
   }
 
+
   /**
    * {@inheritDoc}
    */
@@ -80,7 +66,7 @@ class DelegatingAuthorizationService implements AuthorizationService {
     AuthorizationConfig config = configuration.get();
     Set<String> roles = new LinkedHashSet<>();
     roles.add(config.getDefaultRole());
-    for (AuthorizationStrategy strategy : strategies) {
+    for (AuthorizationStrategy<?> strategy : strategies.values()) {
       roles.addAll(strategy.getApplicableRoles(assertion));
     }
     return roles;
@@ -99,11 +85,23 @@ class DelegatingAuthorizationService implements AuthorizationService {
    */
   @Override
   public void reconfigure(AuthorizationConfig configuration) {
-    AuthorizationConfig clone = configuration.clone();
-    this.configuration.set(clone);
-    for (AuthorizationStrategy strategy : strategies) {
-      strategy.reconfigure(clone);
-    }
+    this.configuration.set(configuration.clone());
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void putStrategy(String name, AuthorizationStrategy<?> strategy) {
+    strategies.put(name, strategy);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void removeStrategy(String name) {
+    strategies.remove(name);
+  }
+  
 }
