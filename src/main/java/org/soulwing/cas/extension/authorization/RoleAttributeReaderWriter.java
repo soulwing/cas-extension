@@ -23,6 +23,7 @@ import java.util.Collections;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.dmr.ModelNode;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 import org.soulwing.cas.extension.AbstractResourceReaderWriter;
@@ -35,8 +36,11 @@ import org.soulwing.cas.extension.Names;
  */
 public class RoleAttributeReaderWriter extends AbstractResourceReaderWriter {
 
-  public RoleAttributeReaderWriter() {
+  private final SimpleAttributeDefinition definition;
+  
+  public RoleAttributeReaderWriter(SimpleAttributeDefinition definition) {
     super(Names.ROLE_ATTRIBUTE);
+    this.definition = definition;
   }
 
   /**
@@ -65,7 +69,7 @@ public class RoleAttributeReaderWriter extends AbstractResourceReaderWriter {
       parser.missingAttributes(reader, Collections.singleton(Names.NAME));
     }
     
-    ModelNode value = LdapSearchDefinition.ROLE_ATTRIBUTE.parse(name, reader);
+    ModelNode value = definition.parse(name, reader);
     parser.lastOperation().get(Names.ROLE_ATTRIBUTES).add(value);
   }
 

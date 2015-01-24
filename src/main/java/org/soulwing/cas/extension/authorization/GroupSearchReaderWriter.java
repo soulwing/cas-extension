@@ -35,7 +35,7 @@ import org.soulwing.cas.extension.Names;
 class GroupSearchReaderWriter extends AbstractResourceReaderWriter {
 
   private static final RoleAttributeReaderWriter ROLE_ATTRIBUTE_RW =
-      new RoleAttributeReaderWriter();
+      new RoleAttributeReaderWriter(LdapSearchDefinition.ROLE_ATTRIBUTE);
   
   /**
    * Constructs a new instance.

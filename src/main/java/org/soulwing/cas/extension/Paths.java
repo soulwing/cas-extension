@@ -35,6 +35,7 @@ public interface Paths {
   PathElement AUTHENTICATION = PathElement.pathElement(Names.AUTHENTICATION);
   PathElement PROXY_CHAIN = PathElement.pathElement(Names.PROXY_CHAIN);
   PathElement AUTHORIZATION = PathElement.pathElement(Names.AUTHORIZATION);
+  PathElement SAML = PathElement.pathElement(Names.SAML);
   PathElement LDAP = PathElement.pathElement(Names.LDAP);
   PathElement PROPERTIES = PathElement.pathElement(Names.PROPERTIES);
   PathElement USER_SEARCH = PathElement.pathElement(Names.USER_SEARCH);

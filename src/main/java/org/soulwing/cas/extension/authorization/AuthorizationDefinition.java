@@ -58,6 +58,7 @@ public class AuthorizationDefinition extends SimpleResourceDefinition {
   public void registerChildren(
       ManagementResourceRegistration resourceRegistration) {
     super.registerChildren(resourceRegistration);
+    resourceRegistration.registerSubModel(SamlDefinition.INSTANCE);
     resourceRegistration.registerSubModel(LdapDefinition.INSTANCE);
     resourceRegistration.registerSubModel(PropertiesDefinition.INSTANCE);
   }

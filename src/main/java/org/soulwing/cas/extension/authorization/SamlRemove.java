@@ -1,5 +1,5 @@
 /*
- * File created on Dec 18, 2014 
+ * File created on Dec 15, 2014 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,22 +18,31 @@
  */
 package org.soulwing.cas.extension.authorization;
 
-import org.soulwing.cas.extension.AbstractResourceReaderWriter;
-import org.soulwing.cas.extension.Names;
+import org.jboss.as.controller.AbstractRemoveStepHandler;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.dmr.ModelNode;
 
 /**
- * A reader/writer for the configuration associated with an authorization
- * resource.
+ * A remove step handler for the SAML authorization resource.
  *
  * @author Carl Harris
  */
-public class AuthorizationReaderWriter extends AbstractResourceReaderWriter {
+public class SamlRemove extends AbstractRemoveStepHandler {
 
-  public AuthorizationReaderWriter() {
-    super(Names.AUTHORIZATION, 
-        new SamlReaderWriter(),
-        new LdapReaderWriter(),
-        new PropertiesReaderWriter());
+  public static final SamlRemove INSTANCE = 
+      new SamlRemove();
+    
+  private SamlRemove() {    
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void performRuntime(OperationContext context,
+      ModelNode operation, ModelNode model) throws OperationFailedException {
+    super.performRuntime(context, operation, model);
   }
   
 }

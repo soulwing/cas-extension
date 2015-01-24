@@ -21,7 +21,6 @@ package org.soulwing.cas.extension.authorization;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.dmr.ModelNode;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 import org.soulwing.cas.extension.AbstractResourceReaderWriter;
@@ -32,28 +31,16 @@ import org.soulwing.cas.extension.Names;
  *
  * @author Carl Harris
  */
-class UserSearchReaderWriter extends AbstractResourceReaderWriter {
+class SamlReaderWriter extends AbstractResourceReaderWriter {
 
   private static final RoleAttributeReaderWriter ROLE_ATTRIBUTE_RW =
-      new RoleAttributeReaderWriter(LdapSearchDefinition.ROLE_ATTRIBUTE);
+      new RoleAttributeReaderWriter(SamlDefinition.ROLE_ATTRIBUTE);
   
   /**
    * Constructs a new instance.
    */
-  public UserSearchReaderWriter() {
-    super(Names.USER_SEARCH, ROLE_ATTRIBUTE_RW);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected SimpleAttributeDefinition[] attributes() {
-    return new SimpleAttributeDefinition[] { 
-        LdapSearchDefinition.BASE,
-        LdapSearchDefinition.FILTER,
-        LdapSearchDefinition.SCOPE
-    };
+  public SamlReaderWriter() {
+    super(Names.SAML, ROLE_ATTRIBUTE_RW);
   }
 
   /**
