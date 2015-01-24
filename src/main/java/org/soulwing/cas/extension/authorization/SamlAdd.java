@@ -18,21 +18,23 @@
  */
 package org.soulwing.cas.extension.authorization;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.dmr.ModelNode;
-import org.jboss.msc.service.ServiceController;
+import org.soulwing.cas.service.authorization.AuthorizationService;
+import org.soulwing.cas.service.authorization.SamlAuthorizationConfig;
+import org.soulwing.cas.service.authorization.SamlAuthorizationStrategy;
 
 /**
  * An add step handler for the SAML authorization resource.
  *
  * @author Carl Harris
  */
-public class SamlAdd extends AbstractAddStepHandler {
+public class SamlAdd extends AbstractAuthorizationStrategyAddStepHandler {
 
   public static final SamlAdd INSTANCE = 
       new SamlAdd();
@@ -47,6 +49,7 @@ public class SamlAdd extends AbstractAddStepHandler {
   protected void populateModel(ModelNode operation, ModelNode model)
       throws OperationFailedException {
     SamlDefinition.ROLE_ATTRIBUTES.validateAndSet(operation, model);
+    super.populateModel(operation, model);
   }
 
   /**
@@ -54,12 +57,22 @@ public class SamlAdd extends AbstractAddStepHandler {
    */
   @Override
   protected void performRuntime(OperationContext context,
-      ModelNode operation, ModelNode model,
-      ServiceVerificationHandler verificationHandler,
-      List<ServiceController<?>> newControllers)
-      throws OperationFailedException {
-    super.performRuntime(context, operation, model, verificationHandler,
-        newControllers);
+      ModelNode operation, ModelNode model, AuthorizationService service,
+      String strategyName) throws OperationFailedException {
+    
+    Set<String> roleAttributes = new LinkedHashSet<>();
+    List<ModelNode> list = SamlDefinition.ROLE_ATTRIBUTES
+        .resolveModelAttribute(context, model).asList();
+    for (ModelNode value : list) {
+      roleAttributes.add(value.asString());
+    }
+
+    SamlAuthorizationStrategy strategy = new SamlAuthorizationStrategy();
+    SamlAuthorizationConfig config = strategy.getConfiguration();
+    config.setRoleAttributes(roleAttributes);
+    strategy.reconfigure(config);
+    service.putStrategy(strategyName, strategy);
   }
+
   
 }

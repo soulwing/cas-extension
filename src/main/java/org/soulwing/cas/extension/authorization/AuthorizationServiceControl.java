@@ -51,10 +51,15 @@ public class AuthorizationServiceControl
   }
 
   public static ServiceName name(ModelNode address) {    
-    String target = address.asPropertyList().get(address.asInt() - 1)
+    return name(address, 0);
+  }
+
+  public static ServiceName name(ModelNode address, int tailOffset) {    
+    String target = address.asPropertyList().get(address.asInt() - 1 + tailOffset)
         .getValue().asString();  
     return name(target);
   }
+
 
   public static ServiceName name(String resourceName) {
     return ServiceName.of(Names.SUBSYSTEM_NAME, Names.AUTHORIZATION, 

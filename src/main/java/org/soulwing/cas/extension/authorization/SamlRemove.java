@@ -18,7 +18,6 @@
  */
 package org.soulwing.cas.extension.authorization;
 
-import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
@@ -28,7 +27,7 @@ import org.jboss.dmr.ModelNode;
  *
  * @author Carl Harris
  */
-public class SamlRemove extends AbstractRemoveStepHandler {
+public class SamlRemove extends AbstractAuthorizationStrategyRemoveStepHandler {
 
   public static final SamlRemove INSTANCE = 
       new SamlRemove();
