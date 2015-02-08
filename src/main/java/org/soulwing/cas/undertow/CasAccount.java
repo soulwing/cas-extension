@@ -24,7 +24,7 @@ import java.security.Principal;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.soulwing.cas.service.authentication.IdentityAssertion;
+import org.soulwing.cas.service.IdentityAssertion;
 
 /**
  * An {@link Account} based on a {@link IdentityAssertion}.
@@ -76,6 +76,15 @@ public class CasAccount implements Account {
    */
   public boolean isValid() {
     return assertion.isValid();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return String.format("account: %s %s", 
+        assertion.getPrincipal().getName(), getRoles());
   }
 
 }

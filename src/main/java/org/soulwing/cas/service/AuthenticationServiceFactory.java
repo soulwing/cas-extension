@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Jan 23, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,21 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
-
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+package org.soulwing.cas.service;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * A factory that produces {@link AuthenticationService} objects.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+public class AuthenticationServiceFactory {
 
   /**
-   * Constructs a new instance.
+   * Creates a new instance of {@link AuthenticationService}.
+   * @return
    */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
+  public static AuthenticationService newInstance() {
+    return new JasigAuthenticationService();
   }
-
+  
 }

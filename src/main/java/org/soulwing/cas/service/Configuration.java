@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Dec 24, 2014 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,37 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
+package org.soulwing.cas.service;
 
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import java.util.List;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * An (immutable) configuration for an {@link AuthenticationService}.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+public interface Configuration extends Cloneable {
 
-  /**
-   * Constructs a new instance.
-   */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
-  }
+  AuthenticationProtocol getProtocol();  
 
+  String getServerUrl();
+  
+  String getServiceUrl();
+  
+  String getProxyCallbackUrl();
+  
+  boolean isAcceptAnyProxy();
+  
+  boolean isAllowEmptyProxyChain();
+  
+  List<String[]> getAllowedProxyChains();
+  
+  boolean isRenew();
+  
+  long getClockSkewTolerance();
+  
+  AuthenticationTicketValidator getValidator();
+  
+  MutableConfiguration clone();
+  
 }

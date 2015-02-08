@@ -1,5 +1,5 @@
 /*
- * File created on Dec 18, 2014 
+ * File created on Jan 22, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,33 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
+package org.soulwing.cas.service;
 
-import org.jboss.as.controller.PathElement;
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import java.util.List;
 
 /**
- * Resource path constants.
+ * A mutable configuration.
  *
  * @author Carl Harris
  */
-public interface Paths {
+public interface MutableConfiguration extends Configuration {
 
-  PathElement SUBSYSTEM  = 
-      PathElement.pathElement(ModelDescriptionConstants.SUBSYSTEM, 
-          Names.SUBSYSTEM_NAME);
+  void setProtocol(AuthenticationProtocol protocol);
   
-  PathElement AUTHENTICATION = PathElement.pathElement(Names.AUTHENTICATION);
-  PathElement PROXY_CHAIN = PathElement.pathElement(Names.PROXY_CHAIN);
+  void setServerUrl(String serverUrl);
+  
+  void setServiceUrl(String serviceUrl);
+  
+  void setProxyCallbackUrl(String proxyCallbackUrl);
+
+  void setAcceptAnyProxy(boolean acceptAnyProxy);
+
+  void setAllowEmptyProxyChain(boolean allowEmptyProxyChain);
+  
+  void setAllowedProxyChains(List<String[]> allowedProxyChains);
+
+  void setRenew(boolean renew);
+  
+  void setClockSkewTolerance(long clockSkewTolerance);
 
 }

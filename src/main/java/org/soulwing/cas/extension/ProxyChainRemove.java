@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Dec 15, 2014 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,21 +18,31 @@
  */
 package org.soulwing.cas.extension;
 
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import org.jboss.as.controller.AbstractRemoveStepHandler;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.dmr.ModelNode;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * A remove step handler for a proxy chain resource.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+class ProxyChainRemove extends AbstractRemoveStepHandler {
 
-  /**
-   * Constructs a new instance.
-   */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
+  public static final ProxyChainRemove INSTANCE = 
+      new ProxyChainRemove();
+    
+  private ProxyChainRemove() {    
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void performRuntime(OperationContext context,
+      ModelNode operation, ModelNode model) throws OperationFailedException {
+    super.performRuntime(context, operation, model);
+  }
+  
 }

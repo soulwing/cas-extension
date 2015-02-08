@@ -10,22 +10,5 @@
       <proxy url="someProxyUrl"/>
     </allowed-proxy-chain>
   </authentication>
-  
-  <authorization name="test-authz">
-    <properties name="test-properties" path="/somePath" relative-to="something.else"/>
-    <ldap name="test-ldap">
-      <user-search name="test-user-search"
-        base="ou=People,dc=vt,dc=edu" filter="authId={0}" scope="subtree">
-        <role-attribute name="eduPersonAffiliation"/>
-        <role-attribute name="groupMembership"/>
-      </user-search>
-      <group-search name="test-group-search"
-        base="ou=Entitlements,dc=vt,dc=edu" 
-        user-member-type="dn"
-        user-member-attribute="entitled">
-        <role-attribute name="entitlement"/>
-      </group-search>
-    </ldap>
-  </authorization>
-    
+      
 </subsystem>

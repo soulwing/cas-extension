@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Jan 23, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,23 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
-
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+package org.soulwing.cas.service;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * A service object that validates CAS authentication tickets.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+public interface AuthenticationTicketValidator {
 
   /**
-   * Constructs a new instance.
+   * Validates a CAS authentication ticket for a given service.
+   * @param ticket the subject ticket
+   * @param service the target service
+   * @return identity assertion describing the authentic ticket holder
+   * @throws AuthenticationException if the ticket cannot be validated
    */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
-  }
-
+  IdentityAssertion validate(String ticket, String service)
+      throws AuthenticationException;
+  
 }

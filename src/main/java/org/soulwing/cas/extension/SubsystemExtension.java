@@ -24,8 +24,6 @@ import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
-import org.soulwing.cas.extension.authentication.AuthenticationDefinition;
-import org.soulwing.cas.extension.authorization.AuthorizationDefinition;
 
 
 /**
@@ -58,8 +56,6 @@ public class SubsystemExtension implements Extension {
         subsystem.registerSubsystemModel(SubsystemDefinition.INSTANCE);
     
     registration.registerSubModel(AuthenticationDefinition.INSTANCE);
-    registration.registerSubModel(AuthorizationDefinition.INSTANCE);
-          
     subsystem.registerXMLElementWriter(writer);
   }
 

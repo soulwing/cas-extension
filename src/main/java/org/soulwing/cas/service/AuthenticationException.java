@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Jan 23, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,24 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
-
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+package org.soulwing.cas.service;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * An exception thrown when an authentication request fails.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+public class AuthenticationException extends Exception {
+
+  private static final long serialVersionUID = -4749539724370810640L;
 
   /**
    * Constructs a new instance.
+   * @param message
+   * @param cause
    */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
+  public AuthenticationException(String message, Throwable cause) {
+    super(message, cause);
   }
 
 }

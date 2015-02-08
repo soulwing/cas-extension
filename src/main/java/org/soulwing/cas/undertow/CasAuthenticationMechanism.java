@@ -26,7 +26,10 @@ import io.undertow.util.HttpString;
 
 import java.util.Deque;
 
-import org.soulwing.cas.service.authentication.AuthenticationService;
+import org.soulwing.cas.extension.SubsystemExtension;
+import org.soulwing.cas.service.AuthenticationException;
+import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.service.IdentityAssertion;
 
 /**
  * An {@link AuthenticationMechanism} that uses the CAS protocol.
@@ -61,20 +64,27 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     Deque<String> tickets = exchange.getQueryParameters().get(
         authenticationService.getConfiguration().getProtocol().getTicketParameterName());
     String ticket = tickets != null ? tickets.peekFirst() : null;
+        
     if (ticket == null) {
-//      securityContext.setAuthenticationRequired();
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
-    Account account = securityContext.getIdentityManager().verify(
-        new CasTicketCredential(ticket));
-    if (account != null) {
-      securityContext.authenticationComplete(account, MECHANISM_NAME, true);
-      return AuthenticationMechanismOutcome.AUTHENTICATED;
+    
+    try {
+      IdentityAssertion assertion = authenticationService.validateTicket(
+          exchange.getRequestPath(), exchange.getQueryString(), ticket);
+      IdentityAssertionCredential credential = new IdentityAssertionCredential(assertion);
+      Account account = securityContext.getIdentityManager()
+          .verify(assertion.getPrincipal().getName(), credential);
+      if (account != null) {
+        securityContext.authenticationComplete(account, MECHANISM_NAME, true);
+        return AuthenticationMechanismOutcome.AUTHENTICATED;
+      }
     }
-    else {
-      securityContext.setAuthenticationRequired();
-      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
+    catch (AuthenticationException ex) {
+      SubsystemExtension.logger.info("authentiation failed: " + ex.toString());
     }
+    securityContext.setAuthenticationRequired();
+    return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
   }
 
   /**

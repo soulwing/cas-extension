@@ -48,26 +48,6 @@ public interface Names {
   String PROXY_CHAIN = "allowed-proxy-chain";  
   String PROXIES = "proxies";
   String PROXY = "proxy";
-  
-  String AUTHORIZATION = "authorization";
-  String DEFAULT_ROLE = "default-role";
-  String SAML = "saml";
-  String LDAP = "ldap";
-  String PROPERTIES = "properties";
-  String USER_SEARCH = "user-search";
-  String GROUP_SEARCH = "group-search";
-  String BASE = "base";
-  String FILTER = "filter";
-  String SCOPE = "scope";
-  String ROLE_ATTRIBUTE = "role-attribute";
-  String ROLE_ATTRIBUTES = "role-attributes";
-  String USER_MEMBER_TYPE = "user-member-type";
-  String USER_MEMBER_ATTRIBUTE = "user-member-attribute";
-  String GROUP_MEMBER_TYPE = "group-member-type";
-  String GROUP_MEMBER_ATTRIBUTE = "group-member-attribute";
-  String PATH = "path";
-  String RELATIVE_TO = "relative-to";
-
-  String KEYSTORE = "keystore";
+  String CLOCK_SKEW_TOLERANCE = "clock-skew-tolerance";
 
 }

@@ -4,6 +4,7 @@ import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
 
+import org.jboss.as.domain.management.SecurityRealm;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -14,11 +15,9 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.vfs.VirtualFile;
+import org.soulwing.cas.extension.AuthenticationServiceControl;
 import org.soulwing.cas.extension.SubsystemExtension;
-import org.soulwing.cas.extension.authentication.AuthenticationServiceControl;
-import org.soulwing.cas.extension.authorization.AuthorizationServiceControl;
-import org.soulwing.cas.service.authentication.AuthenticationService;
-import org.soulwing.cas.service.authorization.AuthorizationService;
+import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.undertow.CasServletExtension;
 import org.wildfly.extension.undertow.deployment.UndertowAttachments;
 
@@ -53,10 +52,14 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     VirtualFile descriptor = root.getRoot().getChild("WEB-INF/cas.xml");
     if (!descriptor.exists()) return;
     
+    
     AppConfiguration config = parseDescriptor(descriptor);
     ServletExtension extension = new CasServletExtension(
-        findAuthenticationService(phaseContext, config), 
-        findAuthorizationService(phaseContext, config));
+        findAuthenticationService(phaseContext, config));
+    
+    phaseContext.getServiceRegistry().getRequiredService(
+        SecurityRealm.ServiceUtil.createServiceName("ApplicationRealm"));
+ 
     
     deploymentUnit.addToAttachmentList(        
         UndertowAttachments.UNDERTOW_SERVLET_EXTENSIONS, extension);
@@ -73,23 +76,10 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
         AuthenticationServiceControl.name(config.getAuthenticationId()));
     if (controller == null) {
       throw new DeploymentUnitProcessingException(
-          "cannot find a CAS authentication resource named '"
+          "cannot find a CAS authentication service named '"
           + config.getAuthenticationId() + "'");
     }
     return (AuthenticationService) controller.getService().getValue();
-  }
-
-  private AuthorizationService findAuthorizationService(
-      DeploymentPhaseContext phaseContext, AppConfiguration config)
-      throws DeploymentUnitProcessingException {
-    ServiceController<?> controller = phaseContext.getServiceRegistry().getService(
-        AuthorizationServiceControl.name(config.getAuthorizationId()));
-    if (controller == null) {
-      throw new DeploymentUnitProcessingException(
-          "cannot find a CAS authorization resource named '"
-          + config.getAuthorizationId() + "'");
-    }
-    return (AuthorizationService) controller.getService().getValue();
   }
 
   private AppConfiguration parseDescriptor(VirtualFile descriptor) 

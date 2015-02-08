@@ -38,7 +38,6 @@ public class XMLStreamDescriptorParserTest  {
     AppConfiguration config = parser.parse(getClass().getClassLoader()
         .getResourceAsStream("descriptor.xml"));
     assertEquals("test-authn-id", config.getAuthenticationId());
-    assertEquals("test-authz-id", config.getAuthorizationId());    
   }
 
 }

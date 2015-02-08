@@ -1,5 +1,5 @@
 /*
- * File created on Dec 20, 2014 
+ * File created on Feb 7, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -16,23 +16,21 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.extension;
+package org.soulwing.cas.jaas;
 
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import org.soulwing.cas.service.IdentityAssertion;
 
 /**
- * A reader for the CAS subsystem management configuration.
+ * A credential object that holds a CAS identity assertion.
  *
  * @author Carl Harris
  */
-class SubsystemReaderWriter extends AbstractResourceReaderWriter {
+public interface IdentityAssertionHolder {
 
   /**
-   * Constructs a new instance.
+   * Gets the identity assertion contained in the receiver.
+   * @return identity assertion (never {@code null})
    */
-  public SubsystemReaderWriter() {
-    super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
-  }
-
+  IdentityAssertion getIdentityAssertion();
+  
 }

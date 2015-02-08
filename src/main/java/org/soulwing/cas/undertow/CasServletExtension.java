@@ -18,30 +18,25 @@
  */
 package org.soulwing.cas.undertow;
 
-import io.undertow.security.idm.IdentityManager;
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
 
 import javax.servlet.ServletContext;
 
 import org.soulwing.cas.extension.SubsystemExtension;
-import org.soulwing.cas.service.authentication.AuthenticationService;
-import org.soulwing.cas.service.authorization.AuthorizationService;
+import org.soulwing.cas.service.AuthenticationService;
 
 public class CasServletExtension implements ServletExtension {
 
   private final AuthenticationService authenticationService;
-  private final AuthorizationService authorizationService;
   
   /**
    * Constructs a new instance.
    * @param authenticationService
    * @param authorizationService
    */
-  public CasServletExtension(AuthenticationService authenticationService, 
-      AuthorizationService authorizationService) {
+  public CasServletExtension(AuthenticationService authenticationService) { 
     this.authenticationService = authenticationService;
-    this.authorizationService = authorizationService;
   }
 
   @Override
@@ -51,14 +46,10 @@ public class CasServletExtension implements ServletExtension {
     CasAuthenticationMechanism authnMechanism = 
         new CasAuthenticationMechanism(authenticationService);
     
-    IdentityManager identityManager = new CasIdentityManager(
-        authenticationService, authorizationService); 
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
         CasAuthenticationMechanism.MECHANISM_NAME, authnMechanism);
-    deploymentInfo.setIdentityManager(identityManager);
     SubsystemExtension.logger.info("registered CAS authentication mechanism");
   }
-
 
 }

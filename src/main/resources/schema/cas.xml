@@ -10,20 +10,4 @@
     </allowed-proxy-chain>
   </authentication>
   
-  <authorization name="edid-with-override">
-    <!-- 
-    <properties path="cas-roles.properties"/>
-    <ldap>
-      <user-search name="EdPeople" base="ou=People,dc=vt,dc=edu" filter="(authId={0})"
-        role-attributes="eduPersonAffiliation groupMembership" />
-      <group-search name="EdGroups" base="ou=Groups,dc=vt,dc=edu" 
-        role-attributes="uugid" user-member-attribute="member"
-        group-member-attribute="groupMembership"
-        scope="subtree"/>
-      <group-search name="EdEntitlements" base="ou=Entitlements,dc=vt,dc=edu" 
-        role-attributes="entitlement" user-member-attribute="entitled" />
-    </ldap>
-    -->
-  </authorization>
-  
 </subsystem>
