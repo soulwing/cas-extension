@@ -15,6 +15,11 @@ The second major component of the extension is a standard JAAS `LoginModule`
 that participates in Wildfly's security subsystem.  The login module provides 
 the mechanism for communicating the result a CAS authentication exchange into Wildfly's built-in security stack.  In addition to providing support for using SAML attributes as user roles for authorization, the login module also allows the use of CAS in combination with Wildfly's built-in features such as LDAP-based authorization, role name mapping, etc.
 
+This extension uses the JASIG Java CAS Client library to perform the CAS
+protocol operations, and exposes most of the features of the client through
+configuration attributes expressed as part of the Wildfly management model.
+
+
 Installation
 ------------
 
@@ -24,7 +29,9 @@ never be seen by applications that do not require CAS support.  Moreover, the
 various library components needed by this extension will not appear on your
 application's class loader, avoiding any potential for conflict.
 
-(NEED INSTRUCTIONS FOR EXTRACTING THE MODULES FROM THE BUILD ARTIFACT) 
+(NEED INSTRUCTIONS FOR EXTRACTING THE MODULES FROM THE BUILD ARTIFACTS; this
+depends on resolution of a couple of TODO items -- opensaml module and use of
+Maven assemblies instead of Smartics module to build the module artifacts)
 
 
 Configuration
@@ -168,7 +175,7 @@ identifies the CAS configuration profile that will be used by the application.
 
 The CAS deployment descriptor can be an empty file (or an empty root element), indicating that CAS authentication should be enabled using the profile named *default*.
 
-In addition to CAS deployment descriptor, the application must specify the
+In addition to the CAS deployment descriptor, the application must specify the
 appropriate CAS-enabled security domain in the `/WEB-INF/jboss-web.xml` deployment
 descriptor.
 
@@ -185,9 +192,7 @@ descriptor.
 </jboss-web>
 ```
 
-Note that the *cas* security domain was created in an earlier configuration
-step.  If you have created more than one security domain for CAS, specify the
-appropriate domain name here.
+Note that the *cas* security domain specified here was created in an earlier configuration step.  If you have created more than one security domain for CAS, specify the appropriate domain name here.
 
 
 
