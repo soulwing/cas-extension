@@ -114,7 +114,7 @@ support you must do both of the following:
    whose values are to be used as role names.
    
    
-### Specifying the SAML-1.1. Protocol
+### Specifying the SAML-1.1 Protocol
 
 You can modify the configuration of an existing profile using the 
 `:write-attribute` CLI operation on the profile:
@@ -151,6 +151,44 @@ creating a security domain:
 ```
 /subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:add(module=org.soulwing.cas, code=org.soulwing.cas.jaas.IdentityAssertionLoginModule, flag=required, module-options={ role-attributes="eduPersonAffiliation, groupMembership" })
 ```
+
+Application Deployment
+----------------------
+
+Web applications indicate their intent to use CAS authentication by means of a 
+deployment descriptor named `/WEB-INF/cas.xml`.  The deployment descriptor
+identifies the CAS configuration profile that will be used by the application.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<cas xmlns="urn:soulwing.org:cas:1.0">
+  <profile>cas-prod</profile>
+</cas>
+```
+
+The CAS deployment descriptor can be an empty file (or an empty root element), indicating that CAS authentication should be enabled using the profile named *default*.
+
+In addition to CAS deployment descriptor, the application must specify the
+appropriate CAS-enabled security domain in the `/WEB-INF/jboss-web.xml` deployment
+descriptor.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web 
+  xmlns="http://www.jboss.com/xml/ns/javaee" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-web_8_0.xsd"
+  version="8.0">
+  
+  <security-domain>cas</security-domain>
+  
+</jboss-web>
+```
+
+Note that the *cas* security domain was created in an earlier configuration
+step.  If you have created more than one security domain for CAS, specify the
+appropriate domain name here.
+
 
 
 
