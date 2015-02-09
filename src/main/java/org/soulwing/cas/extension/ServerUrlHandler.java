@@ -28,13 +28,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  * @author Carl Harris
  */
 class ServerUrlHandler 
-    extends AbstractAuthenticationAttributeHandler<Void> {
+    extends AbstractProfileAttributeHandler<Void> {
 
   static final ServerUrlHandler INSTANCE =
       new ServerUrlHandler();
   
   private ServerUrlHandler() {
-    super(AuthenticationDefinition.SERVICE_URL);
+    super(ProfileDefinition.SERVICE_URL);
   }
   
   /**

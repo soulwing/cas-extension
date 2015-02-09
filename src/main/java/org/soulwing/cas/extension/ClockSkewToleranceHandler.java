@@ -27,13 +27,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  *
  * @author Carl Harris
  */
-class ClockSkewToleranceHandler extends AbstractAuthenticationAttributeHandler<Void> {
+class ClockSkewToleranceHandler extends AbstractProfileAttributeHandler<Void> {
 
   static final ClockSkewToleranceHandler INSTANCE =
       new ClockSkewToleranceHandler();
   
   private ClockSkewToleranceHandler() {
-    super(AuthenticationDefinition.CLOCK_SKEW_TOLERANCE);
+    super(ProfileDefinition.CLOCK_SKEW_TOLERANCE);
   }
 
   /**

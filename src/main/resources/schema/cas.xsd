@@ -8,11 +8,11 @@
 
   <xs:complexType name="SubsystemType">
     <xs:all>
-      <xs:element name="authentication" type="AuthenticationType" />
+      <xs:element name="profile" type="ProfileType" />
     </xs:all>
   </xs:complexType>
 
-  <xs:complexType name="AuthenticationType">
+  <xs:complexType name="ProfileType">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element name="allowed-proxy-chain" type="ProxyChainType"/>
     </xs:choice>

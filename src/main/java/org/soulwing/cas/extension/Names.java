@@ -37,7 +37,7 @@ public interface Names {
   String NAME = "name";
   String URL = "url";
   
-  String AUTHENTICATION = "authentication";
+  String PROFILE = "profile";
   String PROTOCOL = "protocol";
   String SERVICE_URL = "service-url";
   String SERVER_URL = "server-url";

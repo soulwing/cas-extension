@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cas xmlns="urn:soulwing.org:cas:1.0">
-  <authentication>test-authn-id</authentication>
+  <profile>test-authn-id</profile>
 </cas>

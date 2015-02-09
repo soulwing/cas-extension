@@ -61,7 +61,7 @@ public class AuthenticationServiceControl
   }
 
   public static ServiceName name(String resourceName) {
-    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.AUTHENTICATION, 
+    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.PROFILE, 
         resourceName);
   }
   

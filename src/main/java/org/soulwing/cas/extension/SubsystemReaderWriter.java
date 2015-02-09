@@ -32,7 +32,7 @@ class SubsystemReaderWriter extends AbstractResourceReaderWriter {
    */
   public SubsystemReaderWriter() {
     super(Names.NAMESPACE, ModelDescriptionConstants.SUBSYSTEM,
-        new AuthenticationReaderWriter());
+        new ProfileReaderWriter());
   }
 
 }

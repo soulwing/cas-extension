@@ -30,14 +30,14 @@ import org.soulwing.cas.service.AuthenticationProtocol;
 
 /**
  * 
- * A definition for the authentication resource.
+ * A definition for the configuration profile resource.
  *
  * @author Carl Harris
  */
-public class AuthenticationDefinition extends SimpleResourceDefinition {
+public class ProfileDefinition extends SimpleResourceDefinition {
 
-  public static final AuthenticationDefinition INSTANCE =
-      new AuthenticationDefinition();
+  public static final ProfileDefinition INSTANCE =
+      new ProfileDefinition();
   
   static final SimpleAttributeDefinition PROTOCOL =
       new SimpleAttributeDefinitionBuilder(Names.PROTOCOL, 
@@ -117,12 +117,12 @@ public class AuthenticationDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
-  private AuthenticationDefinition() {
-    super(Paths.AUTHENTICATION, 
+  private ProfileDefinition() {
+    super(Paths.PROFILE, 
         ResourceUtil.getResolver(
-            Names.AUTHENTICATION),
-        AuthenticationAdd.INSTANCE,
-        AuthenticationRemove.INSTANCE);
+            Names.PROFILE),
+        ProfileAdd.INSTANCE,
+        ProfileRemove.INSTANCE);
   }
   
   /**
@@ -133,7 +133,7 @@ public class AuthenticationDefinition extends SimpleResourceDefinition {
       ManagementResourceRegistration resourceRegistration) {
     super.registerAttributes(resourceRegistration);
     resourceRegistration.registerReadWriteAttribute(PROTOCOL, null, 
-        AuthenticationProtocolHandler.INSTANCE);
+        ProtocolHandler.INSTANCE);
     resourceRegistration.registerReadWriteAttribute(SERVICE_URL, null, 
         ServiceUrlHandler.INSTANCE);
     resourceRegistration.registerReadWriteAttribute(SERVER_URL, null, 

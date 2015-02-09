@@ -84,7 +84,7 @@ class RootReader implements DescriptorReader {
     static final InnerReader INSTANCE = new InnerReader();
     
     private InnerReader() {
-      super(Names.SUBSYSTEM_NAME, AuthenticationReader.INSTANCE);
+      super(Names.SUBSYSTEM_NAME, ProfileReader.INSTANCE);
     }
   }
   

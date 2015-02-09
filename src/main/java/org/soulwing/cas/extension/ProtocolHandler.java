@@ -24,18 +24,17 @@ import org.soulwing.cas.service.AuthenticationProtocol;
 import org.soulwing.cas.service.MutableConfiguration;
 
 /** 
- * A write attribute handler for the authentication protocol attribute.
+ * A write attribute handler for the protocol attribute.
  *
  * @author Carl Harris
  */
-class AuthenticationProtocolHandler 
-    extends AbstractAuthenticationAttributeHandler<Void> {
+class ProtocolHandler extends AbstractProfileAttributeHandler<Void> {
 
-  static final AuthenticationProtocolHandler INSTANCE =
-      new AuthenticationProtocolHandler();
+  static final ProtocolHandler INSTANCE =
+      new ProtocolHandler();
   
-  private AuthenticationProtocolHandler() {
-    super(AuthenticationDefinition.PROTOCOL);
+  private ProtocolHandler() {
+    super(ProfileDefinition.PROTOCOL);
   }
   
   /**

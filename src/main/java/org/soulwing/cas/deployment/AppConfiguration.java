@@ -26,40 +26,22 @@ package org.soulwing.cas.deployment;
  */
 class AppConfiguration {
 
-  private String authenticationId;
+  private String profileId;
   
-  private String authorizationId;
-
   /**
-   * Gets the identifier of the CAS authentication resource.
-   * @return authentication resource specified in the deployment descriptor
+   * Gets the identifier of the configuration profile.
+   * @return configuration profile specified in the deployment descriptor
    */
-  public String getAuthenticationId() {
-    return authenticationId;
+  public String getProfileId() {
+    return profileId;
   }
 
   /**
-   * Sets the identifier for the CAS authentication resource.
-   * @param authenticationId the value to set
+   * Sets the identifier of the configuration profile.
+   * @param profileId the value to set
    */
-  public void setAuthenticationId(String authenticationId) {
-    this.authenticationId = authenticationId;
+  public void setProfileId(String profileId) {
+    this.profileId = profileId;
   }
-
-  /**
-   * Gets the identifier of the CAS authorization resource.
-   * @return authorization resource specified in the deployment descriptor
-   */
-  public String getAuthorizationId() {
-    return authorizationId;
-  }
-
-  /**
-   * Sets the identifier for the CAS authentication resource.
-   * @param authenticationId the value to set
-   */
-  public void setAuthorizationId(String authorizationId) {
-    this.authorizationId = authorizationId;
-  }  
   
 }

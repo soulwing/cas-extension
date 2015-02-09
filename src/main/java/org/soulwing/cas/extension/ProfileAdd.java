@@ -38,16 +38,16 @@ import org.soulwing.cas.service.Configuration;
 import org.soulwing.cas.service.MutableConfiguration;
 
 /**
- * An add step handler for the authentication resource.
+ * An add step handler for the configuration profile resource.
  *
  * @author Carl Harris
  */
-class AuthenticationAdd extends AbstractAddStepHandler {
+class ProfileAdd extends AbstractAddStepHandler {
 
-  public static final AuthenticationAdd INSTANCE = 
-      new AuthenticationAdd();
+  public static final ProfileAdd INSTANCE = 
+      new ProfileAdd();
   
-  private AuthenticationAdd() {    
+  private ProfileAdd() {    
   }
 
   /**
@@ -56,14 +56,14 @@ class AuthenticationAdd extends AbstractAddStepHandler {
   @Override
   protected void populateModel(ModelNode operation, ModelNode model)
       throws OperationFailedException {
-    AuthenticationDefinition.PROTOCOL.validateAndSet(operation, model);
-    AuthenticationDefinition.SERVICE_URL.validateAndSet(operation, model);
-    AuthenticationDefinition.SERVER_URL.validateAndSet(operation, model);
-    AuthenticationDefinition.PROXY_CALLBACK_URL.validateAndSet(operation, model);
-    AuthenticationDefinition.ACCEPT_ANY_PROXY.validateAndSet(operation, model);
-    AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN.validateAndSet(operation, model);
-    AuthenticationDefinition.RENEW.validateAndSet(operation, model);
-    AuthenticationDefinition.CLOCK_SKEW_TOLERANCE.validateAndSet(operation, model);
+    ProfileDefinition.PROTOCOL.validateAndSet(operation, model);
+    ProfileDefinition.SERVICE_URL.validateAndSet(operation, model);
+    ProfileDefinition.SERVER_URL.validateAndSet(operation, model);
+    ProfileDefinition.PROXY_CALLBACK_URL.validateAndSet(operation, model);
+    ProfileDefinition.ACCEPT_ANY_PROXY.validateAndSet(operation, model);
+    ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN.validateAndSet(operation, model);
+    ProfileDefinition.RENEW.validateAndSet(operation, model);
+    ProfileDefinition.CLOCK_SKEW_TOLERANCE.validateAndSet(operation, model);
     super.populateModel(operation, model);
   }
 
@@ -105,21 +105,21 @@ class AuthenticationAdd extends AbstractAddStepHandler {
       ModelNode model, MutableConfiguration config) 
           throws OperationFailedException {
     config.setProtocol(AuthenticationProtocol.toObject(
-        AuthenticationDefinition.PROTOCOL.resolveModelAttribute(context, model)
+        ProfileDefinition.PROTOCOL.resolveModelAttribute(context, model)
             .asString()));
-    config.setServerUrl(AuthenticationDefinition.SERVER_URL
+    config.setServerUrl(ProfileDefinition.SERVER_URL
         .resolveModelAttribute(context, model).asString());
-    config.setServiceUrl(AuthenticationDefinition.SERVICE_URL
+    config.setServiceUrl(ProfileDefinition.SERVICE_URL
         .resolveModelAttribute(context, model).asString());
-    config.setProxyCallbackUrl(AuthenticationDefinition.PROXY_CALLBACK_URL
+    config.setProxyCallbackUrl(ProfileDefinition.PROXY_CALLBACK_URL
         .resolveModelAttribute(context, model).asString());
-    config.setAcceptAnyProxy(AuthenticationDefinition.ACCEPT_ANY_PROXY
+    config.setAcceptAnyProxy(ProfileDefinition.ACCEPT_ANY_PROXY
         .resolveModelAttribute(context, model).asBoolean());
-    config.setAllowEmptyProxyChain(AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN
+    config.setAllowEmptyProxyChain(ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN
         .resolveModelAttribute(context, model).asBoolean());
-    config.setRenew(AuthenticationDefinition.RENEW
+    config.setRenew(ProfileDefinition.RENEW
         .resolveModelAttribute(context, model).asBoolean());
-    config.setClockSkewTolerance(AuthenticationDefinition.CLOCK_SKEW_TOLERANCE
+    config.setClockSkewTolerance(ProfileDefinition.CLOCK_SKEW_TOLERANCE
         .resolveModelAttribute(context, model).asLong());
     return config;
   }

@@ -28,16 +28,16 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceName;
 
 /**
- * A remove step handler for the authentication resource.
+ * A remove step handler for the configuration profile resource.
  *
  * @author Carl Harris
  */
-class AuthenticationRemove extends AbstractRemoveStepHandler {
+class ProfileRemove extends AbstractRemoveStepHandler {
 
-  public static final AuthenticationRemove INSTANCE = 
-      new AuthenticationRemove();
+  public static final ProfileRemove INSTANCE = 
+      new ProfileRemove();
     
-  private AuthenticationRemove() {    
+  private ProfileRemove() {    
   }
 
   /**

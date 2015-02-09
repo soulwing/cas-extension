@@ -21,18 +21,17 @@ package org.soulwing.cas.extension;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 
 /**
- * A reader/writer for the configuration associate with an authentication 
- * resource.
+ * An XML reader/writer for the configuration profile resource.
  *
  * @author Carl Harris
  */
-public class AuthenticationReaderWriter extends AbstractResourceReaderWriter {
+public class ProfileReaderWriter extends AbstractResourceReaderWriter {
   
   /**
    * Constructs a new instance.
    */
-  public AuthenticationReaderWriter() {
-    super(Names.AUTHENTICATION, new ProxyChainReaderWriter());
+  public ProfileReaderWriter() {
+    super(Names.PROFILE, new ProxyChainReaderWriter());
   }
 
   /**
@@ -41,14 +40,14 @@ public class AuthenticationReaderWriter extends AbstractResourceReaderWriter {
   @Override
   protected SimpleAttributeDefinition[] attributes() {
     return new SimpleAttributeDefinition[] { 
-        AuthenticationDefinition.PROTOCOL,
-        AuthenticationDefinition.SERVICE_URL,
-        AuthenticationDefinition.SERVER_URL,
-        AuthenticationDefinition.PROXY_CALLBACK_URL,
-        AuthenticationDefinition.ACCEPT_ANY_PROXY,
-        AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN,
-        AuthenticationDefinition.RENEW,
-        AuthenticationDefinition.CLOCK_SKEW_TOLERANCE
+        ProfileDefinition.PROTOCOL,
+        ProfileDefinition.SERVICE_URL,
+        ProfileDefinition.SERVER_URL,
+        ProfileDefinition.PROXY_CALLBACK_URL,
+        ProfileDefinition.ACCEPT_ANY_PROXY,
+        ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN,
+        ProfileDefinition.RENEW,
+        ProfileDefinition.CLOCK_SKEW_TOLERANCE
     };
   }
   

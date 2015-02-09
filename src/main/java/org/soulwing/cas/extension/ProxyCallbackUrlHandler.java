@@ -28,13 +28,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  * @author Carl Harris
  */
 class ProxyCallbackUrlHandler 
-    extends AbstractAuthenticationAttributeHandler<Void> {
+    extends AbstractProfileAttributeHandler<Void> {
 
   static final ProxyCallbackUrlHandler INSTANCE =
       new ProxyCallbackUrlHandler();
   
   private ProxyCallbackUrlHandler() {
-    super(AuthenticationDefinition.PROXY_CALLBACK_URL);
+    super(ProfileDefinition.PROXY_CALLBACK_URL);
   }
   
   /**

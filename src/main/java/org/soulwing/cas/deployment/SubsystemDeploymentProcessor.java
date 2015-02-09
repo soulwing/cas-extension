@@ -5,7 +5,6 @@ import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
 
-import org.jboss.as.domain.management.SecurityRealm;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -52,33 +51,28 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     VirtualFile descriptor = root.getRoot().getChild("WEB-INF/cas.xml");
     if (!descriptor.exists()) return;
     
-    
     AppConfiguration config = parseDescriptor(descriptor);
     ServletExtension extension = new CasServletExtension(
         findAuthenticationService(phaseContext, config));
-    
-    phaseContext.getServiceRegistry().getRequiredService(
-        SecurityRealm.ServiceUtil.createServiceName("ApplicationRealm"));
- 
-    
+        
     deploymentUnit.addToAttachmentList(        
         UndertowAttachments.UNDERTOW_SERVLET_EXTENSIONS, extension);
     
     LOGGER.info(
-        "attached CAS servlet extension for deployment " 
+        "attached CAS servlet extension to deployment " 
             + deploymentUnit.getName()
-            + "; profile=" + config.getAuthenticationId());
+            + "; profile=" + config.getProfileId());
   }
 
   private AuthenticationService findAuthenticationService(
       DeploymentPhaseContext phaseContext, AppConfiguration config)
       throws DeploymentUnitProcessingException {
     ServiceController<?> controller = phaseContext.getServiceRegistry().getService(
-        AuthenticationServiceControl.name(config.getAuthenticationId()));
+        AuthenticationServiceControl.name(config.getProfileId()));
     if (controller == null) {
       throw new DeploymentUnitProcessingException(
-          "cannot find a CAS authentication profile named '"
-          + config.getAuthenticationId() + "'");
+          "cannot find a configuration profile named '"
+          + config.getProfileId() + "'");
     }
     return (AuthenticationService) controller.getService().getValue();
   }

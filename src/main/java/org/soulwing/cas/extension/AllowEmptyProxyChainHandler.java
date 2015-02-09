@@ -28,13 +28,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  * @author Carl Harris
  */
 class AllowEmptyProxyChainHandler 
-    extends AbstractAuthenticationAttributeHandler<Void> {
+    extends AbstractProfileAttributeHandler<Void> {
 
   static final AllowEmptyProxyChainHandler INSTANCE =
       new AllowEmptyProxyChainHandler();
   
   private AllowEmptyProxyChainHandler() {
-    super(AuthenticationDefinition.ALLOW_EMPTY_PROXY_CHAIN);
+    super(ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN);
   }
   
   /**

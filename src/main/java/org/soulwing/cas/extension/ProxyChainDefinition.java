@@ -28,7 +28,7 @@ import org.jboss.dmr.ModelType;
 
 /**
  * 
- * A definition for the authentication resource.
+ * A definition for the proxy chain resource.
  *
  * @author Carl Harris
  */
@@ -55,7 +55,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
   private ProxyChainDefinition() {
     super(Paths.PROXY_CHAIN, 
         ResourceUtil.getResolver(
-            Names.AUTHENTICATION, Names.PROXY_CHAIN),
+            Names.PROFILE, Names.PROXY_CHAIN),
         ProxyChainAdd.INSTANCE,
         ProxyChainRemove.INSTANCE);
   }
@@ -68,7 +68,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
       ManagementResourceRegistration resourceRegistration) {
     super.registerAttributes(resourceRegistration);
     resourceRegistration.registerReadWriteAttribute(PROXIES, null, 
-        AuthenticationProtocolHandler.INSTANCE);
+        ProtocolHandler.INSTANCE);
   }
     
 }

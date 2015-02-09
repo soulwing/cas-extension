@@ -27,13 +27,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  *
  * @author Carl Harris
  */
-class RenewHandler extends AbstractAuthenticationAttributeHandler<Void> {
+class RenewHandler extends AbstractProfileAttributeHandler<Void> {
 
   static final RenewHandler INSTANCE =
       new RenewHandler();
   
   private RenewHandler() {
-    super(AuthenticationDefinition.RENEW);
+    super(ProfileDefinition.RENEW);
   }
 
   /**

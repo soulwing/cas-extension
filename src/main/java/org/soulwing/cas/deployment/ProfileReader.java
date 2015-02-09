@@ -24,17 +24,17 @@ import javax.xml.stream.XMLStreamReader;
 import org.soulwing.cas.extension.Names;
 
 /**
- * A {@link DescriptorReader} for the authentication element of the 
+ * A {@link DescriptorReader} for the profile element of the 
  * deployment descriptor.
  *
  * @author Carl Harris
  */
-class AuthenticationReader extends AbstractDescriptorReader {
+class ProfileReader extends AbstractDescriptorReader {
 
-  public static final AuthenticationReader INSTANCE = new AuthenticationReader();
+  public static final ProfileReader INSTANCE = new ProfileReader();
   
-  private AuthenticationReader() {
-    super(Names.AUTHENTICATION);
+  private ProfileReader() {
+    super(Names.PROFILE);
   }
 
   /**
@@ -48,7 +48,7 @@ class AuthenticationReader extends AbstractDescriptorReader {
       throw new XMLStreamException("expected identifier", 
           reader.getLocation());
     }
-    config.setAuthenticationId(id);
+    config.setProfileId(id);
   }
   
 }

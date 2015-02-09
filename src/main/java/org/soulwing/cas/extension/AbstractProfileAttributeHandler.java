@@ -30,14 +30,14 @@ import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.MutableConfiguration;
 
 /**
- * An abstract base for writable authentication resource attributes.
+ * An abstract base for writable configuration profile attributes.
  *
  * @author Carl Harris
  */
-abstract class AbstractAuthenticationAttributeHandler<T>
+abstract class AbstractProfileAttributeHandler<T>
     extends AbstractWriteAttributeHandler<T> {
 
-  protected AbstractAuthenticationAttributeHandler(
+  protected AbstractProfileAttributeHandler(
       SimpleAttributeDefinition definition) {
     super(definition);
   }
@@ -52,7 +52,7 @@ abstract class AbstractAuthenticationAttributeHandler<T>
       String attributeName,
       ModelNode resolvedValue,
       ModelNode currentValue,
-      org.jboss.as.controller.AbstractWriteAttributeHandler.HandbackHolder<T> handbackHolder)
+      AbstractWriteAttributeHandler.HandbackHolder<T> handbackHolder)
       throws OperationFailedException {
 
     AuthenticationService service = findTargetService(context, operation);

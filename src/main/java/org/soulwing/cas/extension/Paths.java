@@ -32,7 +32,7 @@ public interface Paths {
       PathElement.pathElement(ModelDescriptionConstants.SUBSYSTEM, 
           Names.SUBSYSTEM_NAME);
   
-  PathElement AUTHENTICATION = PathElement.pathElement(Names.AUTHENTICATION);
+  PathElement PROFILE = PathElement.pathElement(Names.PROFILE);
   PathElement PROXY_CHAIN = PathElement.pathElement(Names.PROXY_CHAIN);
 
 }

@@ -28,13 +28,13 @@ import org.soulwing.cas.service.MutableConfiguration;
  * @author Carl Harris
  */
 class AcceptAnyProxyHandler 
-    extends AbstractAuthenticationAttributeHandler<Void> {
+    extends AbstractProfileAttributeHandler<Void> {
 
   static final AcceptAnyProxyHandler INSTANCE =
       new AcceptAnyProxyHandler();
   
   private AcceptAnyProxyHandler() {
-    super(AuthenticationDefinition.ACCEPT_ANY_PROXY);
+    super(ProfileDefinition.ACCEPT_ANY_PROXY);
   }
 
   /**

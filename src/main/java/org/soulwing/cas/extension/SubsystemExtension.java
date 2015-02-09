@@ -26,7 +26,8 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 
 
 /**
- * An extension that supports CAS authentication.
+ * A Wildfly extension that provides a CAS authentication mechanism to the
+ * Undertow subsystem.
  *
  * @author Carl Harris
  */
@@ -52,7 +53,7 @@ public class SubsystemExtension implements Extension {
     final ManagementResourceRegistration registration = 
         subsystem.registerSubsystemModel(SubsystemDefinition.INSTANCE);
     
-    registration.registerSubModel(AuthenticationDefinition.INSTANCE);
+    registration.registerSubModel(ProfileDefinition.INSTANCE);
     subsystem.registerXMLElementWriter(writer);
   }
 
