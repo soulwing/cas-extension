@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.service;
 
+import static org.soulwing.cas.service.ServiceLogger.LOGGER;
+
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,6 +36,24 @@ class JasigAuthenticationService implements AuthenticationService {
   private final AtomicReference<Configuration> configuration =
       new AtomicReference<Configuration>(new ClientConfiguration());
   
+  private final String name;
+ 
+  /**
+   * Constructs a new instance.
+   * @param name
+   */
+  public JasigAuthenticationService(String name) {
+    this.name = name;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getName() {
+    return name;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -41,10 +61,16 @@ class JasigAuthenticationService implements AuthenticationService {
   public IdentityAssertion validateTicket(String requestPath, 
       String queryString, String ticket) 
       throws AuthenticationException {
+    
     Configuration config = getConfiguration();
+    
+    String serviceUrl = constructServiceUrl(requestPath, queryString, config);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("validating ticket '" + ticket + "' for service " + serviceUrl);
+    }
+
     return config.getValidator().validate(ticket, 
-        constructServiceUrl(requestPath, queryString, config));
-//    return new MockIdentityAssertion();
+        serviceUrl);
   }
 
   /**
@@ -52,11 +78,15 @@ class JasigAuthenticationService implements AuthenticationService {
    */
   @Override
   public String loginUrl(String requestPath, String queryString) {
+    
     Configuration config = getConfiguration();
+    
     String serviceUrl = constructServiceUrl(requestPath, queryString, config);
-    return CommonUtils.constructRedirectUrl(config.getServerUrl(),
+    String loginUrl = CommonUtils.constructRedirectUrl(config.getServerUrl(),
         config.getProtocol().getServiceParameterName(),
         serviceUrl, config.isRenew(), false);
+    
+    return loginUrl;
   }
 
   private String constructServiceUrl(String requestPath, String queryString,
@@ -92,6 +122,8 @@ class JasigAuthenticationService implements AuthenticationService {
    */
   @Override
   public void reconfigure(Configuration configuration) {
+    LOGGER.info("configured service profile '" + 
+        getName() + "' using " + configuration);
     this.configuration.set(configuration.clone());
   }
 

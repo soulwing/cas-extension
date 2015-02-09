@@ -27,6 +27,12 @@ package org.soulwing.cas.service;
 public interface AuthenticationService {
 
   /**
+   * Gets the name assigned to this authentication service.
+   * @return name
+   */
+  String getName();
+  
+  /**
    * Validates a service ticket.
    * @param ticket the subject ticket
    * @return an assertion describing the validation result

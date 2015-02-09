@@ -23,7 +23,6 @@ import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
-import org.jboss.logging.Logger;
 
 
 /**
@@ -33,8 +32,6 @@ import org.jboss.logging.Logger;
  */
 public class SubsystemExtension implements Extension {
 
-  public static final Logger logger = Logger.getLogger("org.soulwing.cas");
-  
   private final SubsystemReaderWriter delegate = new SubsystemReaderWriter();
   private final SubsystemParser parser = new SubsystemParser(delegate);  
   private final SubsystemWriter writer = new SubsystemWriter(delegate);

@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.extension;
 
+import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
+
 import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -47,8 +49,9 @@ class AuthenticationRemove extends AbstractRemoveStepHandler {
     
     ServiceName serviceName = AuthenticationServiceControl.name(
         operation.get(ModelDescriptionConstants.ADDRESS));
+    
     context.removeService(serviceName);
-    SubsystemExtension.logger.info("removed authentication service " + serviceName);
+    LOGGER.info("removed service " + serviceName);
     
     super.performRuntime(context, operation, model);
   }

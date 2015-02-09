@@ -20,6 +20,8 @@ package org.soulwing.cas.extension;
 
 import java.util.List;
 
+import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
+
 import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -54,7 +56,6 @@ class AuthenticationAdd extends AbstractAddStepHandler {
   @Override
   protected void populateModel(ModelNode operation, ModelNode model)
       throws OperationFailedException {
-    SubsystemExtension.logger.info("populating model for authentication resource");
     AuthenticationDefinition.PROTOCOL.validateAndSet(operation, model);
     AuthenticationDefinition.SERVICE_URL.validateAndSet(operation, model);
     AuthenticationDefinition.SERVER_URL.validateAndSet(operation, model);
@@ -76,10 +77,13 @@ class AuthenticationAdd extends AbstractAddStepHandler {
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
     
-    ServiceName serviceName = AuthenticationServiceControl.name(
+    String resourceName = AuthenticationServiceControl.resourceName(
         operation.get(ModelDescriptionConstants.ADDRESS));
+    ServiceName serviceName = AuthenticationServiceControl.name(resourceName);
     
-    AuthenticationService service = AuthenticationServiceFactory.newInstance();
+    AuthenticationService service = AuthenticationServiceFactory
+        .newInstance(resourceName);
+    
     service.reconfigure(applyConfiguration(context, model, 
         service.getConfiguration()));
     
@@ -90,9 +94,9 @@ class AuthenticationAdd extends AbstractAddStepHandler {
         .setInitialMode(Mode.ACTIVE)
         .install();
     
-    SubsystemExtension.logger.info("added authentication service " + serviceName);
 
     newControllers.add(controller);
+    LOGGER.debug("registered service " + serviceName);
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
   }
@@ -115,8 +119,8 @@ class AuthenticationAdd extends AbstractAddStepHandler {
         .resolveModelAttribute(context, model).asBoolean());
     config.setRenew(AuthenticationDefinition.RENEW
         .resolveModelAttribute(context, model).asBoolean());
-    config.setRenew(AuthenticationDefinition.RENEW
-        .resolveModelAttribute(context, model).asBoolean());
+    config.setClockSkewTolerance(AuthenticationDefinition.CLOCK_SKEW_TOLERANCE
+        .resolveModelAttribute(context, model).asLong());
     return config;
   }
   

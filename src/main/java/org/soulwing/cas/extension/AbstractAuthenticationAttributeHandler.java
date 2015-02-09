@@ -61,7 +61,6 @@ abstract class AbstractAuthenticationAttributeHandler<T>
     handbackHolder.setHandback(handback);
     service.reconfigure(config);
     context.stepCompleted();
-    SubsystemExtension.logger.info("reconfigured : " + config);
     return false;
   }
 

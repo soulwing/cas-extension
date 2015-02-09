@@ -18,12 +18,12 @@
  */
 package org.soulwing.cas.undertow;
 
+import static org.soulwing.cas.undertow.UndertowLogger.LOGGER;
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
 
 import javax.servlet.ServletContext;
 
-import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.AuthenticationService;
 
 public class CasServletExtension implements ServletExtension {
@@ -49,7 +49,10 @@ public class CasServletExtension implements ServletExtension {
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
         CasAuthenticationMechanism.MECHANISM_NAME, authnMechanism);
-    SubsystemExtension.logger.info("registered CAS authentication mechanism");
+    
+    LOGGER.info("enabled CAS authentication profile '" 
+        + authenticationService.getName() 
+        + "' for deployment " + deploymentInfo.getDeploymentName());
   }
 
 }

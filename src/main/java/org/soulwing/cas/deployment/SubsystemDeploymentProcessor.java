@@ -1,5 +1,6 @@
 package org.soulwing.cas.deployment;
 
+import static org.soulwing.cas.deployment.DeploymentLogger.LOGGER;
 import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
@@ -16,7 +17,6 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.vfs.VirtualFile;
 import org.soulwing.cas.extension.AuthenticationServiceControl;
-import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.undertow.CasServletExtension;
 import org.wildfly.extension.undertow.deployment.UndertowAttachments;
@@ -64,9 +64,10 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     deploymentUnit.addToAttachmentList(        
         UndertowAttachments.UNDERTOW_SERVLET_EXTENSIONS, extension);
     
-    SubsystemExtension.logger.info(
+    LOGGER.info(
         "attached CAS servlet extension for deployment " 
-            + deploymentUnit.getName());
+            + deploymentUnit.getName()
+            + "; profile=" + config.getAuthenticationId());
   }
 
   private AuthenticationService findAuthenticationService(
@@ -76,7 +77,7 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
         AuthenticationServiceControl.name(config.getAuthenticationId()));
     if (controller == null) {
       throw new DeploymentUnitProcessingException(
-          "cannot find a CAS authentication service named '"
+          "cannot find a CAS authentication profile named '"
           + config.getAuthenticationId() + "'");
     }
     return (AuthenticationService) controller.getService().getValue();

@@ -45,8 +45,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
               .build();
               
   static final SimpleListAttributeDefinition PROXIES =
-      SimpleListAttributeDefinition.Builder.of(Names.PROXIES, 
-          PROXY)
+      SimpleListAttributeDefinition.Builder.of(Names.PROXIES, PROXY)
           .setAllowNull(false)
           .setAllowExpression(false)
           .setFlags(AttributeAccess.Flag.RESTART_NONE,

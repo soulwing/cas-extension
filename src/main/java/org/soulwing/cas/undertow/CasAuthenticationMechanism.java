@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.undertow;
 
+import static org.soulwing.cas.undertow.UndertowLogger.LOGGER;
+
 import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
 import io.undertow.security.idm.Account;
@@ -26,7 +28,6 @@ import io.undertow.util.HttpString;
 
 import java.util.Deque;
 
-import org.soulwing.cas.extension.SubsystemExtension;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.IdentityAssertion;
@@ -66,22 +67,40 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     String ticket = tickets != null ? tickets.peekFirst() : null;
         
     if (ticket == null) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("no authentication ticket; authentication not attempted");
+      }
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
     
     try {
       IdentityAssertion assertion = authenticationService.validateTicket(
           exchange.getRequestPath(), exchange.getQueryString(), ticket);
-      IdentityAssertionCredential credential = new IdentityAssertionCredential(assertion);
+      IdentityAssertionCredential credential = 
+          new IdentityAssertionCredential(assertion);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("valid ticket '" + ticket + "'");
+      }
+   
       Account account = securityContext.getIdentityManager()
           .verify(assertion.getPrincipal().getName(), credential);
       if (account != null) {
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("authentication complete: " 
+              + " user=" + account.getPrincipal().getName()
+              + " roles=" + account.getRoles());
+        }
         securityContext.authenticationComplete(account, MECHANISM_NAME, true);
         return AuthenticationMechanismOutcome.AUTHENTICATED;
       }
     }
     catch (AuthenticationException ex) {
-      SubsystemExtension.logger.info("authentiation failed: " + ex.toString());
+      LOGGER.info("authentication failed: " + ex);
+    }
+    
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("authentication not successful for ticket '"
+          + ticket + "'");
     }
     securityContext.setAuthenticationRequired();
     return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
@@ -93,9 +112,15 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   @Override
   public ChallengeResult sendChallenge(HttpServerExchange exchange,
       SecurityContext context) {
-    exchange.getResponseHeaders().put(HttpString.tryFromString("Location"),
-        authenticationService.loginUrl(exchange.getRequestPath(), 
-            exchange.getQueryString()));
+    String url = authenticationService.loginUrl(exchange.getRequestPath(), 
+        exchange.getQueryString());
+    
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("responding with redirect to '" + url + "'");
+    }
+    
+    exchange.getResponseHeaders().put(HttpString.tryFromString("Location"), 
+        url);
     return new ChallengeResult(true, 302);
   }
 

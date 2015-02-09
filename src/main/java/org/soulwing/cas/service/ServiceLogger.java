@@ -1,5 +1,5 @@
 /*
- * File created on Jan 23, 2015 
+ * File created on Feb 8, 2015 
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,20 +18,16 @@
  */
 package org.soulwing.cas.service;
 
+import org.jboss.logging.Logger;
+
 /**
- * A factory that produces {@link AuthenticationService} objects.
+ * A static logger for this package.
  *
  * @author Carl Harris
  */
-public class AuthenticationServiceFactory {
+class ServiceLogger {
 
-  /**
-   * Creates a new instance of {@link AuthenticationService}.
-   * @param name name to assign to this service
-   * @return
-   */
-  public static AuthenticationService newInstance(String name) {
-    return new JasigAuthenticationService(name);
-  }
+  static final Logger LOGGER = Logger.getLogger(
+      ServiceLogger.class.getPackage().getName());
   
 }

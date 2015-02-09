@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.extension;
 
+import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
+
 import org.jboss.as.controller.AbstractWriteAttributeHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -47,7 +49,7 @@ class ProxiesHandler extends AbstractWriteAttributeHandler<Void> {
       AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
       throws OperationFailedException {
 
-    SubsystemExtension.logger.info("setting attribute " + attributeName);
+    LOGGER.info("unimplemented attribute " + attributeName);
     return false;
   }
 

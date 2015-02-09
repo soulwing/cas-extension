@@ -51,9 +51,13 @@ public class AuthenticationServiceControl
   }
 
   public static ServiceName name(ModelNode address) {    
-    String target = address.asPropertyList().get(address.asInt() - 1)
-        .getValue().asString();  
-    return name(target);
+    return name(resourceName(address));
+  }
+
+
+  public static String resourceName(ModelNode address) {
+    return address.asPropertyList().get(address.asInt() - 1)
+        .getValue().asString();
   }
 
   public static ServiceName name(String resourceName) {
