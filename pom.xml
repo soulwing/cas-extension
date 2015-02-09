@@ -2,161 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.soulwing</groupId>
     <artifactId>soulwing-parent</artifactId>
     <version>1.0.0</version>
   </parent>
-
-  <artifactId>cas-subsystem</artifactId>
+  <groupId>org.soulwing.cas</groupId>
+  <artifactId>cas-extension</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <name>CAS Subsystem</name>
+  <packaging>pom</packaging>
+  <name>CAS Extension</name>
   <description>
-    A Wildfly subsystem that supports CAS authentication.
+    An extension for Wildfly that supports CAS authentication.
   </description>
-
   <properties>
     <wildfly.version>8.2.0.Final</wildfly.version>
     <undertow.version>1.0.14.Final</undertow.version>
     <module.name>cas</module.name>
   </properties>
-
   <scm>
     <connection>scm:git:https://github.com/soulwing/${project.artifactId}.git</connection>
     <developerConnection>${project.scm.connection}</developerConnection>
     <url>https://github.com/soulwing/${project.artifactId}</url>
   </scm>
-
-  <build>
-    <finalName>${project.artifactId}</finalName>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <filters>
-            <filter>src/assemble/filter.properties</filter>
-          </filters>
-          <descriptors>
-            <descriptor>src/assemble/distribution.xml</descriptor>
-          </descriptors>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>de.smartics.maven.plugin</groupId>
-        <artifactId>smartics-jboss-modules-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>create-modules-archive</id>
-            <goals>
-              <goal>create-modules-archive</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <attach>true</attach>
-          <dependencyExcludes>
-            <exclude>
-              <artifactId>commons-codec</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>opensaml</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>javax.servlet-api</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>slf4j-api</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>xmlsec</artifactId>
-            </exclude>           
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-controller</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-server</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-undertow</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>io.undertow</groupId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-subsystem-test</artifactId>
-            </exclude>
-            <exclude>
-              <groupId>org.springframework</groupId>
-            </exclude>
-          </dependencyExcludes>
-        </configuration>
-      </plugin>      
-      <!--  plugin>      
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <inherited>false</inherited>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <id>build-dist</id>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <tempfile property="temp.file" />
-                <echo message="${project.groupId}/${module.name}"
-                  file="${temp.file}" />
-                <replace file="${temp.file}" token="." value="/" />
-                <loadfile srcfile="${temp.file}" property="module.path" />
-                <delete file="${temp.file}" />
-
-                <delete dir="target/module" />
-                <property name="module.dir"
-                  value="target/module/${module.path}/main" />
-
-                <copy file="target/classes/module/main/module.xml"
-                  tofile="${module.dir}/module.xml" />
-                <copy file="target/${project.artifactId}.jar"
-                  todir="${module.dir}" />
-
-                <echo>Module ${module.name} has been created in the
-                  target/module directory. Copy to your WildFly
-                  installation.</echo>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin -->
-    </plugins>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-          <exclude>**/*.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
-  </build>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -198,73 +66,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-controller</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-server</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-undertow</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jasig.cas.client</groupId>
-      <artifactId>cas-client-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-core</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-servlet</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly</groupId>
-      <artifactId>wildfly-subsystem-test</artifactId>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-library</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock-junit4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock-legacy</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
+  <modules>
+    <module>cas-subsystem</module>
+  </modules>
 </project>
