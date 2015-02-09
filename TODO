@@ -1,0 +1,22 @@
+* Make a private opensaml module that specifies all of the dependencies that 
+  are missing in the opensaml module that is included with Wildfly, so that 
+  it is not necessary to tinker with Wildfly's opensaml module.
+* Allow an empty cas.xml deployment descriptor (empty file or empty root 
+  element); use the configuration profile named 'default'
+* Use predefined module descriptors and Maven assemblies to build the module
+  artifacts so that we're not having to work around the various (mis-)behaviors 
+  of the Smartics module
+* Proxy authentication support; the management model already includes all of 
+  the relevant attributes; need to decide on a strategy for providing a 
+  service the application can use to request a proxy ticket to
+  access another application/service (e.g. bound JNDI resource, implicit
+  CDI bean provided through a portable CDI extension, etc)
+* Allowed proxies list support for proxy validation; the management model
+  provides a way to specify proxy lists, but they're not used when creating
+  a ticket validator
+* Explore whether the application's configured security domain could be
+  probed for presence of the IdentityAssertion login module as a means for
+  enabling CAS support (so that the cas.xml descriptor isn't required at all)
+* Allow the cas.xml deployment descriptor to specify part (or all) of the
+  configuration profile
+ 
