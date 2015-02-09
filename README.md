@@ -1,48 +1,54 @@
 cas-subsystem
 =============
 
-A Wildfly extension module that supports web application authentication using
-the Central Authentication Service (CAS) protocol.  
+A Wildfly extension module that supports web application authentication using the 
+Central Authentication Service (CAS) protocol.  
 
-This extension provides container-managed support for CAS, such that web applications can use the Java EE standard security mechanisms; for example, declarative roles and constraints in `web.xml` and the `@RolesAllowed` bean annotation. 
+This extension provides container-managed support for CAS, such that web applications 
+can use the Java EE standard security mechanisms; for example, declarative roles and 
+constraints in `web.xml` and the `@RolesAllowed` bean annotation. 
 
-This extension consists of two major components.  The first is a Wildfly
-subsystem that monitors web application deployment events and attaches
-support for the CAS authentication protocol to those deployments that 
-include a CAS deployment descriptor.  
+This extension consists of two major components.  The first is a Wildfly subsystem 
+that monitors web application deployment events and attaches support for the CAS 
+authentication protocol to those deployments that include a CAS deployment descriptor.  
 
 The second major component of the extension is a standard JAAS `LoginModule` 
 that participates in Wildfly's security subsystem.  The login module provides 
-the mechanism for communicating the result a CAS authentication exchange into Wildfly's built-in security stack.  In addition to providing support for using SAML attributes as user roles for authorization, the login module also allows the use of CAS in combination with Wildfly's built-in features such as LDAP-based authorization, role name mapping, etc.
+the mechanism for communicating the result of a CAS authentication exchange into 
+Wildfly's built-in security stack.  In addition to providing support for using SAML 
+attributes as user roles for authorization, the login module also allows the use of CAS 
+in combination with Wildfly's built-in features such as LDAP-based authorization, role 
+name mapping, etc.
 
-This extension uses the JASIG Java CAS Client library to perform the CAS
-protocol operations, and exposes most of the features of the client through
-configuration attributes expressed as part of the Wildfly management model.
+This extension uses the JASIG Java CAS Client library to perform the CAS protocol 
+operations, and exposes most of the features of the client through configuration 
+attributes expressed as part of the Wildfly management model.
 
 
 Installation
 ------------
 
-The module and its dependencies must be installed in the `modules` directory of your Wildfly server.  Thanks to Wildfly's modular design, the installed 
-modules remain isolated in your server's configuration, and will
-never be seen by applications that do not require CAS support.  Moreover, the
-various library components needed by this extension will not appear on your
-application's class loader, avoiding any potential for conflict.
+The module and its dependencies must be installed in the `modules` directory of 
+your Wildfly server.  Thanks to Wildfly's modular design, the installed modules 
+remain isolated in your server's configuration, and will never be seen by applications 
+that do not require CAS support.  Moreover, the various library components needed by 
+this extension will not appear on your application's class loader, avoiding any 
+potential for conflict.
 
-(NEED INSTRUCTIONS FOR EXTRACTING THE MODULES FROM THE BUILD ARTIFACTS; this
-depends on resolution of a couple of TODO items -- opensaml module and use of
-Maven assemblies instead of Smartics module to build the module artifacts)
+(NEED INSTRUCTIONS FOR EXTRACTING THE MODULES FROM THE BUILD ARTIFACTS; this depends 
+on resolution of a couple of TODO items -- opensaml module and use of Maven assemblies 
+instead of Smartics module to build the module artifacts)
 
 
 Configuration
 -------------
 
-The recommended approach to configuring the CAS extension is to use the Wildfly (JBoss) command line interface.  See the Wildfly documentation for instructions
-on how to run the command line interface.  The remainder of this document
-provides commands that are used at the CLI prompt.
+The recommended approach to configuring the CAS extension is to use the Wildfly (JBoss) 
+command line interface.  See the Wildfly documentation for instructions on how to run the 
+command line interface.  The remainder of this document provides commands that are used 
+at the CLI prompt.
 
-The following CLI commands are used to create the subsystem resource and a
-Wildfly security domain for applications that use CAS authentication.  Note
+The following CLI commands are used to create the subsystem resource and a Wildfly security domain for applications that use CAS authentication.  Note
 that the last command given here is `reload`.  The container must be reloaded
 to activate these components.  Subsequent configuration of the CAS subsystem
 does not require the container to be reloaded.
