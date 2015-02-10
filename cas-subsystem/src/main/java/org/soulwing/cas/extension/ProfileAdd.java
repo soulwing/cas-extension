@@ -78,7 +78,7 @@ class ProfileAdd extends AbstractAddStepHandler {
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
     
-    String resourceName = AuthenticationServiceControl.resourceName(
+    String resourceName = AuthenticationServiceControl.profileName(
         operation.get(ModelDescriptionConstants.ADDRESS));
     ServiceName serviceName = AuthenticationServiceControl.name(resourceName);
     

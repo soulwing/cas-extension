@@ -18,14 +18,18 @@
  */
 package org.soulwing.cas.extension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
+import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.service.MutableConfiguration;
 
 /**
  * An add step handler for a proxy chain resource.
@@ -59,6 +63,24 @@ class ProxyChainAdd extends AbstractAddStepHandler {
       ServiceVerificationHandler verificationHandler,
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
+    
+    List<String> chain = new ArrayList<>();
+    for (ModelNode element : ProxyChainDefinition.PROXIES
+        .resolveModelAttribute(context, model).asList()) {
+      chain.add(element.asString());
+    }
+    
+    ModelNode address = operation.get(ModelDescriptionConstants.ADDRESS);
+    String name = address.asPropertyList().get(address.asInt() - 1)
+        .getValue().asString();
+
+    AuthenticationService service = AuthenticationServiceControl
+        .locateService(context, address);
+    
+    MutableConfiguration config = service.getConfiguration().clone();
+    config.putAllowedProxyChain(name, chain);
+    service.reconfigure(config);
+    
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
   }

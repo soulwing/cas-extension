@@ -68,7 +68,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
       ManagementResourceRegistration resourceRegistration) {
     super.registerAttributes(resourceRegistration);
     resourceRegistration.registerReadWriteAttribute(PROXIES, null, 
-        ProtocolHandler.INSTANCE);
+        ProxiesHandler.INSTANCE);
   }
     
 }

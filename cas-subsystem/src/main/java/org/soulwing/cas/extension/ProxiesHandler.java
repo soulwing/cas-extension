@@ -18,12 +18,16 @@
  */
 package org.soulwing.cas.extension;
 
-import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.as.controller.AbstractWriteAttributeHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
+import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.service.MutableConfiguration;
 
 /** 
  * A write attribute handler for the proxies attribute.
@@ -49,7 +53,7 @@ class ProxiesHandler extends AbstractWriteAttributeHandler<Void> {
       AbstractWriteAttributeHandler.HandbackHolder<Void> handbackHolder)
       throws OperationFailedException {
 
-    LOGGER.info("unimplemented attribute " + attributeName);
+    applyConfiguration(context, operation, resolvedValue);
     return false;
   }
 
@@ -57,7 +61,27 @@ class ProxiesHandler extends AbstractWriteAttributeHandler<Void> {
   protected void revertUpdateToRuntime(OperationContext context,
       ModelNode operation, String attributeName, ModelNode valueToRestore,
       ModelNode valueToRevert, Void handback) throws OperationFailedException {
+    applyConfiguration(context, operation, valueToRestore);
+  }
 
+  private void applyConfiguration(OperationContext context,
+      ModelNode operation, ModelNode value) throws OperationFailedException {
+    
+    List<String> chain = new ArrayList<>();
+    for (ModelNode element : value.asList()) {
+      chain.add(element.asString());
+    }
+    
+    ModelNode address = operation.get(ModelDescriptionConstants.ADDRESS);
+    String name = address.asPropertyList().get(address.asInt() - 1)
+        .getValue().asString();
+
+    AuthenticationService service = AuthenticationServiceControl
+        .locateService(context, address);
+    
+    MutableConfiguration config = service.getConfiguration().clone();
+    config.putAllowedProxyChain(name, chain);
+    service.reconfigure(config);
   }
 
 }

@@ -19,13 +19,15 @@
 package org.soulwing.cas.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.ProxyList;
 import org.jasig.cas.client.validation.Saml11TicketValidator;
 
 /**
@@ -53,7 +55,7 @@ public class ClientConfiguration implements MutableConfiguration {
   
   private boolean postAuthRedirect;
 
-  private List<String[]> allowedProxyChains = new ArrayList<>();
+  private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
   
   /**
    * Gets the {@code protocol} property.
@@ -169,16 +171,27 @@ public class ClientConfiguration implements MutableConfiguration {
    */
   @Override
   public List<String[]> getAllowedProxyChains() {
-    return allowedProxyChains;
+    List<String[]> chains = new ArrayList<>();
+    for (List<String> chain : allowedProxyChains.values()) {
+      chains.add(chain.toArray(new String[chain.size()]));
+    }
+    return chains;
   }
 
   /**
-   * Sets the {@code allowedProxyChains} property.
-   * @param allowedProxyChains the value to set
+   * {@inheritDoc}
    */
   @Override
-  public void setAllowedProxyChains(List<String[]> allowedProxyChains) {
-    this.allowedProxyChains = Collections.unmodifiableList(allowedProxyChains);
+  public void putAllowedProxyChain(String name, List<String> chain) {
+    allowedProxyChains.put(name, chain);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void removeAllowedProxyChain(String name) {
+    allowedProxyChains.remove(name);
   }
 
   /**
@@ -252,6 +265,8 @@ public class ClientConfiguration implements MutableConfiguration {
         if (isAcceptAnyProxy() || isAllowEmptyProxyChain() 
             || !getAllowedProxyChains().isEmpty()) {
           casValidator = new Cas20ProxyTicketValidator(getServerUrl());
+          ((Cas20ProxyTicketValidator) casValidator)
+              .setAllowedProxyChains(new ProxyList(getAllowedProxyChains()));            
         }
         else {
           casValidator = new Cas20ServiceTicketValidator(getServerUrl());
@@ -276,11 +291,10 @@ public class ClientConfiguration implements MutableConfiguration {
   @Override
   public MutableConfiguration clone() {
     try {
-      MutableConfiguration clone = (MutableConfiguration) super.clone();
+      ClientConfiguration clone = (ClientConfiguration) super.clone();
       if (getAllowedProxyChains() != null) {
-        List<String[]> allowedProxyChains = new ArrayList<>();
-        allowedProxyChains.addAll(getAllowedProxyChains());
-        clone.setAllowedProxyChains(allowedProxyChains);
+        clone.allowedProxyChains = new LinkedHashMap<>();
+        clone.allowedProxyChains.putAll(this.allowedProxyChains);
       }
       return clone;
     }
@@ -296,11 +310,12 @@ public class ClientConfiguration implements MutableConfiguration {
   public String toString() {
     return String.format("%s::protocol=%s"
         + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
-        + " acceptAnyProxy=%s allowEmptyProxyChain=%s renew=%s "
-        + " clockSkewTolerance=%d postAuthRedirect=%s",
+        + " acceptAnyProxy=%s allowEmptyProxyChain=%s allowedProxyChains=%s"
+        + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s",
         getClass().getSimpleName(), 
         protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
-        acceptAnyProxy, allowEmptyProxyChain, renew, clockSkewTolerance,
+        acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
+        renew, clockSkewTolerance,
         postAuthRedirect);
   }
  

@@ -20,6 +20,7 @@ package org.soulwing.cas.service;
 
 import java.util.List;
 
+
 /**
  * A mutable configuration.
  *
@@ -38,9 +39,11 @@ public interface MutableConfiguration extends Configuration {
   void setAcceptAnyProxy(boolean acceptAnyProxy);
 
   void setAllowEmptyProxyChain(boolean allowEmptyProxyChain);
-  
-  void setAllowedProxyChains(List<String[]> allowedProxyChains);
 
+  void putAllowedProxyChain(String name, List<String> chain);
+  
+  void removeAllowedProxyChain(String name);
+  
   void setRenew(boolean renew);
   
   void setClockSkewTolerance(long clockSkewTolerance);

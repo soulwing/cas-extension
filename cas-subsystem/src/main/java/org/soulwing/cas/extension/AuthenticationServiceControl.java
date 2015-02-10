@@ -18,8 +18,15 @@
  */
 package org.soulwing.cas.extension;
 
+import java.util.List;
+
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
+import org.jboss.dmr.Property;
 import org.jboss.msc.service.AbstractService;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
 import org.soulwing.cas.service.AuthenticationService;
 
@@ -50,19 +57,35 @@ public class AuthenticationServiceControl
     return delegate;
   }
 
+  public static AuthenticationService locateService(OperationContext context, 
+      ModelNode address) throws OperationFailedException{
+    ServiceController<?> controller = context.getServiceRegistry(true)
+        .getRequiredService(name(address));    
+    return (AuthenticationService) 
+        controller.getService().getValue();
+  }
+  
   public static ServiceName name(ModelNode address) {    
-    return name(resourceName(address));
+    return name(profileName(address));
   }
 
-
-  public static String resourceName(ModelNode address) {
-    return address.asPropertyList().get(address.asInt() - 1)
-        .getValue().asString();
+  public static String profileName(ModelNode address) {
+    List<Property> names = address.asPropertyList();
+    if (!ModelDescriptionConstants.SUBSYSTEM.equals(names.get(0).getName())) {
+      throw new IllegalArgumentException("address not of subsystem type");
+    }
+    if (!Names.SUBSYSTEM_NAME.equals(names.get(0).getValue().asString())) {
+      throw new IllegalArgumentException(address + " is not an address in the "
+          + Names.SUBSYSTEM_NAME + " subsystem");
+    }
+    if (!Names.PROFILE.equals(names.get(1).getName())) {
+      throw new IllegalArgumentException("address not of profile type");      
+    }
+    return names.get(1).getValue().asString();
   }
 
-  public static ServiceName name(String resourceName) {
-    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.PROFILE, 
-        resourceName);
+  public static ServiceName name(String profileName) {
+    return ServiceName.of(Names.SUBSYSTEM_NAME, Names.PROFILE, profileName);
   }
   
 }

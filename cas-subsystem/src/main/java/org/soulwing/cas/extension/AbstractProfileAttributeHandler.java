@@ -22,10 +22,7 @@ import org.jboss.as.controller.AbstractWriteAttributeHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.SimpleAttributeDefinition;
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
-import org.jboss.msc.service.ServiceController;
-import org.jboss.msc.service.ServiceName;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.MutableConfiguration;
 
@@ -55,7 +52,8 @@ abstract class AbstractProfileAttributeHandler<T>
       AbstractWriteAttributeHandler.HandbackHolder<T> handbackHolder)
       throws OperationFailedException {
 
-    AuthenticationService service = findTargetService(context, operation);
+    AuthenticationService service = AuthenticationServiceControl.locateService(
+        context, operation);
     MutableConfiguration config = service.getConfiguration();
     T handback = applyUpdateToConfiguration(attributeName, resolvedValue, config);
     handbackHolder.setHandback(handback);
@@ -72,7 +70,9 @@ abstract class AbstractProfileAttributeHandler<T>
       ModelNode operation, String attributeName, ModelNode valueToRestore,
       ModelNode valueToRevert, T handback) throws OperationFailedException {
     
-    AuthenticationService service = findTargetService(context, operation);
+    AuthenticationService service = AuthenticationServiceControl.locateService(
+        context, operation);
+
     MutableConfiguration config = service.getConfiguration();
     revertUpdateToConfiguration(attributeName, valueToRestore, config, handback);
     service.reconfigure(config);
@@ -86,16 +86,5 @@ abstract class AbstractProfileAttributeHandler<T>
   protected abstract void revertUpdateToConfiguration(String attributeName, 
       ModelNode value, MutableConfiguration config, T handback) 
           throws OperationFailedException;
-
-  private AuthenticationService findTargetService(OperationContext context,
-      ModelNode operation) throws OperationFailedException {
-    ServiceName serviceName = AuthenticationServiceControl.name(
-        operation.get(ModelDescriptionConstants.ADDRESS));
-    ServiceController<?> controller = context.getServiceRegistry(true)
-        .getRequiredService(serviceName);    
-    return (AuthenticationService) 
-        controller.getService().getValue();
-  }
-
 
 }
