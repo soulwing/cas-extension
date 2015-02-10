@@ -18,6 +18,7 @@
   <properties>
     <wildfly.version>8.2.0.Final</wildfly.version>
     <undertow.version>1.0.14.Final</undertow.version>
+    <cas.client.version>3.3.3</cas.client.version>    
     <module.name>cas</module.name>
   </properties>
   <scm>
@@ -52,7 +53,7 @@
       <dependency>
         <groupId>org.jasig.cas.client</groupId>
         <artifactId>cas-client-core</artifactId>
-        <version>3.3.3</version>
+        <version>${cas.client.version}</version>
       </dependency>
       <dependency>
         <groupId>io.undertow</groupId>
@@ -68,5 +69,8 @@
   </dependencyManagement>
   <modules>
     <module>cas-subsystem</module>
+    <module>cas-opensaml</module>
+    <module>cas-jasig-client</module>
+    <module>cas-modules</module>
   </modules>
 </project>

@@ -17,64 +17,16 @@
     CAS authentication support.
   </description>
 
+  <properties>
+    <subsystem.name>cas</subsystem.name>
+    <module.name>org.soulwing.${subsystem.name}</module.name>
+    <module.path>org/soulwing/${subsystem.name}</module.path>
+    <module.slot>main</module.slot>
+    <module.directory>${project.build.directory}/modules/${module.path}/${module.slot}</module.directory>
+    <dependency.module.slot>${project.parent.artifactId}</dependency.module.slot>
+  </properties>
+  
   <build>
-    <plugins>
-      <plugin>
-        <groupId>de.smartics.maven.plugin</groupId>
-        <artifactId>smartics-jboss-modules-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>create-modules-archive</id>
-            <goals>
-              <goal>create-modules-archive</goal>
-            </goals>
-            <phase>package</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <attach>true</attach>
-          <dependencyExcludes>
-            <exclude>
-              <artifactId>commons-codec</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>opensaml</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>javax.servlet-api</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>slf4j-api</artifactId>
-            </exclude>           
-            <exclude>
-              <artifactId>xmlsec</artifactId>
-            </exclude>           
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-controller</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-server</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-undertow</artifactId>
-            </exclude> 
-            <exclude>
-              <groupId>io.undertow</groupId>
-            </exclude> 
-            <exclude>
-              <groupId>org.wildfly</groupId>
-              <artifactId>wildfly-subsystem-test</artifactId>
-            </exclude>
-            <exclude>
-              <groupId>org.springframework</groupId>
-            </exclude>
-          </dependencyExcludes>
-        </configuration>
-      </plugin>      
-    </plugins>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -93,6 +45,58 @@
         </excludes>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-module-descriptor</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <outputDirectory>${module.directory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/module</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>**/*.xml</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>src/module</directory>
+                  <filtering>false</filtering>
+                  <excludes>
+                    <exclude>**/*.xml</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>copy-module-artifact</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" 
+                  todir="${module.directory}/" force="true"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <dependencies>

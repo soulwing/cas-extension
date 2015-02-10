@@ -1,0 +1,23 @@
+<module xmlns="urn:jboss:module:1.0" name="${module.name}">
+  <resources>
+    <resource-root path="${project.build.finalName}.jar" />
+  </resources>
+
+  <dependencies>
+    <module name="org.jasig.cas.client" slot="${dependency.module.slot}"/>
+    <module name="org.picketbox" />
+    <module name="org.jboss.staxmapper" />
+    <module name="org.jboss.as.controller" />
+    <module name="org.jboss.as.server" />
+    <module name="org.jboss.modules" />
+    <module name="org.jboss.msc" />
+    <module name="org.jboss.logging" />
+    <module name="org.jboss.vfs" />
+    <module name="org.jboss.as.domain-management" />
+    <module name="org.wildfly.extension.undertow" />
+    <module name="io.undertow.servlet" />
+    <module name="io.undertow.core" />
+    <module name="javax.api" />
+  </dependencies>
+
+</module>

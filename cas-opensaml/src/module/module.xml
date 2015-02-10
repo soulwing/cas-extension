@@ -1,0 +1,20 @@
+<module xmlns="urn:jboss:module:1.3" name="${module.name}" slot="${module.slot}">
+
+  <resources>
+    <resource-root path="opensaml-${opensaml.version}.jar" />
+    <resource-root path="openws-${openws.version}.jar" />
+    <resource-root path="xmltooling-${xmltooling.version}.jar" />
+    <resource-root path="esapi-${esapi.version}.jar" />
+  </resources>
+
+  <dependencies>
+    <module name="javax.api" />
+    <module name="org.slf4j" />
+    <module name="org.bouncycastle" />
+    <module name="org.apache.santuario.xmlsec" />
+    <module name="org.apache.ws.security" />
+    <module name="org.apache.velocity" />
+    <module name="org.joda.time" />
+  </dependencies>
+
+</module>
