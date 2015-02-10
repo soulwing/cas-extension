@@ -26,7 +26,10 @@ package org.soulwing.cas.deployment;
  */
 class AppConfiguration {
 
-  private String profileId;
+  public static final String DEFAULT_PROFILE = "default";
+  
+
+  private String profileId = DEFAULT_PROFILE;
   
   /**
    * Gets the identifier of the configuration profile.
@@ -41,6 +44,9 @@ class AppConfiguration {
    * @param profileId the value to set
    */
   public void setProfileId(String profileId) {
+    if (profileId == null || profileId.isEmpty()) {
+      profileId = DEFAULT_PROFILE;
+    }
     this.profileId = profileId;
   }
   

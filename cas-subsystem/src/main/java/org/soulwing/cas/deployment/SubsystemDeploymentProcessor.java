@@ -4,6 +4,7 @@ import static org.soulwing.cas.deployment.DeploymentLogger.LOGGER;
 import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.deployment.Attachments;
@@ -30,8 +31,6 @@ import org.wildfly.extension.undertow.deployment.UndertowAttachments;
  */
 public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
 
-  public static final String DEFAULT_PROFILE = "default";
-  
   /**
    * See {@link Phase} for a description of the different phases
    */
@@ -82,12 +81,10 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
 
   private AppConfiguration parseDescriptor(VirtualFile descriptor) 
       throws DeploymentUnitProcessingException {
-    DescriptorParser parser = new XMLStreamDescriptorParser();
     try {
+      if (isEmptyFile(descriptor)) return new AppConfiguration();
+      DescriptorParser parser = new XMLStreamDescriptorParser();
       AppConfiguration config = parser.parse(descriptor.openStream());
-      if (config.getProfileId() == null || config.getProfileId().isEmpty()) {
-        config.setProfileId(DEFAULT_PROFILE);
-      }
       return config;
     }
     catch (IOException | DescriptorParseException ex) {
@@ -95,6 +92,22 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     }
   }
 
+  private boolean isEmptyFile(VirtualFile descriptor) throws IOException {
+    if (descriptor.getSize() == 0) return true;
+    InputStream inputStream = descriptor.openStream();
+    try {
+      return InputStreamUtil.isEmptyStream(inputStream);
+    }
+    finally {
+      try {
+        inputStream.close();
+      }
+      catch (IOException ex) {
+        ex.printStackTrace(System.err);
+      }
+    }
+  }
+  
   @Override
   public void undeploy(DeploymentUnit context) {
   }
