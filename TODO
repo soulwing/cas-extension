@@ -1,10 +1,3 @@
-* Determine why the generated service URL and/or login URL is picking up 
-  repeated copies of the service URL parameter 
-* Allow an empty cas.xml deployment descriptor (empty file or empty root 
-  element); use the configuration profile named 'default'
-* Provide support for performing a redirect for the original application URL
-  without the ticket parameter after a successful authentication to avoid
-  having ticket parameter appear in bookmarks
 * Provide the assertion object that resulted from a successful ticket
   validation to the application; need to decide on a strategy or 
   strategies (e.g. bound JNDI resource, implicit CDI bean provided through a 

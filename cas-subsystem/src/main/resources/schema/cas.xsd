@@ -25,7 +25,8 @@
     <xs:attribute name="accept-any-proxy" type="xs:boolean"/>
     <xs:attribute name="allow-empty-proxy-chain" type="xs:boolean"/>
     <xs:attribute name="renew" type="xs:boolean"/>
-    <xs:attribute name="clock-skew-tolerance" type="xs:long"/>   
+    <xs:attribute name="clock-skew-tolerance" type="xs:long"/>
+    <xs:attribute name="post-auth-redirect" type="xs:boolean"/>  
   </xs:complexType>
   
   <xs:simpleType name="AuthenticationProtocolType">

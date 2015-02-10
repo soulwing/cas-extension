@@ -117,6 +117,16 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition POST_AUTH_REDIRECT =
+      new SimpleAttributeDefinitionBuilder(Names.POST_AUTH_REDIRECT,
+          ModelType.BOOLEAN)
+              .setAllowExpression(true)
+              .setAllowNull(true)
+              .setDefaultValue(new ModelNode(true))
+              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+              .build();
+
   private ProfileDefinition() {
     super(Paths.PROFILE, 
         ResourceUtil.getResolver(
@@ -148,6 +158,8 @@ public class ProfileDefinition extends SimpleResourceDefinition {
         RenewHandler.INSTANCE);
     resourceRegistration.registerReadWriteAttribute(CLOCK_SKEW_TOLERANCE, null, 
         ClockSkewToleranceHandler.INSTANCE);
+    resourceRegistration.registerReadWriteAttribute(POST_AUTH_REDIRECT, null, 
+        PostAuthRedirectHandler.INSTANCE);
   }
 
   /**

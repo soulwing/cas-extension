@@ -19,7 +19,6 @@
 package org.soulwing.cas.undertow;
 
 import static org.soulwing.cas.undertow.UndertowLogger.LOGGER;
-
 import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
 import io.undertow.security.idm.Account;
@@ -74,12 +73,16 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     }
     
     try {
+      String query = QueryUtil.removeProtocolParameters(
+          authenticationService.getConfiguration().getProtocol(),
+          exchange.getQueryString());
+
       IdentityAssertion assertion = authenticationService.validateTicket(
-          exchange.getRequestPath(), exchange.getQueryString(), ticket);
+          exchange.getRequestPath(), query, ticket);
       IdentityAssertionCredential credential = 
           new IdentityAssertionCredential(assertion);
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("valid ticket '" + ticket + "'");
+        LOGGER.debug("valid ticket");
       }
    
       Account account = securityContext.getIdentityManager()
@@ -90,6 +93,13 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
               + " user=" + account.getPrincipal().getName()
               + " roles=" + account.getRoles());
         }
+        
+        exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
+        if (authenticationService.getConfiguration().isPostAuthRedirect()) {
+          exchange.putAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY, 
+              authenticationService.getConfiguration().getProtocol());
+        }
+                
         securityContext.authenticationComplete(account, MECHANISM_NAME, true);
         return AuthenticationMechanismOutcome.AUTHENTICATED;
       }

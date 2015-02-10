@@ -64,6 +64,7 @@ class ProfileAdd extends AbstractAddStepHandler {
     ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN.validateAndSet(operation, model);
     ProfileDefinition.RENEW.validateAndSet(operation, model);
     ProfileDefinition.CLOCK_SKEW_TOLERANCE.validateAndSet(operation, model);
+    ProfileDefinition.POST_AUTH_REDIRECT.validateAndSet(operation, model);
     super.populateModel(operation, model);
   }
 
@@ -121,6 +122,8 @@ class ProfileAdd extends AbstractAddStepHandler {
         .resolveModelAttribute(context, model).asBoolean());
     config.setClockSkewTolerance(ProfileDefinition.CLOCK_SKEW_TOLERANCE
         .resolveModelAttribute(context, model).asLong());
+    config.setPostAuthRedirect(ProfileDefinition.POST_AUTH_REDIRECT
+        .resolveModelAttribute(context, model).asBoolean());
     return config;
   }
   

@@ -19,6 +19,8 @@
 package org.soulwing.cas.undertow;
 
 import static org.soulwing.cas.undertow.UndertowLogger.LOGGER;
+import io.undertow.server.HandlerWrapper;
+import io.undertow.server.HttpHandler;
 import io.undertow.servlet.ServletExtension;
 import io.undertow.servlet.api.DeploymentInfo;
 
@@ -49,6 +51,13 @@ public class CasServletExtension implements ServletExtension {
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
         CasAuthenticationMechanism.MECHANISM_NAME, authnMechanism);
+    
+    deploymentInfo.addInnerHandlerChainWrapper(new HandlerWrapper() {
+      @Override
+      public HttpHandler wrap(HttpHandler handler) {
+        return new PostAuthRedirectHandler(handler);
+      } 
+    });
     
     LOGGER.info("enabled CAS authentication profile '" 
         + authenticationService.getName() 

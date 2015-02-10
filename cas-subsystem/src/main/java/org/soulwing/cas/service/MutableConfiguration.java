@@ -44,5 +44,7 @@ public interface MutableConfiguration extends Configuration {
   void setRenew(boolean renew);
   
   void setClockSkewTolerance(long clockSkewTolerance);
-
+  
+  void setPostAuthRedirect(boolean postAuthRedirect);
+  
 }

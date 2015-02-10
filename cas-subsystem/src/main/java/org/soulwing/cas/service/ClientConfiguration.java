@@ -50,6 +50,8 @@ public class ClientConfiguration implements MutableConfiguration {
   private boolean renew;
   
   private long clockSkewTolerance;
+  
+  private boolean postAuthRedirect;
 
   private List<String[]> allowedProxyChains = new ArrayList<>();
   
@@ -218,6 +220,22 @@ public class ClientConfiguration implements MutableConfiguration {
    * {@inheritDoc}
    */
   @Override
+  public boolean isPostAuthRedirect() {
+    return postAuthRedirect;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void setPostAuthRedirect(boolean postAuthRedirect) {
+    this.postAuthRedirect = postAuthRedirect;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public AuthenticationTicketValidator getValidator() {
     AbstractUrlBasedTicketValidator validator = newValidator();
     validator.setRenew(isRenew());
@@ -278,10 +296,12 @@ public class ClientConfiguration implements MutableConfiguration {
   public String toString() {
     return String.format("%s::protocol=%s"
         + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
-        + " acceptAnyProxy=%s allowEmptyProxyChain=%s renew=%s clockSkewTolerance=%d",
+        + " acceptAnyProxy=%s allowEmptyProxyChain=%s renew=%s "
+        + " clockSkewTolerance=%d postAuthRedirect=%s",
         getClass().getSimpleName(), 
         protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
-        acceptAnyProxy, allowEmptyProxyChain, renew, clockSkewTolerance);
+        acceptAnyProxy, allowEmptyProxyChain, renew, clockSkewTolerance,
+        postAuthRedirect);
   }
  
   

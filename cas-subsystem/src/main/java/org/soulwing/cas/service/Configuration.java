@@ -45,6 +45,8 @@ public interface Configuration extends Cloneable {
   
   long getClockSkewTolerance();
   
+  boolean isPostAuthRedirect();
+  
   AuthenticationTicketValidator getValidator();
   
   MutableConfiguration clone();
