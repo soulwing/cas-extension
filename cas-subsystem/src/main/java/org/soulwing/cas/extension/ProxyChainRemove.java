@@ -21,7 +21,10 @@ package org.soulwing.cas.extension;
 import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
+import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.service.MutableConfiguration;
 
 /**
  * A remove step handler for a proxy chain resource.
@@ -42,7 +45,17 @@ class ProxyChainRemove extends AbstractRemoveStepHandler {
   @Override
   protected void performRuntime(OperationContext context,
       ModelNode operation, ModelNode model) throws OperationFailedException {
-    super.performRuntime(context, operation, model);
+    
+    ModelNode address = operation.get(ModelDescriptionConstants.ADDRESS);
+    String name = address.asPropertyList().get(address.asInt() - 1)
+        .getValue().asString();
+
+    AuthenticationService service = AuthenticationServiceControl
+        .locateService(context, address);
+    
+    MutableConfiguration config = service.getConfiguration().clone();
+    config.removeAllowedProxyChain(name);
+    service.reconfigure(config);
   }
   
 }
