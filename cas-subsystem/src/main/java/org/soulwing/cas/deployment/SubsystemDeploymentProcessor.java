@@ -30,6 +30,8 @@ import org.wildfly.extension.undertow.deployment.UndertowAttachments;
  */
 public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
 
+  public static final String DEFAULT_PROFILE = "default";
+  
   /**
    * See {@link Phase} for a description of the different phases
    */
@@ -52,6 +54,7 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     if (!descriptor.exists()) return;
     
     AppConfiguration config = parseDescriptor(descriptor);
+    
     ServletExtension extension = new CasServletExtension(
         findAuthenticationService(phaseContext, config));
         
@@ -81,7 +84,11 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
       throws DeploymentUnitProcessingException {
     DescriptorParser parser = new XMLStreamDescriptorParser();
     try {
-      return parser.parse(descriptor.openStream());
+      AppConfiguration config = parser.parse(descriptor.openStream());
+      if (config.getProfileId() == null || config.getProfileId().isEmpty()) {
+        config.setProfileId(DEFAULT_PROFILE);
+      }
+      return config;
     }
     catch (IOException | DescriptorParseException ex) {
       throw new DeploymentUnitProcessingException(ex);
