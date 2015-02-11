@@ -36,8 +36,8 @@ import javax.security.auth.login.LoginException;
 import org.jboss.security.SimpleGroup;
 import org.jboss.security.auth.callback.ObjectCallback;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
-import org.soulwing.cas.service.IdentityAssertion;
-import org.soulwing.cas.service.UserPrincipal;
+import org.soulwing.cas.api.IdentityAssertion;
+import org.soulwing.cas.api.UserPrincipal;
 
 /**
  * A JAAS {@code LoginModule} that validates a credential of type 

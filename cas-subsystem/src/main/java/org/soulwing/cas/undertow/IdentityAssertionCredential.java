@@ -20,8 +20,8 @@ package org.soulwing.cas.undertow;
 
 import io.undertow.security.idm.Credential;
 
+import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.jaas.IdentityAssertionHolder;
-import org.soulwing.cas.service.IdentityAssertion;
 
 /**
  * A credential that contains a CAS authentication ticket.

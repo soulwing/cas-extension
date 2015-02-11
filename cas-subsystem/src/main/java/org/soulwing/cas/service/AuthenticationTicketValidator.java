@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.service;
 
+import org.soulwing.cas.api.IdentityAssertion;
+
 /**
  * A service object that validates CAS authentication tickets.
  *

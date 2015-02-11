@@ -20,6 +20,7 @@ package org.soulwing.cas.service;
 
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
+import org.soulwing.cas.api.IdentityAssertion;
 
 /**
  * A {@link AuthenticationTicketValidator} that delegates to 

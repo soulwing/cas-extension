@@ -72,5 +72,6 @@
     <module>cas-opensaml</module>
     <module>cas-jasig-client</module>
     <module>cas-modules</module>
+    <module>cas-api</module>
   </modules>
 </project>

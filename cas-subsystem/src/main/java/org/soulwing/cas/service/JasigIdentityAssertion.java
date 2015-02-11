@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.Map;
 
 import org.jasig.cas.client.validation.Assertion;
+import org.soulwing.cas.api.IdentityAssertion;
+import org.soulwing.cas.api.UserPrincipal;
 
 /**
  * An {@link IdentityAssertion} that delegates to an {@link Assertion}.

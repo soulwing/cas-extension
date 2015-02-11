@@ -27,9 +27,9 @@ import io.undertow.util.HttpString;
 
 import java.util.Deque;
 
+import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.AuthenticationService;
-import org.soulwing.cas.service.IdentityAssertion;
 
 /**
  * An {@link AuthenticationMechanism} that uses the CAS protocol.

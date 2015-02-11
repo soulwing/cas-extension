@@ -16,7 +16,7 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.service;
+package org.soulwing.cas.api;
 
 import java.io.Serializable;
 import java.security.Principal;

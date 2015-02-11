@@ -21,6 +21,7 @@ package org.soulwing.cas.service;
 import java.util.Map;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.soulwing.cas.api.UserPrincipal;
 
 /**
  * A {@link UserPrincipal} that delegates to a {@link AttributePrincipal}

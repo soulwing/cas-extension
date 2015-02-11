@@ -18,7 +18,7 @@
  */
 package org.soulwing.cas.jaas;
 
-import org.soulwing.cas.service.IdentityAssertion;
+import org.soulwing.cas.api.IdentityAssertion;
 
 /**
  * A credential object that holds a CAS identity assertion.

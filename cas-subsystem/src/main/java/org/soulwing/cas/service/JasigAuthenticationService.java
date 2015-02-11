@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.jasig.cas.client.util.CommonUtils;
+import org.soulwing.cas.api.IdentityAssertion;
 
 /**
  * An implementation of the {@link AuthenticationService} that delegates to
