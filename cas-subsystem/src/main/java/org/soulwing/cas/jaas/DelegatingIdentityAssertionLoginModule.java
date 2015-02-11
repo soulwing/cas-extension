@@ -39,21 +39,19 @@ import org.jboss.as.domain.management.SecurityRealm;
 import org.jboss.as.server.CurrentServiceContainer;
 import org.jboss.msc.service.ServiceContainer;
 import org.jboss.msc.service.ServiceController;
-import org.soulwing.cas.api.IdentityAssertion;
 
 /**
- * A JAAS {@code LoginModule} that validates a credential of type 
- * {@link IdentityAssertion} obtained from a CAS ticket validation.
+ * A JAAS {@code LoginModule} that extends the base 
+ * {@link IdentityAssertionLoginModule} by delegating authorization to
+ * a configured security realm.
  * <p>
- * Assertion attribute values can be used as role names by specifying the
- * {{roleAttributes}} module option.  The value is a list of attribute names
- * whose values will be used as role name.  The list may be delimited with
- * spaces and/or commas.  Each value of each named role attribute is used
- * as a role for the authentic user.
+ * The realm delegate is specified using the {@link #REALM} module option.
+ * The default realm is {@link #DEFAULT_REALM}.
  *
  * @author Carl Harris
  */
-public class IARealmDirectLoginModule extends IdentityAssertionLoginModule {
+public class DelegatingIdentityAssertionLoginModule 
+    extends IdentityAssertionLoginModule {
 
   public static final String REALM = "realm";
   
