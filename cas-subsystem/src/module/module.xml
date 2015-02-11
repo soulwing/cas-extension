@@ -1,10 +1,10 @@
 <module xmlns="urn:jboss:module:1.0" name="${module.name}">
   <resources>
     <resource-root path="${project.build.finalName}.jar" />
-    <resource-root path="cas-api-${project.version}.jar" />
   </resources>
 
   <dependencies>
+    <module name="org.soulwing.cas.api" />
     <module name="org.jasig.cas.client" slot="${dependency.module.slot}"/>
     <module name="org.picketbox" />
     <module name="org.jboss.staxmapper" />

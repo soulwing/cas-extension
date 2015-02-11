@@ -7,4 +7,63 @@
   </parent>
   <artifactId>cas-api</artifactId>
   <name>CAS Extension API</name>
+  <properties>
+    <module.name>org.soulwing.cas.api</module.name>
+    <module.path>org/soulwing/cas/api</module.path>
+    <module.slot>main</module.slot>
+    <module.directory>${project.build.directory}/modules/${module.path}/${module.slot}</module.directory>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-module-descriptor</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <outputDirectory>${module.directory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/module</directory>
+                  <filtering>true</filtering>
+                  <includes>
+                    <include>**/*.xml</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>src/module</directory>
+                  <filtering>false</filtering>
+                  <excludes>
+                    <exclude>**/*.xml</exclude>
+                  </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-module-artifact</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar" 
+                  todir="${module.directory}/" force="true"/>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
