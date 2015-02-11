@@ -177,6 +177,44 @@ creating a security domain:
 /subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:add(module=org.soulwing.cas, code=org.soulwing.cas.jaas.IdentityAssertionLoginModule, flag=required, module-options={ role-attributes="eduPersonAffiliation, groupMembership" })
 ```
 
+Delegating Authorization to a Security Realm
+--------------------------------------------
+
+Security Realms are a Wildfly management concept that is intended to simplify
+the configuration needed to manage users and roles.  A security realm can
+perform password-based, certificate-based, or other authentication, and can 
+support role-based authorization using simple properties files or custom
+plugins.
+
+You can configure the *security domain* used for CAS such that it delegates
+authorization to a *security realm*.  This can be done in addition to (or as 
+an alternative to) using SAML attributes as roles used for authorization.
+
+Assuming that you have already configured the your `cas` security domain,
+you can reconfigure the domain to support realm delegation as follows:
+
+```
+/subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:remove
+/subsystem=security/security-domain=cas/authentication=classic/login-module=DelegatingIdentityAssertion:add(code=org.soulwing.cas.jaas.DelegatingIdentityAssertionLoginModule, module=org.soulwing.cas, flag=required)
+```
+
+By default, this configuration delegates to the security realm named
+`ApplicationRealm`.  If you wish to use a different realm (perhaps creating
+your own realm for this purpose) you can specify the `realm` module option.
+The following command changes the delegate realm name to 
+`CasAuthorizationRealm`.
+
+```
+/subsystem=security/security-domain=cas/authentication=classic/login-module=DelegatingIdentityAssertion:write-attribute(module-options={realm:CasAuthorizationRealm, role-attributes=...})
+```
+
+Note that you must also specify the `role-attributes` module option (as
+previously described) if you wish to use SAML attributes as authorization
+roles.
+
+Of course, you can also specify the `module-options` attribute when adding
+the `DelegatingIdentityAssertion`.
+
 Application Deployment
 ----------------------
 
