@@ -34,5 +34,8 @@ public interface CasAttachments {
 
   AttachmentKey<AuthenticationProtocol> POST_AUTH_REDIRECT_KEY =
       AttachmentKey.create(AuthenticationProtocol.class);
+  
+  AttachmentKey<Boolean> AUTH_FAILED_KEY =
+      AttachmentKey.create(Boolean.class);
 
 }

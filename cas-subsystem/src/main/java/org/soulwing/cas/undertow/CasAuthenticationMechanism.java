@@ -103,6 +103,12 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         securityContext.authenticationComplete(account, MECHANISM_NAME, true);
         return AuthenticationMechanismOutcome.AUTHENTICATED;
       }
+
+      LOGGER.info("identity manager does not recognize user");
+      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, true);
+      securityContext.authenticationFailed(
+          "identity manager does not recognized user", MECHANISM_NAME);
+      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
     catch (AuthenticationException ex) {
       LOGGER.info("authentication failed: " + ex);
@@ -122,8 +128,16 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   @Override
   public ChallengeResult sendChallenge(HttpServerExchange exchange,
       SecurityContext context) {
-    String url = authenticationService.loginUrl(exchange.getRequestPath(), 
+    String query = QueryUtil.removeProtocolParameters(
+        authenticationService.getConfiguration().getProtocol(),
         exchange.getQueryString());
+    String url = authenticationService.loginUrl(exchange.getRequestPath(), 
+        query);
+    
+    if (exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY) != null) {
+      exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);
+      return new ChallengeResult(false, 403);
+    }
     
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("responding with redirect to '" + url + "'");
