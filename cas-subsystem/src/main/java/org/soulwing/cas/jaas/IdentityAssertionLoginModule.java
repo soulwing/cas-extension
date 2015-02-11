@@ -25,7 +25,9 @@ import java.security.Principal;
 import java.security.acl.Group;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -57,7 +59,7 @@ public class IdentityAssertionLoginModule extends AbstractServerLoginModule {
   public static final String ROLE_ATTRIBUTES = "role-attributes";
   
   private String[] roleAttributes;
-  private IdentityAssertion assertion; 
+  protected IdentityAssertion assertion; 
   
   /**
    * {@inheritDoc}
@@ -121,30 +123,44 @@ public class IdentityAssertionLoginModule extends AbstractServerLoginModule {
    */
   @Override
   protected Group[] getRoleSets() throws LoginException {
-    if (roleAttributes.length == 0) return new Group[0];
+    Set<Principal> roles = getRoles();
+    if (roles.isEmpty()) return new Group[0];
+
     Group rolesGroup = new SimpleGroup("Roles");
-    Map<String, Object> attributes = assertion.getPrincipal().getAttributes();
-    for (String roleAttribute : roleAttributes) {
-      Object attrValue = attributes.get(roleAttribute);
-      if (attrValue instanceof Collection) {
-        for (Object value : (Collection<?>) attrValue) {
-          rolesGroup.addMember(createRole(value.toString()));
-        }
-      }
-      else if (attrValue != null) {
-        rolesGroup.addMember(createRole(attrValue.toString()));
-      }
-      else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("assertion does not contain attribute '" 
-              + roleAttribute + "'");
-        }
-      }
+    for (Principal role : roles) {
+      rolesGroup.addMember(role);
     }
+    
     return new Group[] { rolesGroup };
   }
 
-  private Principal createRole(String name) throws LoginException {
+  protected Set<Principal> getRoles() throws LoginException {
+    Set<Principal> roles = new LinkedHashSet<>();
+    if (roleAttributes.length > 0) {      
+      Map<String, Object> attributes = assertion.getPrincipal().getAttributes();
+      for (String roleAttribute : roleAttributes) {
+        Object attrValue = attributes.get(roleAttribute);
+        if (attrValue instanceof Collection) {
+          for (Object value : (Collection<?>) attrValue) {
+            roles.add(createRole(value.toString()));
+          }
+        }
+        else if (attrValue != null) {
+          roles.add(createRole(attrValue.toString()));
+        }
+        else {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("assertion does not contain attribute '" 
+                + roleAttribute + "'");
+          }
+        }
+      }
+    }
+    LOGGER.debug("assertion-derived roles: " + roles);
+    return roles; 
+  }
+  
+  protected Principal createRole(String name) throws LoginException {
     try {
       Principal role = createIdentity(name);
       if (LOGGER.isDebugEnabled()) {
