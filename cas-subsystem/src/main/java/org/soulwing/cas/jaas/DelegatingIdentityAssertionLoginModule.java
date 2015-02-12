@@ -104,7 +104,7 @@ public class DelegatingIdentityAssertionLoginModule
           + "' does not provide authorization");
     }  
 
-    LOGGER.info("attached to realm " + realmName);
+    LOGGER.debug("attached to realm '" + realmName + "'");
   }
 
   /**
