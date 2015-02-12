@@ -22,6 +22,7 @@ import org.jboss.as.controller.AbstractWriteAttributeHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.SimpleAttributeDefinition;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.dmr.ModelNode;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.MutableConfiguration;
@@ -53,7 +54,7 @@ abstract class AbstractProfileAttributeHandler<T>
       throws OperationFailedException {
 
     AuthenticationService service = AuthenticationServiceControl.locateService(
-        context, operation);
+        context, operation.get(ModelDescriptionConstants.ADDRESS));
     MutableConfiguration config = service.getConfiguration();
     T handback = applyUpdateToConfiguration(attributeName, resolvedValue, config);
     handbackHolder.setHandback(handback);
@@ -71,7 +72,7 @@ abstract class AbstractProfileAttributeHandler<T>
       ModelNode valueToRevert, T handback) throws OperationFailedException {
     
     AuthenticationService service = AuthenticationServiceControl.locateService(
-        context, operation);
+        context, operation.get(ModelDescriptionConstants.ADDRESS));
 
     MutableConfiguration config = service.getConfiguration();
     revertUpdateToConfiguration(attributeName, valueToRestore, config, handback);
