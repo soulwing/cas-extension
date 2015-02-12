@@ -65,6 +65,7 @@ class ProfileAdd extends AbstractAddStepHandler {
     ProfileDefinition.RENEW.validateAndSet(operation, model);
     ProfileDefinition.CLOCK_SKEW_TOLERANCE.validateAndSet(operation, model);
     ProfileDefinition.POST_AUTH_REDIRECT.validateAndSet(operation, model);
+    ProfileDefinition.SECURITY_REALM.validateAndSet(operation, model);
     super.populateModel(operation, model);
   }
 

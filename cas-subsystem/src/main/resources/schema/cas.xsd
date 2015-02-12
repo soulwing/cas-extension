@@ -27,6 +27,7 @@
     <xs:attribute name="renew" type="xs:boolean"/>
     <xs:attribute name="clock-skew-tolerance" type="xs:long"/>
     <xs:attribute name="post-auth-redirect" type="xs:boolean"/>  
+    <xs:attribute name="security-realm" type="xs:string"/>
   </xs:complexType>
   
   <xs:simpleType name="AuthenticationProtocolType">

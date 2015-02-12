@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.extension;
 
+import org.jboss.as.controller.ModelOnlyWriteAttributeHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
@@ -127,6 +128,16 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition SECURITY_REALM =
+	      new SimpleAttributeDefinitionBuilder(Names.SECURITY_REALM,
+	          ModelType.STRING)
+	              .setAllowExpression(true)
+	              .setAllowNull(true)
+	              .setDefaultValue(null)
+	              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
+	                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+	              .build();
+
   private ProfileDefinition() {
     super(Paths.PROFILE, 
         ResourceUtil.getResolver(
@@ -160,6 +171,8 @@ public class ProfileDefinition extends SimpleResourceDefinition {
         ClockSkewToleranceHandler.INSTANCE);
     resourceRegistration.registerReadWriteAttribute(POST_AUTH_REDIRECT, null, 
         PostAuthRedirectHandler.INSTANCE);
+    resourceRegistration.registerReadWriteAttribute(SECURITY_REALM, null, 
+        new ModelOnlyWriteAttributeHandler());
   }
 
   /**

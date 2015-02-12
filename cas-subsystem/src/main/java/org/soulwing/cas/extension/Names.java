@@ -50,5 +50,6 @@ public interface Names {
   String PROXY = "proxy";
   String CLOCK_SKEW_TOLERANCE = "clock-skew-tolerance";
   String POST_AUTH_REDIRECT = "post-auth-redirect";
+  String SECURITY_REALM = "security-realm";
 
 }

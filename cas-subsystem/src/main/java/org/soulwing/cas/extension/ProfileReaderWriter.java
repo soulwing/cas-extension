@@ -48,7 +48,8 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
         ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN,
         ProfileDefinition.RENEW,
         ProfileDefinition.CLOCK_SKEW_TOLERANCE,
-        ProfileDefinition.POST_AUTH_REDIRECT
+        ProfileDefinition.POST_AUTH_REDIRECT,
+        ProfileDefinition.SECURITY_REALM
     };
   }
   

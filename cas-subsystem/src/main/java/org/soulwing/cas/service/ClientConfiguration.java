@@ -54,7 +54,7 @@ public class ClientConfiguration implements MutableConfiguration {
   private long clockSkewTolerance;
   
   private boolean postAuthRedirect;
-
+  
   private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
   
   /**
@@ -315,8 +315,7 @@ public class ClientConfiguration implements MutableConfiguration {
         getClass().getSimpleName(), 
         protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
         acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
-        renew, clockSkewTolerance,
-        postAuthRedirect);
+        renew, clockSkewTolerance, postAuthRedirect);
   }
  
   
