@@ -87,7 +87,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
    
       Account account = securityContext.getIdentityManager()
           .verify(assertion.getPrincipal().getName(), credential);
+      
       if (account != null) {
+        
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("authentication complete: " 
               + " user=" + account.getPrincipal().getName()
@@ -104,20 +106,28 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         return AuthenticationMechanismOutcome.AUTHENTICATED;
       }
 
-      LOGGER.info("identity manager does not recognize user");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("identity manager does not recognize user '"
+            + assertion.getPrincipal().getName() + "'");
+      }
+      
       exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, true);
       securityContext.authenticationFailed(
-          "identity manager does not recognized user", MECHANISM_NAME);
+          "identity manager does not recognize user", MECHANISM_NAME);
+      
       return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
     catch (AuthenticationException ex) {
-      LOGGER.info("authentication failed: " + ex);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("authentication failed: " + ex);
+      }
     }
     
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("authentication not successful for ticket '"
           + ticket + "'");
     }
+    
     securityContext.setAuthenticationRequired();
     return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
   }
@@ -143,8 +153,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       LOGGER.debug("responding with redirect to '" + url + "'");
     }
     
-    exchange.getResponseHeaders().put(HttpString.tryFromString("Location"), 
-        url);
+    exchange.getResponseHeaders().put(
+        HttpString.tryFromString("Location"), url);
+    
     return new ChallengeResult(true, 302);
   }
 

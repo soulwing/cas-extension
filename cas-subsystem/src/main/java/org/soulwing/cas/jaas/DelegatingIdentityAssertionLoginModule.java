@@ -103,8 +103,10 @@ public class DelegatingIdentityAssertionLoginModule
       throw new IllegalArgumentException("realm '" + realmName
           + "' does not provide authorization");
     }  
-
-    LOGGER.debug("attached to realm '" + realmName + "'");
+    
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("attached to realm '" + realmName + "'");
+    }
   }
 
   /**
@@ -119,8 +121,10 @@ public class DelegatingIdentityAssertionLoginModule
           .createSubjectUserInfo(Collections.<Principal>singleton(user));
       Set<RealmRole> realmRoles = subjectUserInfo.getSubject()
           .getPrincipals(RealmRole.class);
-      LOGGER.debug("user '" + user + '@' + realmName + "' has roles " 
-          + realmRoles);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("user '" + user + '@' + realmName + "' has roles " 
+            + realmRoles);
+      }
       for (RealmRole role : realmRoles) {
         roles.add(createRole(role.getName()));
       }

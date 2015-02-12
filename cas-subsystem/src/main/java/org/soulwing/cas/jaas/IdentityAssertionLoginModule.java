@@ -69,7 +69,9 @@ public class IdentityAssertionLoginModule extends AbstractServerLoginModule {
       Map<String, ?> sharedState, Map<String, ?> options) {
     super.initialize(subject, callbackHandler, sharedState, options);
     this.roleAttributes = parseRoleAttributes(options.get(ROLE_ATTRIBUTES));
-    LOGGER.debug("role attributes: " + Arrays.asList(this.roleAttributes));
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("role attributes: " + Arrays.asList(this.roleAttributes));
+    }
   }
 
   private static String[] parseRoleAttributes(Object attrs) {
@@ -89,7 +91,9 @@ public class IdentityAssertionLoginModule extends AbstractServerLoginModule {
       callbackHandler.handle(new Callback[] { callback });
       Object obj = callback.getCredential();
       if (!(obj instanceof IdentityAssertionHolder)) {
-        LOGGER.debug("credential object is not an identity assertion");
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("credential object is not an identity assertion");
+        }
         return false;
       }
 
@@ -156,7 +160,9 @@ public class IdentityAssertionLoginModule extends AbstractServerLoginModule {
         }
       }
     }
-    LOGGER.debug("assertion-derived roles: " + roles);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("assertion-derived roles: " + roles);
+    }
     return roles; 
   }
   
