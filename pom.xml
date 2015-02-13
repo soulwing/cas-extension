@@ -26,16 +26,6 @@
     <developerConnection>${project.scm.connection}</developerConnection>
     <url>https://github.com/soulwing/${project.artifactId}</url>
   </scm>
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.8</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
   <dependencyManagement>
     <dependencies>
       <dependency>
