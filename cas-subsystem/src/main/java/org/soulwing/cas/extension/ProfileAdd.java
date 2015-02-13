@@ -18,16 +18,19 @@
  */
 package org.soulwing.cas.extension;
 
-import java.util.List;
-
 import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
+
+import java.util.List;
 
 import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import org.jboss.as.domain.management.SecurityRealm;
+import org.jboss.as.domain.management.security.SSLContextService;
 import org.jboss.dmr.ModelNode;
+import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -36,6 +39,7 @@ import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.AuthenticationServiceFactory;
 import org.soulwing.cas.service.Configuration;
 import org.soulwing.cas.service.MutableConfiguration;
+import org.soulwing.cas.service.SSLContextLocator;
 
 /**
  * An add step handler for the configuration profile resource.
@@ -44,6 +48,7 @@ import org.soulwing.cas.service.MutableConfiguration;
  */
 class ProfileAdd extends AbstractAddStepHandler {
 
+  private static final String SSL_CONTEXT_LOCATOR_NAME = "ssl-context-locator";
   public static final ProfileAdd INSTANCE = 
       new ProfileAdd();
   
@@ -79,12 +84,15 @@ class ProfileAdd extends AbstractAddStepHandler {
       List<ServiceController<?>> newControllers)
       throws OperationFailedException {
     
-    String resourceName = AuthenticationServiceControl.profileName(
+    String profileName = AuthenticationServiceControl.profileName(
         operation.get(ModelDescriptionConstants.ADDRESS));
-    ServiceName serviceName = AuthenticationServiceControl.name(resourceName);
+    ServiceName serviceName = AuthenticationServiceControl.name(profileName);
+    
+    SSLContextLocator locator =
+        createSSLContextLocator(context, model, serviceName);
     
     AuthenticationService service = AuthenticationServiceFactory
-        .newInstance(resourceName);
+      .newInstance(profileName, locator, NullHostnameVerifierLocator.INSTANCE);
     
     service.reconfigure(applyConfiguration(context, model, 
         service.getConfiguration()));
@@ -96,11 +104,38 @@ class ProfileAdd extends AbstractAddStepHandler {
         .setInitialMode(Mode.ACTIVE)
         .install();
     
-
     newControllers.add(controller);
-    LOGGER.debug("registered service " + serviceName);
+    LOGGER.debug("installed service " + serviceName);
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
+  }
+
+  private SSLContextLocator createSSLContextLocator(OperationContext context,
+      ModelNode model, ServiceName profileServiceName)
+      throws OperationFailedException {
+    
+    String realmName = ProfileDefinition.SECURITY_REALM
+        .resolveModelAttribute(context, model).asString();
+    
+    if (realmName == null) return NullSSLContextLocator.INSTANCE;
+    
+    SSLContextLocatorService locatorService = new SSLContextLocatorService();
+    ServiceName serviceName = ServiceName.of(profileServiceName, 
+        SSL_CONTEXT_LOCATOR_NAME);
+    
+    ServiceBuilder<SSLContextLocator> locatorServiceBuilder = context
+        .getServiceTarget().addService(serviceName, locatorService);
+    
+    ServiceName realmServiceName = SecurityRealm.ServiceUtil
+        .createServiceName(realmName);
+          
+    SSLContextService.ServiceUtil.addDependency(locatorServiceBuilder, 
+        locatorService.getContextInjector(), realmServiceName, false);
+    
+    locatorServiceBuilder.install();
+    
+    LOGGER.debug("installed service " + serviceName);
+    return locatorService;
   }
 
   private Configuration applyConfiguration(OperationContext context,
