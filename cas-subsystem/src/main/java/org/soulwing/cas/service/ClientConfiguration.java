@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
@@ -37,6 +38,8 @@ import org.jasig.cas.client.validation.Saml11TicketValidator;
  */
 public class ClientConfiguration implements MutableConfiguration {
 
+  private final HttpURLConnectionFactory connectionFactory;
+    
   private AuthenticationProtocol protocol;
 
   private String serverUrl;
@@ -57,6 +60,16 @@ public class ClientConfiguration implements MutableConfiguration {
   
   private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
   
+  /**
+   * Constructs a new instance.
+   * @param sslContextLocator
+   */
+  public ClientConfiguration(SSLContextLocator sslContextLocator,
+      HostnameVerifierLocator hostnameVerifierLocator) {
+    this.connectionFactory = new HttpsURLConnectionFactory(sslContextLocator,
+        hostnameVerifierLocator);
+  }
+
   /**
    * Gets the {@code protocol} property.
    * @return property value
@@ -252,6 +265,7 @@ public class ClientConfiguration implements MutableConfiguration {
   public AuthenticationTicketValidator getValidator() {
     AbstractUrlBasedTicketValidator validator = newValidator();
     validator.setRenew(isRenew());
+    validator.setURLConnectionFactory(connectionFactory);
     return new JasigTicketValidator(validator);
   }
 

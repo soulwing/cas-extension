@@ -27,11 +27,16 @@ public class AuthenticationServiceFactory {
 
   /**
    * Creates a new instance of {@link AuthenticationService}.
-   * @param name name to assign to this service
-   * @return
+   * @param name profile name of the service configuration
+   * @param sslContextLocator SSL context locator
+   * @param hostnameVerifierLocator hostname verifier locator
+   * @return authentication service instance
    */
-  public static AuthenticationService newInstance(String name) {
-    return new JasigAuthenticationService(name);
+  public static AuthenticationService newInstance(String name,
+      SSLContextLocator sslContextLocator, 
+      HostnameVerifierLocator hostnameVerifierLocator) {
+    return new JasigAuthenticationService(name, sslContextLocator,
+        hostnameVerifierLocator);
   }
   
 }

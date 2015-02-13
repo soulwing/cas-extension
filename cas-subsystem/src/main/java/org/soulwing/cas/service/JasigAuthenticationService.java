@@ -34,17 +34,22 @@ import org.soulwing.cas.api.IdentityAssertion;
  */
 class JasigAuthenticationService implements AuthenticationService {
 
-  private final AtomicReference<Configuration> configuration =
-      new AtomicReference<Configuration>(new ClientConfiguration());
+  private final AtomicReference<Configuration> configuration;
   
   private final String name;
  
   /**
    * Constructs a new instance.
-   * @param name
+   * @param name configuration profile name
+   * @param sslContextLocator locator for the SSL context
+   * @param hostnameVerifierLocator locator for the hostname verifier
    */
-  public JasigAuthenticationService(String name) {
+  public JasigAuthenticationService(String name, 
+      SSLContextLocator sslContextLocator, 
+      HostnameVerifierLocator hostnameVerifierLocator) {
     this.name = name;
+    this.configuration = new AtomicReference<Configuration>(
+        new ClientConfiguration(sslContextLocator, hostnameVerifierLocator));
   }
 
   /**
