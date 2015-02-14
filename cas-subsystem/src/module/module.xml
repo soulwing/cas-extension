@@ -1,4 +1,5 @@
-<module xmlns="urn:jboss:module:1.0" name="${module.name}">
+<module xmlns="urn:jboss:module:1.0" name="${module.name}" 
+    slot="${module.slot}">
   <resources>
     <resource-root path="${project.build.finalName}.jar" />
   </resources>

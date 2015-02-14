@@ -18,10 +18,10 @@
     <module.slot>${project.parent.artifactId}</module.slot>
     <module.path>org/opensaml/${module.slot}</module.path>
     <module.directory>${project.build.directory}/modules/${module.path}</module.directory>    
-    <opensaml.version>2.6.1</opensaml.version>
-    <openws.version>1.5.1</openws.version>
-    <xmltooling.version>1.4.1</xmltooling.version>
-    <esapi.version>2.1.0</esapi.version>
+    <version.org.opensaml.opensaml>2.6.1</version.org.opensaml.opensaml>
+    <version.org.opensaml.openws>1.5.1</version.org.opensaml.openws>
+    <version.org.opensaml.xmltooling>1.4.1</version.org.opensaml.xmltooling>
+    <version.org.owasp.esapi>2.1.0</version.org.owasp.esapi>
   </properties>
   <build>
     <plugins>
@@ -78,12 +78,12 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
-      <version>${opensaml.version}</version>
+      <version>${version.org.opensaml.opensaml}</version>
     </dependency>
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>openws</artifactId>
-      <version>${openws.version}</version>
+      <version>${version.org.opensaml.openws}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -94,12 +94,12 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>xmltooling</artifactId>
-      <version>${xmltooling.version}</version>
+      <version>${version.org.opensaml.xmltooling}</version>
     </dependency>
     <dependency>
       <groupId>org.owasp.esapi</groupId>
       <artifactId>esapi</artifactId>
-      <version>${esapi.version}</version>
+      <version>${version.org.owasp.esapi}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
