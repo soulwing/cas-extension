@@ -51,7 +51,7 @@ class ProfileRemove extends AbstractRemoveStepHandler {
         operation.get(ModelDescriptionConstants.ADDRESS));
     
     context.removeService(serviceName);
-    LOGGER.info("removed service " + serviceName);
+    LOGGER.debug("removed " + serviceName);
     
     super.performRuntime(context, operation, model);
   }

@@ -105,7 +105,7 @@ class ProfileAdd extends AbstractAddStepHandler {
         .install();
     
     newControllers.add(controller);
-    LOGGER.debug("installed service " + serviceName);
+    LOGGER.debug("installed " + serviceName);
     super.performRuntime(context, operation, model, verificationHandler,
         newControllers);
   }
@@ -114,10 +114,11 @@ class ProfileAdd extends AbstractAddStepHandler {
       ModelNode model, ServiceName profileServiceName)
       throws OperationFailedException {
     
-    String realmName = ProfileDefinition.SECURITY_REALM
-        .resolveModelAttribute(context, model).asString();
-    
-    if (realmName == null) return NullSSLContextLocator.INSTANCE;
+    ModelNode securityRealm = ProfileDefinition.SECURITY_REALM
+        .resolveModelAttribute(context, model);
+    if (!securityRealm.isDefined()) return NullSSLContextLocator.INSTANCE; 
+
+    String realmName = securityRealm.asString();
     
     SSLContextLocatorService locatorService = new SSLContextLocatorService();
     ServiceName serviceName = ServiceName.of(profileServiceName, 
@@ -134,7 +135,7 @@ class ProfileAdd extends AbstractAddStepHandler {
     
     locatorServiceBuilder.install();
     
-    LOGGER.debug("installed service " + serviceName);
+    LOGGER.debug("installed " + serviceName);
     return locatorService;
   }
 
