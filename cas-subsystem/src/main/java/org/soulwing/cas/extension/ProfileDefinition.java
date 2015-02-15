@@ -1,5 +1,5 @@
 /*
- * File created on Dec 15, 2014 
+ * File created on Dec 15, 2014
  *
  * Copyright (c) 2015 Carl Harris, Jr.
  *
@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.extension;
 
+import org.jboss.as.controller.AttributeDefinition;
 import org.jboss.as.controller.ModelOnlyWriteAttributeHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
@@ -30,18 +31,15 @@ import org.jboss.dmr.ModelType;
 import org.soulwing.cas.service.AuthenticationProtocol;
 
 /**
- * 
+ *
  * A definition for the configuration profile resource.
  *
  * @author Carl Harris
  */
 public class ProfileDefinition extends SimpleResourceDefinition {
 
-  public static final ProfileDefinition INSTANCE =
-      new ProfileDefinition();
-  
   static final SimpleAttributeDefinition PROTOCOL =
-      new SimpleAttributeDefinitionBuilder(Names.PROTOCOL, 
+      new SimpleAttributeDefinitionBuilder(Names.PROTOCOL,
           ModelType.STRING)
               .setAllowExpression(false)
               .setAllowNull(true)
@@ -138,14 +136,32 @@ public class ProfileDefinition extends SimpleResourceDefinition {
 	                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
 	              .build();
 
+  public static final ProfileDefinition INSTANCE =
+      new ProfileDefinition();
+
+  public static AttributeDefinition[] attributes() {
+    return new AttributeDefinition[] {
+      PROTOCOL,
+      SERVER_URL,
+      SERVICE_URL,
+      PROXY_CALLBACK_URL,
+      ACCEPT_ANY_PROXY,
+      ALLOW_EMPTY_PROXY_CHAIN,
+      RENEW,
+      CLOCK_SKEW_TOLERANCE,
+      POST_AUTH_REDIRECT,
+      SECURITY_REALM
+    };
+  }
+
   private ProfileDefinition() {
-    super(Paths.PROFILE, 
+    super(Paths.PROFILE,
         ResourceUtil.getResolver(
             Names.PROFILE),
         ProfileAdd.INSTANCE,
         ProfileRemove.INSTANCE);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -153,25 +169,25 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   public void registerAttributes(
       ManagementResourceRegistration resourceRegistration) {
     super.registerAttributes(resourceRegistration);
-    resourceRegistration.registerReadWriteAttribute(PROTOCOL, null, 
+    resourceRegistration.registerReadWriteAttribute(PROTOCOL, null,
         ProtocolHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(SERVICE_URL, null, 
+    resourceRegistration.registerReadWriteAttribute(SERVICE_URL, null,
         ServiceUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(SERVER_URL, null, 
+    resourceRegistration.registerReadWriteAttribute(SERVER_URL, null,
         ServerUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(PROXY_CALLBACK_URL, null, 
+    resourceRegistration.registerReadWriteAttribute(PROXY_CALLBACK_URL, null,
         ProxyCallbackUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(ACCEPT_ANY_PROXY, null, 
+    resourceRegistration.registerReadWriteAttribute(ACCEPT_ANY_PROXY, null,
         AcceptAnyProxyHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(ALLOW_EMPTY_PROXY_CHAIN, null, 
+    resourceRegistration.registerReadWriteAttribute(ALLOW_EMPTY_PROXY_CHAIN, null,
         AllowEmptyProxyChainHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(RENEW, null, 
+    resourceRegistration.registerReadWriteAttribute(RENEW, null,
         RenewHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(CLOCK_SKEW_TOLERANCE, null, 
+    resourceRegistration.registerReadWriteAttribute(CLOCK_SKEW_TOLERANCE, null,
         ClockSkewToleranceHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(POST_AUTH_REDIRECT, null, 
+    resourceRegistration.registerReadWriteAttribute(POST_AUTH_REDIRECT, null,
         PostAuthRedirectHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(SECURITY_REALM, null, 
+    resourceRegistration.registerReadWriteAttribute(SECURITY_REALM, null,
         new ModelOnlyWriteAttributeHandler());
   }
 

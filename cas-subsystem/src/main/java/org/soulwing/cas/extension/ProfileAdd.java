@@ -49,29 +49,12 @@ import org.soulwing.cas.service.SSLContextLocator;
 class ProfileAdd extends AbstractAddStepHandler {
 
   private static final String SSL_CONTEXT_LOCATOR_NAME = "ssl-context-locator";
+
   public static final ProfileAdd INSTANCE = 
       new ProfileAdd();
   
-  private ProfileAdd() {    
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void populateModel(ModelNode operation, ModelNode model)
-      throws OperationFailedException {
-    ProfileDefinition.PROTOCOL.validateAndSet(operation, model);
-    ProfileDefinition.SERVICE_URL.validateAndSet(operation, model);
-    ProfileDefinition.SERVER_URL.validateAndSet(operation, model);
-    ProfileDefinition.PROXY_CALLBACK_URL.validateAndSet(operation, model);
-    ProfileDefinition.ACCEPT_ANY_PROXY.validateAndSet(operation, model);
-    ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN.validateAndSet(operation, model);
-    ProfileDefinition.RENEW.validateAndSet(operation, model);
-    ProfileDefinition.CLOCK_SKEW_TOLERANCE.validateAndSet(operation, model);
-    ProfileDefinition.POST_AUTH_REDIRECT.validateAndSet(operation, model);
-    ProfileDefinition.SECURITY_REALM.validateAndSet(operation, model);
-    super.populateModel(operation, model);
+  private ProfileAdd() {
+    super(ProfileDefinition.attributes());
   }
 
   /**
