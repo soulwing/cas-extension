@@ -14,4 +14,5 @@
 * Allow SSL configuration for CAS using a Wildfly security realm to specify
   the truststore, keystore for client authentication, etc and provide 
   configuration support for hostname verifier.
+* Query string may be butchered by JasigAuthenticationService.constructServiceUrl 
  
