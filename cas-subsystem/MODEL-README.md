@@ -31,15 +31,15 @@ Suppose you want to add a Bar resource as a child of the Foo resource.
    the Names interface.
 4. Add a definition for the subresource path to the Paths interface.
 5. Create a BarDefinition that extends SimpleResourceDefinition.  See
-   AuthenticationDefinition for an example that defines both attributes and
+   ProfileDefinition for an example that defines both attributes and
    subresources.
-6. Create a BarAdd that extends AbstractAddStepHandler.  See AuthenticationAdd
+6. Create a BarAdd that extends AbstractAddStepHandler.  See ProfileAdd
    for an example.  Be sure that the populateModel method calls validateAndSet
    on each of the attributes defined in BarDefinition.  
 7. Create a BarRemove that extends AbstractRemoveStepHandler.  See 
-   AuthenticationRemove for an example.
+   ProfileRemove for an example.
 8. Create a BarReaderWriter that extends AbstractResourceReaderWriter.  See
-   AuthenticationReaderWriter for an example.  Be sure that the attributes
+   ProfileReaderWriter for an example.  Be sure that the attributes
    method returns an array containing each of the attributes defined in
    BarDefinition.
 9. Modify the constructor of FooReaderWriter so that it passes an instance
