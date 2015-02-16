@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Carl Harris
  */
-public interface Configuration extends Cloneable {
+public interface Configuration {
 
   AuthenticationProtocol getProtocol();  
 
@@ -46,9 +46,5 @@ public interface Configuration extends Cloneable {
   long getClockSkewTolerance();
   
   boolean isPostAuthRedirect();
-  
-  AuthenticationTicketValidator getValidator();
-  
-  MutableConfiguration clone();
   
 }

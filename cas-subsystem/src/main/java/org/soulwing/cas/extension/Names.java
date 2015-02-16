@@ -52,4 +52,8 @@ public interface Names {
   String POST_AUTH_REDIRECT = "post-auth-redirect";
   String SECURITY_REALM = "security-realm";
 
+  String AUTHENTICATION_SERVICE = "authentication-service";  
+  String SERVLET_EXTENSION = "servlet-extension";
+  String SSL_CONTEXT = "ssl-context";
+  
 }

@@ -1,5 +1,5 @@
 /*
- * File created on Feb 12, 2015 
+ * File created on Feb 15, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -18,20 +18,28 @@
  */
 package org.soulwing.cas.service;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
 /**
- * A locator for an {@link SSLContext}.
+ * A factory that produces {@link Authenticator} objects.
  *
  * @author Carl Harris
  */
-public interface SSLContextLocator {
+public class AuthenticatorFactory {
 
   /**
-   * Gets the target SSL context.
-   * @return SSL context or {@code null} to indicate that the default SSL
-   *    context should be used instead
+   * Constructs a new authenticator.
+   * @param config protocol configuration 
+   * @param sslContext SSL context or {@code null} to indicate that the 
+   *    default SSL context should be used
+   * @param hostnameVerifier hostname verifier or {@code null} to indicate
+   *    that the default hostname verifier should be used
+   * @return authenticator
    */
-  SSLContext getSSLContext();
+  public static Authenticator newInstance(Configuration config, 
+      SSLContext sslContext, HostnameVerifier hostnameVerifier) {
+    return new JasigAuthenticator(config, sslContext, hostnameVerifier);
+  }
   
 }

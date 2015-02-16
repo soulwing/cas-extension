@@ -18,13 +18,21 @@
  */
 package org.soulwing.cas.extension;
 
+import org.jboss.as.controller.AttributeDefinition;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.PathAddress;
+import org.jboss.as.controller.RestartParentResourceAddHandler;
+import org.jboss.as.controller.RestartParentResourceRemoveHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleListAttributeDefinition;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.registry.AttributeAccess;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
+import org.jboss.msc.service.ServiceName;
 
 /**
  * 
@@ -34,9 +42,6 @@ import org.jboss.dmr.ModelType;
  */
 class ProxyChainDefinition extends SimpleResourceDefinition {
 
-  public static final ProxyChainDefinition INSTANCE =
-      new ProxyChainDefinition();
-  
   static final SimpleAttributeDefinition PROXY =
       new SimpleAttributeDefinitionBuilder(Names.PROXY, 
           ModelType.STRING)
@@ -48,9 +53,18 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
       SimpleListAttributeDefinition.Builder.of(Names.PROXIES, PROXY)
           .setAllowNull(false)
           .setAllowExpression(false)
-          .setFlags(AttributeAccess.Flag.RESTART_NONE,
+          .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
               AttributeAccess.Flag.STORAGE_CONFIGURATION)
           .build();
+
+  public static final ProxyChainDefinition INSTANCE =
+      new ProxyChainDefinition();
+  
+  public static AttributeDefinition[] attributes() {
+    return new AttributeDefinition[] { 
+        PROXIES
+    };
+  }
 
   private ProxyChainDefinition() {
     super(Paths.PROXY_CHAIN, 
@@ -59,16 +73,89 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
         ProxyChainAdd.INSTANCE,
         ProxyChainRemove.INSTANCE);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   @Override
   public void registerAttributes(
       ManagementResourceRegistration resourceRegistration) {
+    for (AttributeDefinition attribute : attributes()) {
+      resourceRegistration.registerReadWriteAttribute(attribute, null, 
+          ProfileWriteAttributeHandler.INSTANCE);
+    }
     super.registerAttributes(resourceRegistration);
-    resourceRegistration.registerReadWriteAttribute(PROXIES, null, 
-        ProxiesHandler.INSTANCE);
   }
+
+  
+  static class ProxyChainAdd extends RestartParentResourceAddHandler {
+
+    static final ProxyChainAdd INSTANCE = new ProxyChainAdd();
     
+    private ProxyChainAdd() {
+      super(Names.PROFILE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void populateModel(ModelNode operation, ModelNode model)
+        throws OperationFailedException {
+      for (AttributeDefinition attribute : ProxyChainDefinition.attributes()) {
+        attribute.validateAndSet(operation, model);
+      }    
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ServiceName getParentServiceName(PathAddress parentAddress) {
+      return ProfileService.ServiceUtil.profileServiceName(parentAddress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void recreateParentService(OperationContext context,
+        PathAddress parentAddress, ModelNode parentModel)
+        throws OperationFailedException {
+      ProfileService.ServiceUtil.installService(context, parentModel, 
+          parentAddress);
+    }
+
+  }
+  
+  static class ProxyChainRemove extends RestartParentResourceRemoveHandler {
+
+    static final ProxyChainRemove INSTANCE = new ProxyChainRemove();
+      
+    private ProxyChainRemove() {
+      super(Names.PROFILE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ServiceName getParentServiceName(PathAddress parentAddress) {
+      return ProfileService.ServiceUtil.profileServiceName(
+          parentAddress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void recreateParentService(OperationContext context,
+        PathAddress parentAddress, ModelNode parentModel)
+        throws OperationFailedException {
+      ProfileService.ServiceUtil.installService(context, parentModel, 
+          parentAddress);
+    }
+
+  }
+
 }

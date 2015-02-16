@@ -30,6 +30,7 @@ import java.util.Deque;
 import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.service.Authenticator;
 
 /**
  * An {@link AuthenticationMechanism} that uses the CAS protocol.
@@ -61,8 +62,12 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
     
+    LOGGER.debug("authenticationService " + authenticationService);
+    Authenticator authenticator = authenticationService.newAuthenticator();
+    exchange.putAttachment(CasAttachments.AUTHENTICATOR_KEY, authenticator);
+    
     Deque<String> tickets = exchange.getQueryParameters().get(
-        authenticationService.getConfiguration().getProtocol().getTicketParameterName());
+        authenticator.getProtocol().getTicketParameterName());
     String ticket = tickets != null ? tickets.peekFirst() : null;
         
     if (ticket == null) {
@@ -74,10 +79,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     
     try {
       String query = QueryUtil.removeProtocolParameters(
-          authenticationService.getConfiguration().getProtocol(),
-          exchange.getQueryString());
+          authenticator.getProtocol(), exchange.getQueryString());
 
-      IdentityAssertion assertion = authenticationService.validateTicket(
+      IdentityAssertion assertion = authenticator.validateTicket(
           exchange.getRequestPath(), query, ticket);
       IdentityAssertionCredential credential = 
           new IdentityAssertionCredential(assertion);
@@ -97,9 +101,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         }
         
         exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
-        if (authenticationService.getConfiguration().isPostAuthRedirect()) {
+        if (authenticator.isPostAuthRedirect()) {
           exchange.putAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY, 
-              authenticationService.getConfiguration().getProtocol());
+              authenticator.getProtocol());
         }
                 
         securityContext.authenticationComplete(account, MECHANISM_NAME, true);
@@ -138,10 +142,12 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   @Override
   public ChallengeResult sendChallenge(HttpServerExchange exchange,
       SecurityContext context) {
+    
+    Authenticator authenticator = exchange.getAttachment(
+        CasAttachments.AUTHENTICATOR_KEY);
     String query = QueryUtil.removeProtocolParameters(
-        authenticationService.getConfiguration().getProtocol(),
-        exchange.getQueryString());
-    String url = authenticationService.loginUrl(exchange.getRequestPath(), 
+        authenticator.getProtocol(), exchange.getQueryString());
+    String url = authenticator.loginUrl(exchange.getRequestPath(), 
         query);
     
     if (exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY) != null) {

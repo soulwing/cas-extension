@@ -16,30 +16,23 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.service;
+package org.soulwing.cas.extension;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Cas10TicketValidator;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
-import org.jasig.cas.client.validation.ProxyList;
-import org.jasig.cas.client.validation.Saml11TicketValidator;
+import org.soulwing.cas.service.AuthenticationProtocol;
+import org.soulwing.cas.service.Configuration;
 
 /**
  * A {@link Configuration} for a CAS client.
  *
  * @author Carl Harris
  */
-public class ClientConfiguration implements MutableConfiguration {
+public class Profile implements Configuration {
 
-  private final HttpURLConnectionFactory connectionFactory;
-    
   private AuthenticationProtocol protocol;
 
   private String serverUrl;
@@ -61,16 +54,6 @@ public class ClientConfiguration implements MutableConfiguration {
   private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
   
   /**
-   * Constructs a new instance.
-   * @param sslContextLocator
-   */
-  public ClientConfiguration(SSLContextLocator sslContextLocator,
-      HostnameVerifierLocator hostnameVerifierLocator) {
-    this.connectionFactory = new HttpsURLConnectionFactory(sslContextLocator,
-        hostnameVerifierLocator);
-  }
-
-  /**
    * Gets the {@code protocol} property.
    * @return property value
    */
@@ -83,7 +66,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code protocol} property.
    * @param protocol the value to set
    */
-  @Override
   public void setProtocol(AuthenticationProtocol protocol) {
     this.protocol = protocol;
   }
@@ -101,7 +83,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code serverUrl} property.
    * @param serverUrl the value to set
    */
-  @Override
   public void setServerUrl(String serverUrl) {
     this.serverUrl = serverUrl;
   }
@@ -119,7 +100,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code serviceUrl} property.
    * @param serviceUrl the value to set
    */
-  @Override
   public void setServiceUrl(String serviceUrl) {
     this.serviceUrl = serviceUrl;
   }
@@ -137,7 +117,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code proxyCallbackUrl} property.
    * @param proxyCallbackUrl the value to set
    */
-  @Override
   public void setProxyCallbackUrl(String proxyCallbackUrl) {
     this.proxyCallbackUrl = proxyCallbackUrl;
   }
@@ -155,7 +134,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code acceptAnyProxy} property.
    * @param acceptAnyProxy the value to set
    */
-  @Override
   public void setAcceptAnyProxy(boolean acceptAnyProxy) {
     this.acceptAnyProxy = acceptAnyProxy;
   }
@@ -173,7 +151,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code allowEmptyProxyChain} property.
    * @param allowEmptyProxyChain the value to set
    */
-  @Override
   public void setAllowEmptyProxyChain(boolean allowEmptyProxyChain) {
     this.allowEmptyProxyChain = allowEmptyProxyChain;
   }
@@ -194,7 +171,6 @@ public class ClientConfiguration implements MutableConfiguration {
   /**
    * {@inheritDoc}
    */
-  @Override
   public void putAllowedProxyChain(String name, List<String> chain) {
     allowedProxyChains.put(name, chain);
   }
@@ -202,7 +178,6 @@ public class ClientConfiguration implements MutableConfiguration {
   /**
    * {@inheritDoc}
    */
-  @Override
   public void removeAllowedProxyChain(String name) {
     allowedProxyChains.remove(name);
   }
@@ -220,7 +195,6 @@ public class ClientConfiguration implements MutableConfiguration {
    * Sets the {@code renew} property.
    * @param renew the value to set
    */
-  @Override
   public void setRenew(boolean renew) {
     this.renew = renew;
   }
@@ -237,7 +211,6 @@ public class ClientConfiguration implements MutableConfiguration {
   /**
    * {@inheritDoc}
    */
-  @Override
   public void setClockSkewTolerance(long clockSkewTolerance) {
     this.clockSkewTolerance = clockSkewTolerance;
   }
@@ -253,68 +226,8 @@ public class ClientConfiguration implements MutableConfiguration {
   /**
    * {@inheritDoc}
    */
-  @Override
   public void setPostAuthRedirect(boolean postAuthRedirect) {
     this.postAuthRedirect = postAuthRedirect;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public AuthenticationTicketValidator getValidator() {
-    AbstractUrlBasedTicketValidator validator = newValidator();
-    validator.setRenew(isRenew());
-    validator.setURLConnectionFactory(connectionFactory);
-    return new JasigTicketValidator(validator);
-  }
-
-  private AbstractUrlBasedTicketValidator newValidator() {
-    switch (protocol) {
-      case CAS1_0:
-        return new Cas10TicketValidator(getServerUrl());
-      
-      case CAS2_0:
-        Cas20ServiceTicketValidator casValidator = null;
-        if (isAcceptAnyProxy() || isAllowEmptyProxyChain() 
-            || !getAllowedProxyChains().isEmpty()) {
-          casValidator = new Cas20ProxyTicketValidator(getServerUrl());
-          ((Cas20ProxyTicketValidator) casValidator)
-              .setAllowedProxyChains(new ProxyList(getAllowedProxyChains()));            
-        }
-        else {
-          casValidator = new Cas20ServiceTicketValidator(getServerUrl());
-        }
-        
-        casValidator.setProxyCallbackUrl(getProxyCallbackUrl());
-        return casValidator;
-        
-      case SAML1_1:
-        Saml11TicketValidator samlValidator = new Saml11TicketValidator(getServerUrl());
-        samlValidator.setTolerance(getClockSkewTolerance());
-        return samlValidator;
-        
-      default:
-        throw new IllegalArgumentException("unrecognized protocol");
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public MutableConfiguration clone() {
-    try {
-      ClientConfiguration clone = (ClientConfiguration) super.clone();
-      if (getAllowedProxyChains() != null) {
-        clone.allowedProxyChains = new LinkedHashMap<>();
-        clone.allowedProxyChains.putAll(this.allowedProxyChains);
-      }
-      return clone;
-    }
-    catch (CloneNotSupportedException ex) {
-      throw new RuntimeException(ex);
-    }
   }
 
   /**
@@ -331,6 +244,5 @@ public class ClientConfiguration implements MutableConfiguration {
         acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
         renew, clockSkewTolerance, postAuthRedirect);
   }
- 
-  
+
 }

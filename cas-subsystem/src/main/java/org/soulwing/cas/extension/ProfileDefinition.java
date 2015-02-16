@@ -18,16 +18,26 @@
  */
 package org.soulwing.cas.extension;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.as.controller.AbstractAddStepHandler;
+import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.AttributeDefinition;
-import org.jboss.as.controller.ModelOnlyWriteAttributeHandler;
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.PathAddress;
+import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
+import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.operations.validation.EnumValidator;
 import org.jboss.as.controller.registry.AttributeAccess;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
+import org.jboss.msc.service.ServiceController;
 import org.soulwing.cas.service.AuthenticationProtocol;
 
 /**
@@ -45,7 +55,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowNull(true)
               .setDefaultValue(new ModelNode().set(AuthenticationProtocol.CAS2_0.toString()))
               .setValidator(new EnumValidator<>(AuthenticationProtocol.class, true, false))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -54,7 +64,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
           ModelType.STRING)
               .setAllowExpression(true)
               .setAllowNull(false)
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -63,7 +73,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
           ModelType.STRING)
               .setAllowExpression(true)
               .setAllowNull(false)
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -72,7 +82,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
           ModelType.STRING)
               .setAllowExpression(true)
               .setAllowNull(true)
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -82,7 +92,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowExpression(false)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(false))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -92,7 +102,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowExpression(false)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(false))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -102,7 +112,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowExpression(false)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(false))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -112,7 +122,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowExpression(true)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(1000L))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -122,7 +132,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
               .setAllowExpression(true)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(true))
-              .setFlags(AttributeAccess.Flag.RESTART_NONE,
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
@@ -156,8 +166,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
 
   private ProfileDefinition() {
     super(Paths.PROFILE,
-        ResourceUtil.getResolver(
-            Names.PROFILE),
+        ResourceUtil.getResolver(Names.PROFILE),
         ProfileAdd.INSTANCE,
         ProfileRemove.INSTANCE);
   }
@@ -168,27 +177,14 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   @Override
   public void registerAttributes(
       ManagementResourceRegistration resourceRegistration) {
-    super.registerAttributes(resourceRegistration);
-    resourceRegistration.registerReadWriteAttribute(PROTOCOL, null,
-        ProtocolHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(SERVICE_URL, null,
-        ServiceUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(SERVER_URL, null,
-        ServerUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(PROXY_CALLBACK_URL, null,
-        ProxyCallbackUrlHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(ACCEPT_ANY_PROXY, null,
-        AcceptAnyProxyHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(ALLOW_EMPTY_PROXY_CHAIN, null,
-        AllowEmptyProxyChainHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(RENEW, null,
-        RenewHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(CLOCK_SKEW_TOLERANCE, null,
-        ClockSkewToleranceHandler.INSTANCE);
-    resourceRegistration.registerReadWriteAttribute(POST_AUTH_REDIRECT, null,
-        PostAuthRedirectHandler.INSTANCE);
+    for (AttributeDefinition attribute : attributes()) {
+      resourceRegistration.registerReadWriteAttribute(attribute, null, 
+          ProfileWriteAttributeHandler.INSTANCE);
+    }
+    resourceRegistration.unregisterAttribute(SECURITY_REALM.getName());
     resourceRegistration.registerReadWriteAttribute(SECURITY_REALM, null,
-        new ModelOnlyWriteAttributeHandler());
+        SecurityRealmWriteAttributeHandler.INSTANCE);
+    super.registerAttributes(resourceRegistration);
   }
 
   /**
@@ -200,5 +196,94 @@ public class ProfileDefinition extends SimpleResourceDefinition {
     super.registerChildren(resourceRegistration);
     resourceRegistration.registerSubModel(ProxyChainDefinition.INSTANCE);
   }
- 
+
+  private static List<ServiceController<?>> installServices(
+      OperationContext context, ModelNode operation, ModelNode model) 
+      throws OperationFailedException {
+    
+    List<ServiceController<?>> newControllers = new ArrayList<>();
+    PathAddress profileAddress = PathAddress.pathAddress(
+        operation.get(ModelDescriptionConstants.OP_ADDR));
+
+    ServiceController<?> profileController = 
+        ProfileService.ServiceUtil.installService(context, model, 
+            profileAddress); 
+    
+    newControllers.add(profileController);
+    
+    ModelNode securityRealm = ProfileDefinition.SECURITY_REALM
+        .resolveModelAttribute(context, model);
+    
+    ServiceController<?> sslContextController = 
+        WrapperSSLContextService.ServiceUtil.installService(
+            context, profileAddress, 
+            securityRealm.isDefined() ? securityRealm.asString() : null);
+    
+    newControllers.add(sslContextController);
+
+    return newControllers;
+  }
+  
+  private static void removeServices(OperationContext context, 
+      ModelNode operation, ModelNode model)  throws OperationFailedException {
+    PathAddress profileAddress = PathAddress.pathAddress(
+        operation.get(ModelDescriptionConstants.OP_ADDR));
+
+    ProfileService.ServiceUtil.removeService(context, 
+        profileAddress);
+    
+    WrapperSSLContextService.ServiceUtil.removeService(context, profileAddress);
+
+  }
+  
+  static class ProfileAdd extends AbstractAddStepHandler {
+    
+    static final ProfileAdd INSTANCE = 
+        new ProfileAdd();
+    
+    private ProfileAdd() {
+      super(ProfileDefinition.attributes());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void performRuntime(OperationContext context,
+        ModelNode operation, ModelNode model,
+        ServiceVerificationHandler verificationHandler,
+        List<ServiceController<?>> newControllers)
+        throws OperationFailedException {
+
+      newControllers.addAll(installServices(context, operation, model));
+    }
+
+  }
+
+  static class ProfileRemove extends AbstractRemoveStepHandler {
+
+    static final ProfileRemove INSTANCE = new ProfileRemove();
+      
+    private ProfileRemove() {    
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void performRuntime(OperationContext context,
+        ModelNode operation, ModelNode model) throws OperationFailedException {
+      removeServices(context, operation, model);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void recoverServices(OperationContext context,
+        ModelNode operation, ModelNode model) throws OperationFailedException {
+      installServices(context, operation, model);      
+    }
+  }
+  
 }

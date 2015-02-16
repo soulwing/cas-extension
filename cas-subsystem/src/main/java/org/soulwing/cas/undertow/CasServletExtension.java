@@ -18,7 +18,6 @@
  */
 package org.soulwing.cas.undertow;
 
-import static org.soulwing.cas.undertow.UndertowLogger.LOGGER;
 import io.undertow.server.HandlerWrapper;
 import io.undertow.server.HttpHandler;
 import io.undertow.servlet.ServletExtension;
@@ -26,19 +25,19 @@ import io.undertow.servlet.api.DeploymentInfo;
 
 import javax.servlet.ServletContext;
 
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.service.AbstractService;
+import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.service.AuthenticationService;
 
-public class CasServletExtension implements ServletExtension {
+public class CasServletExtension extends AbstractService<ServletExtension> 
+    implements ServletExtension {
 
-  private final AuthenticationService authenticationService;
+  private final InjectedValue<AuthenticationService> authenticationService =
+      new InjectedValue<>();
   
-  /**
-   * Constructs a new instance.
-   * @param authenticationService
-   * @param authorizationService
-   */
-  public CasServletExtension(AuthenticationService authenticationService) { 
-    this.authenticationService = authenticationService;
+  public Injector<AuthenticationService> getAuthenticationServiceInjector() {
+    return authenticationService;
   }
 
   @Override
@@ -46,7 +45,7 @@ public class CasServletExtension implements ServletExtension {
       ServletContext servletContext) {
     
     CasAuthenticationMechanism authnMechanism = 
-        new CasAuthenticationMechanism(authenticationService);
+        new CasAuthenticationMechanism(authenticationService.getValue());
     
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
@@ -59,9 +58,6 @@ public class CasServletExtension implements ServletExtension {
       } 
     });
     
-    LOGGER.info("enabled CAS authentication profile '" 
-        + authenticationService.getName() 
-        + "' for deployment " + deploymentInfo.getDeploymentName());
   }
 
 }

@@ -1,10 +1,11 @@
 package org.soulwing.cas.deployment;
 
 import static org.soulwing.cas.deployment.DeploymentLogger.LOGGER;
-import io.undertow.servlet.ServletExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.net.ssl.SSLContext;
 
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.deployment.Attachments;
@@ -15,9 +16,14 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
-import org.soulwing.cas.extension.AuthenticationServiceControl;
+import org.soulwing.cas.extension.Names;
+import org.soulwing.cas.extension.Profile;
+import org.soulwing.cas.extension.ProfileService;
+import org.soulwing.cas.extension.WrapperSSLContextService;
 import org.soulwing.cas.service.AuthenticationService;
+import org.soulwing.cas.undertow.CasAuthenticationService;
 import org.soulwing.cas.undertow.CasServletExtension;
 import org.wildfly.extension.undertow.deployment.UndertowAttachments;
 
@@ -54,9 +60,15 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     
     AppConfiguration config = parseDescriptor(descriptor);
     
-    ServletExtension extension = new CasServletExtension(
-        findAuthenticationService(phaseContext, config));
-        
+    ServiceName authServiceName = ServiceName.of(
+        phaseContext.getPhaseServiceName().getParent(), 
+        Names.SUBSYSTEM_NAME, Names.AUTHENTICATION_SERVICE);
+    
+    installAuthenticationService(phaseContext, config, authServiceName);
+    
+    CasServletExtension extension = new CasServletExtension();
+    installServletExtension(phaseContext, extension, authServiceName);
+            
     deploymentUnit.addToAttachmentList(        
         UndertowAttachments.UNDERTOW_SERVLET_EXTENSIONS, extension);
     
@@ -66,19 +78,49 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
             + "; profile=" + config.getProfileId());
   }
 
-  private AuthenticationService findAuthenticationService(
-      DeploymentPhaseContext phaseContext, AppConfiguration config)
-      throws DeploymentUnitProcessingException {
-    ServiceController<?> controller = phaseContext.getServiceRegistry().getService(
-        AuthenticationServiceControl.name(config.getProfileId()));
-    if (controller == null) {
-      throw new DeploymentUnitProcessingException(
-          "cannot find a configuration profile named '"
-          + config.getProfileId() + "'");
-    }
-    return (AuthenticationService) controller.getService().getValue();
-  }
+  private ServiceController<?> installAuthenticationService(
+      DeploymentPhaseContext phaseContext, AppConfiguration config,
+      ServiceName authServiceName) 
+          throws DeploymentUnitProcessingException {
+    
+    ServiceName profileServiceName =
+        ProfileService.ServiceUtil.profileServiceName(config.getProfileId());
+    
+    ServiceName sslContextServiceName =
+        WrapperSSLContextService.ServiceUtil.createServiceName(profileServiceName);
+    
+    CasAuthenticationService service = new CasAuthenticationService();
 
+    ServiceController<?> controller = phaseContext.getServiceTarget()
+        .addService(authServiceName, service)
+        .addDependency(phaseContext.getPhaseServiceName())
+        .addDependency(profileServiceName, Profile.class, 
+            service.getProfileInjector())
+        .addDependency(sslContextServiceName, SSLContext.class, 
+            service.getSslContextInjector())
+        .install();
+    
+    return controller;
+  }
+  
+  private ServiceController<?> installServletExtension(
+      DeploymentPhaseContext phaseContext, CasServletExtension extension,
+      ServiceName authServiceName) {
+
+    ServiceName extensionServiceName = ServiceName.of(
+        phaseContext.getPhaseServiceName().getParent(), 
+        Names.SUBSYSTEM_NAME, Names.SERVLET_EXTENSION);
+    
+    ServiceController<?> controller = phaseContext.getServiceTarget()
+        .addService(extensionServiceName, extension)
+        .addDependency(phaseContext.getPhaseServiceName())
+        .addDependency(authServiceName, AuthenticationService.class, 
+            extension.getAuthenticationServiceInjector())
+        .install();
+    
+    return controller;
+  }
+  
   private AppConfiguration parseDescriptor(VirtualFile descriptor) 
       throws DeploymentUnitProcessingException {
     try {

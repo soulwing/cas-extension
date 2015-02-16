@@ -18,6 +18,8 @@
  */
 package org.soulwing.cas.service;
 
+import static org.soulwing.cas.service.ServiceLogger.LOGGER;
+
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
@@ -40,14 +42,21 @@ class HttpsURLConnectionFactory
   
   private static final long serialVersionUID = 1192037344009446034L;
 
-  private final SSLContextLocator sslContextLocator;
+  private final SSLContext sslContext;
   
-  private final HostnameVerifierLocator hostnameVerifierLocator; 
+  private final HostnameVerifier hostnameVerifier; 
   
-  public HttpsURLConnectionFactory(SSLContextLocator sslContextLocator,
-      HostnameVerifierLocator hostnameVerifierLocator) {
-    this.sslContextLocator = sslContextLocator;
-    this.hostnameVerifierLocator = hostnameVerifierLocator;
+  /**
+   * Constructs a new instance.
+   * @param sslContext
+   * @param hostnameVerifier
+   */
+  public HttpsURLConnectionFactory(SSLContext sslContext,
+      HostnameVerifier hostnameVerifier) {
+    this.sslContext = sslContext;
+    this.hostnameVerifier = hostnameVerifier;
+    LOGGER.debug("created connection factory; sslContext="
+        + sslContext + " hostnameVerifier=" + hostnameVerifier); 
   }
 
   /**
@@ -58,13 +67,10 @@ class HttpsURLConnectionFactory
     if (url instanceof HttpsURLConnection) {
       HttpsURLConnection connection = (HttpsURLConnection) url;
       
-      HostnameVerifier hostnameVerifier = 
-          hostnameVerifierLocator.getHostnameVerifier();
       if (hostnameVerifier != null) {
         connection.setHostnameVerifier(hostnameVerifier);
       }
       
-      SSLContext sslContext = sslContextLocator.getSSLContext();
       if (sslContext != null) {
         SSLSocketFactory socketFactory = sslContext.getSocketFactory();
         connection.setSSLSocketFactory(socketFactory);

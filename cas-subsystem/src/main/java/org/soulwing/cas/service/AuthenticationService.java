@@ -18,52 +18,18 @@
  */
 package org.soulwing.cas.service;
 
-import org.soulwing.cas.api.IdentityAssertion;
-
 
 /**
- * A service that authenticates CAS service tickets.
+ * A service that provides CAS authentication.
  *
  * @author Carl Harris
  */
 public interface AuthenticationService {
 
   /**
-   * Gets the name assigned to this authentication service.
-   * @return name
+   * Creates a new authenticator instance.
+   * @return authenticator
    */
-  String getName();
-  
-  /**
-   * Validates a service ticket.
-   * @param ticket the subject ticket
-   * @return an assertion describing the validation result
-   * @throws AuthenticationException if the ticket cannot be validated
-   */
-  IdentityAssertion validateTicket(String requestPath, String queryString, 
-      String ticket) throws AuthenticationException;
-
-  /**
-   * Produces the URL for the CAS server's login function.
-   * @param requestPath the path of the request that requires authentication 
-   *    for access
-   * @param queryString the query string of the request that requires 
-   *    authentication
-   * @return CAS server login URL
-   */
-  String loginUrl(String requestPath, String queryString);
-  
-  /**
-   * Gets the current configuration of this service.
-   * @return configuration
-   */
-  MutableConfiguration getConfiguration();
-  
-  /**
-   * Replaces the current configuration of this service with the given
-   * configuration.
-   * @param configuration the new configuration for this service
-   */
-  void reconfigure(Configuration configuration);
+  Authenticator newAuthenticator();
   
 }

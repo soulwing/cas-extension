@@ -21,13 +21,14 @@ package org.soulwing.cas.undertow;
 import io.undertow.util.AttachmentKey;
 
 import org.soulwing.cas.service.AuthenticationProtocol;
+import org.soulwing.cas.service.Authenticator;
 
 /**
  * Attachment keys used by CAS.
  *
  * @author Carl Harris
  */
-public interface CasAttachments {
+interface CasAttachments {
 
   AttachmentKey<IdentityAssertionCredential> CREDENTIAL_KEY =
       AttachmentKey.create(IdentityAssertionCredential.class);
@@ -37,5 +38,8 @@ public interface CasAttachments {
   
   AttachmentKey<Boolean> AUTH_FAILED_KEY =
       AttachmentKey.create(Boolean.class);
+  
+  AttachmentKey<Authenticator> AUTHENTICATOR_KEY =
+      AttachmentKey.create(Authenticator.class);
 
 }
