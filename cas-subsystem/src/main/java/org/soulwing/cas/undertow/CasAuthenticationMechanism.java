@@ -125,6 +125,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         LOGGER.debug("authentication failed: " + ex);
       }
     }
+    catch (RuntimeException ex) {
+      LOGGER.error("CAS authentication exception: " + ex, ex);
+    }
     
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("authentication not successful for ticket '"

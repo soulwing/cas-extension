@@ -276,13 +276,14 @@ public class ProfileDefinition extends SimpleResourceDefinition {
     protected ServiceName getParentServiceName(PathAddress parentAddress) {
       return ProfileService.ServiceUtil.profileServiceName(parentAddress);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel)
+        PathAddress parentAddress, ModelNode parentModel,
+        ServiceVerificationHandler verificationHandler)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);
