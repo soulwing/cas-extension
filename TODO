@@ -15,4 +15,6 @@
   the truststore, keystore for client authentication, etc and provide 
   configuration support for hostname verifier.
 * Query string may be butchered by JasigAuthenticationService.constructServiceUrl 
+* Remove all installed services when subsystem removed
+
  
