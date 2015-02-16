@@ -5,8 +5,11 @@
   <profile name="cas-production"
     service-url="https://summit.research.vt.edu"
     server-url="https://auth.vt.edu/cas">
+    <hostname-verifier type="pattern-match">
+      <host name=".*\.vt\.edu$"/>
+    </hostname-verifier>
     <allowed-proxy-chain name="summit-proxies">
-      <proxy url="https://summit.research.vt.edu/"/>
+      <proxy url="https://summit.research.vt.edu"/>
     </allowed-proxy-chain>
   </profile>
   

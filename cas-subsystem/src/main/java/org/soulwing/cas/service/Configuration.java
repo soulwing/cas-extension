@@ -20,6 +20,9 @@ package org.soulwing.cas.service;
 
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
 /**
  * An (immutable) configuration for an {@link AuthenticationService}.
  *
@@ -27,6 +30,10 @@ import java.util.List;
  */
 public interface Configuration {
 
+  SSLContext getSslContext();
+  
+  HostnameVerifier getHostnameVerifier();
+  
   AuthenticationProtocol getProtocol();  
 
   String getServerUrl();

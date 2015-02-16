@@ -22,21 +22,27 @@ import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import javax.net.ssl.SSLContext;
 
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.registry.Resource;
+import org.jboss.as.domain.management.SecurityRealm;
+import org.jboss.as.domain.management.security.SSLContextService;
 import org.jboss.dmr.ModelNode;
-import org.jboss.dmr.Property;
+import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.AbstractService;
+import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.soulwing.cas.service.AuthenticationProtocol;
 import org.soulwing.cas.service.Configuration;
+import org.soulwing.cas.ssl.HostnameVerifierFactory;
+import org.soulwing.cas.ssl.HostnameVerifierType;
 
 /**
  * A service that holds a {@link Configuration}.
@@ -55,6 +61,10 @@ public class ProfileService extends AbstractService<Profile> {
     this.profile = profile;
   }
 
+  public Injector<SSLContext> getSslContextInjector() {
+    return profile.getSslContextInjector();
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -76,7 +86,32 @@ public class ProfileService extends AbstractService<Profile> {
     public static ServiceController<?> installService(
         OperationContext context, ModelNode model, PathAddress profileAddress) 
         throws OperationFailedException {
-      return installService(context, model, profileName(profileAddress));
+
+      Resource resource = context.readResourceFromRoot(profileAddress, true);
+      
+      Profile profile = createProfile(context, model);
+      addAllowedProxyChains(resource, profile);
+      addHostnameVerifier(resource, profile);
+      
+      ProfileService profileService = new ProfileService(profile);
+      
+      ServiceBuilder<Profile> builder = context.getServiceTarget()
+          .addService(profileServiceName(profileAddress), profileService);
+
+      if (profile.getSecurityRealm() != null) {
+        SSLContextService.ServiceUtil.addDependency(builder, 
+            profileService.getSslContextInjector(), 
+            SecurityRealm.ServiceUtil.createServiceName(
+                profile.getSecurityRealm()), false);
+      }
+      
+      ServiceController<?> controller = builder.install();
+
+      LOGGER.debug("installed " + controller.getName() + " with profile "
+          + profile);
+
+      return controller;
+
     }
 
     private static String profileName(PathAddress profileAddress) {
@@ -88,21 +123,6 @@ public class ProfileService extends AbstractService<Profile> {
       return pathElement.getValue();
     }
     
-    public static ServiceController<?> installService(
-        OperationContext context, ModelNode model, String profileName) 
-        throws OperationFailedException {
-      
-      ProfileService profileService = new ProfileService(
-          createProfile(context, model));
-      
-      ServiceController<?> controller = context.getServiceTarget()
-          .addService(profileServiceName(profileName), profileService)
-          .install();
-
-      LOGGER.debug("installed " + controller.getName());
-      return controller;
-    }
-
     public static void removeService(OperationContext context, 
         PathAddress profileAddress) throws OperationFailedException {
       removeService(context, profileName(profileAddress));
@@ -117,7 +137,7 @@ public class ProfileService extends AbstractService<Profile> {
     
     private static Profile createProfile(OperationContext context,
         ModelNode model) throws OperationFailedException {
-     
+
       Profile config = new Profile();
       config.setProtocol(AuthenticationProtocol.toObject(
           ProfileDefinition.PROTOCOL.resolveModelAttribute(context, model)
@@ -139,19 +159,62 @@ public class ProfileService extends AbstractService<Profile> {
       config.setPostAuthRedirect(ProfileDefinition.POST_AUTH_REDIRECT
           .resolveModelAttribute(context, model).asBoolean());
       
-      if (model.has(Names.PROXY_CHAIN)) {
-        ModelNode chains = model.get(Names.PROXY_CHAIN);
-        for (String name : chains.keys()) {
-          List<String> proxies = new ArrayList<>();
-          for (ModelNode proxy : chains.get(name).get(Names.PROXIES).asList()) {
+      ModelNode securityRealm = ProfileDefinition.SECURITY_REALM
+          .resolveModelAttribute(context, model);
+      if (securityRealm.isDefined()) {
+        config.setSecurityRealm(securityRealm.asString());
+      }
+            
+      return config;
+    }
+    
+    private static void addAllowedProxyChains(Resource profileResource,
+        Profile config) {
+      for (String name : profileResource.getChildrenNames(Names.PROXY_CHAIN)) {
+        ModelNode chain = profileResource.getChild(
+            PathElement.pathElement(Names.PROXY_CHAIN, name)).getModel(); 
+        List<String> proxies = new ArrayList<>();
+        if (chain.has(Names.PROXIES)) {
+          for (ModelNode proxy : chain.get(Names.PROXIES).asList()) {
             proxies.add(proxy.asString());
           }
-          config.putAllowedProxyChain(name, proxies);
+        }
+        config.putAllowedProxyChain(name, proxies);        
+      }
+    }
+    
+    private static void addHostnameVerifier(Resource profileResource,
+        Profile config) throws OperationFailedException {
+      Set<String> names = profileResource.getChildrenNames(
+          Names.HOSTNAME_VERIFIER);
+      if (names.size() > 1) {
+        throw new OperationFailedException("too many server host verifiers");
+      }
+      
+      if (names.isEmpty()) return;
+      
+      String name = names.iterator().next();
+      
+      ModelNode model = profileResource.getChild(
+          PathElement.pathElement(Names.HOSTNAME_VERIFIER, name)).getModel();
+      
+      config.setHostnameVerifier(
+          HostnameVerifierFactory.newInstance(
+              HostnameVerifierType.toObject(name), createHosts(model)));
+     
+    }
+
+    private static String[] createHosts(ModelNode model) {
+      List<String> hosts = new ArrayList<>();
+      if (model.has(Names.HOSTS)) {
+        ModelNode hostsModel = model.get(Names.HOSTS);
+        if (hostsModel.isDefined()) {
+          for (ModelNode host : hostsModel.asList()) {
+            hosts.add(host.asString());
+          }
         }
       }
-
-      LOGGER.debug(config);
-      return config;
+      return hosts.toArray(new String[hosts.size()]);
     }
     
   }

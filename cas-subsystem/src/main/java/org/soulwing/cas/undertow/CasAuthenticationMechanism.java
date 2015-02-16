@@ -27,6 +27,8 @@ import io.undertow.util.HttpString;
 
 import java.util.Deque;
 
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.AuthenticationService;
@@ -41,17 +43,13 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
 
   public static final String MECHANISM_NAME = "CAS";
   
-  private final AuthenticationService authenticationService;
+  private final InjectedValue<AuthenticationService> 
+      authenticationService = new InjectedValue<>();
 
-  /**
-   * Constructs a new instance.
-   * @param authenticationService
-   */
-  public CasAuthenticationMechanism(
-      AuthenticationService authenticationService) {
-    this.authenticationService = authenticationService;
+  public Injector<AuthenticationService> getAuthenticationServiceInjector() {
+    return authenticationService;
   }
-
+  
   /**
    * {@inheritDoc}
    */
@@ -62,8 +60,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
     
-    LOGGER.debug("authenticationService " + authenticationService);
-    Authenticator authenticator = authenticationService.newAuthenticator();
+    Authenticator authenticator = authenticationService.getValue()
+        .newAuthenticator();
+    
     exchange.putAttachment(CasAttachments.AUTHENTICATOR_KEY, authenticator);
     
     Deque<String> tickets = exchange.getQueryParameters().get(
@@ -145,6 +144,7 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     
     Authenticator authenticator = exchange.getAttachment(
         CasAttachments.AUTHENTICATOR_KEY);
+    
     String query = QueryUtil.removeProtocolParameters(
         authenticator.getProtocol(), exchange.getQueryString());
     String url = authenticator.loginUrl(exchange.getRequestPath(), 

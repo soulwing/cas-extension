@@ -5,8 +5,6 @@ import static org.soulwing.cas.deployment.DeploymentLogger.LOGGER;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.net.ssl.SSLContext;
-
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -21,7 +19,6 @@ import org.jboss.vfs.VirtualFile;
 import org.soulwing.cas.extension.Names;
 import org.soulwing.cas.extension.Profile;
 import org.soulwing.cas.extension.ProfileService;
-import org.soulwing.cas.extension.WrapperSSLContextService;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.undertow.CasAuthenticationService;
 import org.soulwing.cas.undertow.CasServletExtension;
@@ -85,10 +82,7 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
     
     ServiceName profileServiceName =
         ProfileService.ServiceUtil.profileServiceName(config.getProfileId());
-    
-    ServiceName sslContextServiceName =
-        WrapperSSLContextService.ServiceUtil.createServiceName(profileServiceName);
-    
+        
     CasAuthenticationService service = new CasAuthenticationService();
 
     ServiceController<?> controller = phaseContext.getServiceTarget()
@@ -96,8 +90,6 @@ public class SubsystemDeploymentProcessor implements DeploymentUnitProcessor {
         .addDependency(phaseContext.getPhaseServiceName())
         .addDependency(profileServiceName, Profile.class, 
             service.getProfileInjector())
-        .addDependency(sslContextServiceName, SSLContext.class, 
-            service.getSslContextInjector())
         .install();
     
     return controller;

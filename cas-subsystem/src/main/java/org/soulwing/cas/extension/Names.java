@@ -51,9 +51,12 @@ public interface Names {
   String CLOCK_SKEW_TOLERANCE = "clock-skew-tolerance";
   String POST_AUTH_REDIRECT = "post-auth-redirect";
   String SECURITY_REALM = "security-realm";
+  String HOSTNAME_VERIFIER = "hostname-verifier";
+  String TYPE = "type";    
+  String HOSTS = "hosts";
+  String HOST = "host";
 
   String AUTHENTICATION_SERVICE = "authentication-service";  
   String SERVLET_EXTENSION = "servlet-extension";
-  String SSL_CONTEXT = "ssl-context";
-  
+
 }

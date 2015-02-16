@@ -27,29 +27,25 @@ import javax.servlet.ServletContext;
 
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.AbstractService;
-import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.service.AuthenticationService;
 
 public class CasServletExtension extends AbstractService<ServletExtension> 
     implements ServletExtension {
 
-  private final InjectedValue<AuthenticationService> authenticationService =
-      new InjectedValue<>();
+  private final CasAuthenticationMechanism mechanism =
+      new CasAuthenticationMechanism();
   
   public Injector<AuthenticationService> getAuthenticationServiceInjector() {
-    return authenticationService;
+    return mechanism.getAuthenticationServiceInjector();
   }
 
   @Override
   public void handleDeployment(DeploymentInfo deploymentInfo, 
       ServletContext servletContext) {
     
-    CasAuthenticationMechanism authnMechanism = 
-        new CasAuthenticationMechanism(authenticationService.getValue());
-    
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
-        CasAuthenticationMechanism.MECHANISM_NAME, authnMechanism);
+        CasAuthenticationMechanism.MECHANISM_NAME, mechanism);
     
     deploymentInfo.addInnerHandlerChainWrapper(new HandlerWrapper() {
       @Override

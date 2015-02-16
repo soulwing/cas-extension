@@ -1,5 +1,5 @@
 /*
- * File created on Feb 15, 2015 
+ * File created on Feb 16, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -16,23 +16,32 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.service;
+package org.soulwing.cas.ssl;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 /**
- * A factory that produces {@link Authenticator} objects.
+ * A {@link HostnameVerifier} that allows any host on a given white list.
  *
  * @author Carl Harris
  */
-public class AuthenticatorFactory {
+class AllowAnyHostnameVerifier implements HostnameVerifier {
 
   /**
-   * Constructs a new authenticator.
-   * @param config protocol configuration 
-   * @return authenticator
+   * {@inheritDoc}
    */
-  public static Authenticator newInstance(Configuration config) {
-    return new JasigAuthenticator(config);
+  @Override
+  public boolean verify(String hostname, SSLSession session) {
+    return true;
   }
-  
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return HostnameVerifierType.ALLOW_ANY.toString();
+  }
+
 }

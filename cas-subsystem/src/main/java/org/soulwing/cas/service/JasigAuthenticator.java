@@ -22,9 +22,6 @@ import static org.soulwing.cas.service.ServiceLogger.LOGGER;
 
 import java.net.URI;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
@@ -35,6 +32,7 @@ import org.jasig.cas.client.validation.Saml11TicketValidator;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.soulwing.cas.api.IdentityAssertion;
+import org.soulwing.cas.ssl.HttpsURLConnectionFactory;
 
 /**
  * An {@link Authenticator} that delegates to the JASIG CAS client library.
@@ -49,22 +47,17 @@ public class JasigAuthenticator implements Authenticator {
   /**
    * Constructs a new instance.
    * @param config
-   * @param sslContext
-   * @param hostnameVerifier
    */
-  public JasigAuthenticator(Configuration config,
-      SSLContext sslContext, HostnameVerifier hostnameVerifier) {
+  public JasigAuthenticator(Configuration config) {
     this.config = config;
-    this.validator = createTicketValidator(config, sslContext, 
-        hostnameVerifier);
+    this.validator = createTicketValidator(config);
   }
   
-  private static TicketValidator createTicketValidator(Configuration config,
-      SSLContext sslContext, HostnameVerifier hostnameVerifier) {
+  private static TicketValidator createTicketValidator(Configuration config) {
     AbstractUrlBasedTicketValidator validator = newTicketValidator(config);
     validator.setRenew(config.isRenew());
     validator.setURLConnectionFactory(new HttpsURLConnectionFactory(
-        sslContext, hostnameVerifier));
+        config.getSslContext(), config.getHostnameVerifier()));
     if (validator instanceof Cas20ProxyTicketValidator) {
       ((Cas20ProxyTicketValidator) validator).setAcceptAnyProxy(
           config.isAcceptAnyProxy());

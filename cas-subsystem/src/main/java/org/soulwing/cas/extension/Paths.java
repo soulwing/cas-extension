@@ -33,6 +33,10 @@ public interface Paths {
           Names.SUBSYSTEM_NAME);
   
   PathElement PROFILE = PathElement.pathElement(Names.PROFILE);
+  
   PathElement PROXY_CHAIN = PathElement.pathElement(Names.PROXY_CHAIN);
+  
+  PathElement SERVER_HOST_VERIFIER = PathElement.pathElement(
+      Names.HOSTNAME_VERIFIER);
 
 }

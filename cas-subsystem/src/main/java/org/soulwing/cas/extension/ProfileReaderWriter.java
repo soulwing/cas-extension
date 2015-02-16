@@ -31,7 +31,8 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
    * Constructs a new instance.
    */
   public ProfileReaderWriter() {
-    super(Names.PROFILE, new ProxyChainReaderWriter());
+    super(Names.PROFILE, new HostnameVerifierReaderWriter(),
+        new ProxyChainReaderWriter());
   }
 
   /**

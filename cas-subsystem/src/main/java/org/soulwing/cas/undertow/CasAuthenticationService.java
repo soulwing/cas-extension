@@ -18,8 +18,6 @@
  */
 package org.soulwing.cas.undertow;
 
-import javax.net.ssl.SSLContext;
-
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.AbstractService;
 import org.jboss.msc.value.InjectedValue;
@@ -39,21 +37,11 @@ public class CasAuthenticationService
 
   private final InjectedValue<Profile> profile =
       new InjectedValue<>();
-  
-  private final InjectedValue<SSLContext> sslContext =
-      new InjectedValue<>();
-  
-//  private final InjectedValue<HostnameVerifierService> hostnameVerifierService =
-//      new InjectedValue<>();
-  
+    
   public Injector<Profile> getProfileInjector() {
     return profile;
   }
-  
-  public Injector<SSLContext> getSslContextInjector() {
-    return sslContext;
-  }
-
+    
   /**
    * {@inheritDoc}
    */
@@ -67,9 +55,7 @@ public class CasAuthenticationService
    */
   @Override
   public Authenticator newAuthenticator() {
-    return AuthenticatorFactory.newInstance(profile.getValue(), 
-        sslContext.getValue(), 
-        null);
+    return AuthenticatorFactory.newInstance(profile.getValue());
   }
 
 }

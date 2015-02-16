@@ -16,9 +16,7 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.service;
-
-import static org.soulwing.cas.service.ServiceLogger.LOGGER;
+package org.soulwing.cas.ssl;
 
 import java.io.Serializable;
 import java.net.HttpURLConnection;
@@ -37,7 +35,7 @@ import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
  *
  * @author Carl Harris
  */
-class HttpsURLConnectionFactory 
+public class HttpsURLConnectionFactory 
     implements HttpURLConnectionFactory, Serializable {
   
   private static final long serialVersionUID = 1192037344009446034L;
@@ -55,8 +53,6 @@ class HttpsURLConnectionFactory
       HostnameVerifier hostnameVerifier) {
     this.sslContext = sslContext;
     this.hostnameVerifier = hostnameVerifier;
-    LOGGER.debug("created connection factory; sslContext="
-        + sslContext + " hostnameVerifier=" + hostnameVerifier); 
   }
 
   /**

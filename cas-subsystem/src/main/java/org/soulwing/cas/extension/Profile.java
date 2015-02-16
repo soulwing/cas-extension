@@ -23,6 +23,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.service.AuthenticationProtocol;
 import org.soulwing.cas.service.Configuration;
 
@@ -33,6 +38,13 @@ import org.soulwing.cas.service.Configuration;
  */
 public class Profile implements Configuration {
 
+  private final InjectedValue<SSLContext> sslContext =
+      new InjectedValue<>();
+  
+  private String securityRealm;
+  
+  private HostnameVerifier hostnameVerifier;
+  
   private AuthenticationProtocol protocol;
 
   private String serverUrl;
@@ -53,6 +65,55 @@ public class Profile implements Configuration {
   
   private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
   
+  /**
+   * Gets the {@code sslContext} property.
+   * @return property value
+   */
+  public Injector<SSLContext> getSslContextInjector() {
+    return sslContext;
+  }
+
+  /**
+   * Gets the SSL context.
+   * @return SSL context
+   */
+  public SSLContext getSslContext() {
+    if (getSecurityRealm() == null) return null;
+    return sslContext.getValue();
+  }
+  
+  /**
+   * Gets the {@code securityRealm} property.
+   * @return property value
+   */
+  public String getSecurityRealm() {
+    return securityRealm;
+  }
+
+  /**
+   * Sets the {@code securityRealm} property.
+   * @param securityRealm the value to set
+   */
+  public void setSecurityRealm(String securityRealm) {
+    this.securityRealm = securityRealm;
+  }
+
+  /**
+   * Gets the {@code hostnameVerifier} property.
+   * @return property value
+   */
+  public HostnameVerifier getHostnameVerifier() {
+    return hostnameVerifier;
+  }
+
+  /**
+   * Sets the {@code hostnameVerifier} property.
+   * @param hostnameVerifier the value to set
+   */
+  public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+    this.hostnameVerifier = hostnameVerifier;
+  }
+
   /**
    * Gets the {@code protocol} property.
    * @return property value
@@ -235,14 +296,17 @@ public class Profile implements Configuration {
    */
   @Override
   public String toString() {
-    return String.format("%s::protocol=%s"
+    return String.format("{ protocol=%s"
         + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
         + " acceptAnyProxy=%s allowEmptyProxyChain=%s allowedProxyChains=%s"
-        + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s",
-        getClass().getSimpleName(), 
+        + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s"
+        + " securityRealm=%s hostnameVerifier=%s }",
         protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
         acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
-        renew, clockSkewTolerance, postAuthRedirect);
+        renew, clockSkewTolerance, postAuthRedirect,
+        securityRealm != null ? securityRealm : "(none)", 
+        hostnameVerifier != null ? 
+            hostnameVerifier.getClass().getSimpleName() : "(none)");
   }
 
 }

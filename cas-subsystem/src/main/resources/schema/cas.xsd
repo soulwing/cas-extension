@@ -13,9 +13,12 @@
   </xs:complexType>
 
   <xs:complexType name="ProfileType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="allowed-proxy-chain" type="ProxyChainType"/>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="hostname-verifier" type="HostnameVerifierType"
+        minOccurs="0" maxOccurs="1"/>
+      <xs:element name="allowed-proxy-chain" type="ProxyChainType"
+        minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
     <xs:attribute name="name" use="optional" default="default"/>
     <xs:attribute name="protocol" type="AuthenticationProtocolType" 
       use="optional" default="CAS-2.0"/>
@@ -47,7 +50,27 @@
   </xs:complexType>
 
   <xs:complexType name="ProxyType">
-    <xs:attribute name="name" use="required" type="xs:anyURI"/>
+    <xs:attribute name="url" use="required" type="xs:anyURI"/>
+  </xs:complexType>
+
+  <xs:complexType name="HostnameVerifierType">
+    <xs:sequence>
+      <xs:element name="host" type="HostType" minOccurs="0" 
+        maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="AllowType"/>
   </xs:complexType>
   
+  <xs:simpleType name="AllowType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="allow-any"/>
+      <xs:enumeration value="pattern-match"/>
+      <xs:enumeration value="white-list"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="HostType">
+    <xs:attribute name="name" use="required" type="xs:string"/>
+  </xs:complexType>
+    
 </xs:schema>

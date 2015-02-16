@@ -18,7 +18,6 @@
  */
 package org.soulwing.cas.extension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.controller.AbstractAddStepHandler;
@@ -27,6 +26,7 @@ import org.jboss.as.controller.AttributeDefinition;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
+import org.jboss.as.controller.RestartParentWriteAttributeHandler;
 import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
@@ -38,6 +38,7 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.ModelType;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
 import org.soulwing.cas.service.AuthenticationProtocol;
 
 /**
@@ -181,9 +182,6 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       resourceRegistration.registerReadWriteAttribute(attribute, null, 
           ProfileWriteAttributeHandler.INSTANCE);
     }
-    resourceRegistration.unregisterAttribute(SECURITY_REALM.getName());
-    resourceRegistration.registerReadWriteAttribute(SECURITY_REALM, null,
-        SecurityRealmWriteAttributeHandler.INSTANCE);
     super.registerAttributes(resourceRegistration);
   }
 
@@ -195,47 +193,9 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       ManagementResourceRegistration resourceRegistration) {
     super.registerChildren(resourceRegistration);
     resourceRegistration.registerSubModel(ProxyChainDefinition.INSTANCE);
+    resourceRegistration.registerSubModel(HostnameVerifierDefinition.INSTANCE);
   }
 
-  private static List<ServiceController<?>> installServices(
-      OperationContext context, ModelNode operation, ModelNode model) 
-      throws OperationFailedException {
-    
-    List<ServiceController<?>> newControllers = new ArrayList<>();
-    PathAddress profileAddress = PathAddress.pathAddress(
-        operation.get(ModelDescriptionConstants.OP_ADDR));
-
-    ServiceController<?> profileController = 
-        ProfileService.ServiceUtil.installService(context, model, 
-            profileAddress); 
-    
-    newControllers.add(profileController);
-    
-    ModelNode securityRealm = ProfileDefinition.SECURITY_REALM
-        .resolveModelAttribute(context, model);
-    
-    ServiceController<?> sslContextController = 
-        WrapperSSLContextService.ServiceUtil.installService(
-            context, profileAddress, 
-            securityRealm.isDefined() ? securityRealm.asString() : null);
-    
-    newControllers.add(sslContextController);
-
-    return newControllers;
-  }
-  
-  private static void removeServices(OperationContext context, 
-      ModelNode operation, ModelNode model)  throws OperationFailedException {
-    PathAddress profileAddress = PathAddress.pathAddress(
-        operation.get(ModelDescriptionConstants.OP_ADDR));
-
-    ProfileService.ServiceUtil.removeService(context, 
-        profileAddress);
-    
-    WrapperSSLContextService.ServiceUtil.removeService(context, profileAddress);
-
-  }
-  
   static class ProfileAdd extends AbstractAddStepHandler {
     
     static final ProfileAdd INSTANCE = 
@@ -255,7 +215,13 @@ public class ProfileDefinition extends SimpleResourceDefinition {
         List<ServiceController<?>> newControllers)
         throws OperationFailedException {
 
-      newControllers.addAll(installServices(context, operation, model));
+      ServiceController<?> controller = 
+          ProfileService.ServiceUtil.installService(context, model, 
+              PathAddress.pathAddress(
+                  operation.get(ModelDescriptionConstants.OP_ADDR)));
+      
+      newControllers.add(
+          (ServiceController<?>) controller);
     }
 
   }
@@ -273,7 +239,9 @@ public class ProfileDefinition extends SimpleResourceDefinition {
     @Override
     protected void performRuntime(OperationContext context,
         ModelNode operation, ModelNode model) throws OperationFailedException {
-      removeServices(context, operation, model);
+      ProfileService.ServiceUtil.removeService(context, 
+          PathAddress.pathAddress(
+              operation.get(ModelDescriptionConstants.OP_ADDR)));
     }
 
     /**
@@ -282,8 +250,44 @@ public class ProfileDefinition extends SimpleResourceDefinition {
     @Override
     protected void recoverServices(OperationContext context,
         ModelNode operation, ModelNode model) throws OperationFailedException {
-      installServices(context, operation, model);      
+      ProfileService.ServiceUtil.installService(context, model, 
+          PathAddress.pathAddress(
+                operation.get(ModelDescriptionConstants.OP_ADDR)));      
     }
   }
   
+  static class ProfileWriteAttributeHandler 
+      extends RestartParentWriteAttributeHandler {
+
+    public static ProfileWriteAttributeHandler INSTANCE =
+        new ProfileWriteAttributeHandler();
+    
+    /**
+     * Constructs a new instance.
+     */
+    private ProfileWriteAttributeHandler() {
+      super(Names.PROFILE, ProfileDefinition.attributes());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected ServiceName getParentServiceName(PathAddress parentAddress) {
+      return ProfileService.ServiceUtil.profileServiceName(parentAddress);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void recreateParentService(OperationContext context,
+        PathAddress parentAddress, ModelNode parentModel)
+        throws OperationFailedException {
+      ProfileService.ServiceUtil.installService(context, parentModel, 
+          parentAddress);
+    }
+
+  }
+
 }
