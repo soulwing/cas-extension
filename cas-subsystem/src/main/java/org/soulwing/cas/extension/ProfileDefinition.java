@@ -60,6 +60,16 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition ENCODING =
+      new SimpleAttributeDefinitionBuilder(Names.ENCODING,
+          ModelType.STRING)
+              .setAllowExpression(false)
+              .setAllowNull(true)
+              .setDefaultValue(new ModelNode().set("UTF-8"))
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
+                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+              .build();
+
   static final SimpleAttributeDefinition SERVICE_URL =
       new SimpleAttributeDefinitionBuilder(Names.SERVICE_URL,
           ModelType.STRING)
@@ -153,6 +163,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   public static AttributeDefinition[] attributes() {
     return new AttributeDefinition[] {
       PROTOCOL,
+      ENCODING,
       SERVER_URL,
       SERVICE_URL,
       PROXY_CALLBACK_URL,

@@ -39,6 +39,7 @@ public interface Names {
   
   String PROFILE = "profile";
   String PROTOCOL = "protocol";
+  String ENCODING = "encoding";
   String SERVICE_URL = "service-url";
   String SERVER_URL = "server-url";
   String PROXY_CALLBACK_URL = "proxy-callback-url";

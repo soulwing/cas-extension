@@ -142,6 +142,8 @@ public class ProfileService extends AbstractService<Profile> {
       config.setProtocol(AuthenticationProtocol.toObject(
           ProfileDefinition.PROTOCOL.resolveModelAttribute(context, model)
               .asString()));
+      config.setEncoding(ProfileDefinition.ENCODING
+          .resolveModelAttribute(context, model).asString());
       config.setServerUrl(ProfileDefinition.SERVER_URL
           .resolveModelAttribute(context, model).asString());
       config.setServiceUrl(ProfileDefinition.SERVICE_URL

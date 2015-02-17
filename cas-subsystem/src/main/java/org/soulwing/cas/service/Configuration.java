@@ -35,6 +35,8 @@ public interface Configuration {
   HostnameVerifier getHostnameVerifier();
   
   AuthenticationProtocol getProtocol();  
+  
+  String getEncoding();
 
   String getServerUrl();
   

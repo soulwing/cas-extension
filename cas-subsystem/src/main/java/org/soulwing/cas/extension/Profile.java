@@ -46,6 +46,8 @@ public class Profile implements Configuration {
   private HostnameVerifier hostnameVerifier;
   
   private AuthenticationProtocol protocol;
+  
+  private String encoding;
 
   private String serverUrl;
 
@@ -129,6 +131,22 @@ public class Profile implements Configuration {
    */
   public void setProtocol(AuthenticationProtocol protocol) {
     this.protocol = protocol;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getEncoding() {
+    return encoding;
+  }
+
+  /**
+   * Sets the {@code encoding} property.
+   * @param encoding the value to set
+   */
+  public void setEncoding(String encoding) {
+    this.encoding = encoding;
   }
 
   /**
@@ -296,12 +314,12 @@ public class Profile implements Configuration {
    */
   @Override
   public String toString() {
-    return String.format("{ protocol=%s"
+    return String.format("{ protocol=%s encoding=%s"
         + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
         + " acceptAnyProxy=%s allowEmptyProxyChain=%s allowedProxyChains=%s"
         + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s"
         + " securityRealm=%s hostnameVerifier=%s }",
-        protocol, serverUrl, serviceUrl, proxyCallbackUrl, 
+        protocol, encoding, serverUrl, serviceUrl, proxyCallbackUrl, 
         acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
         renew, clockSkewTolerance, postAuthRedirect,
         securityRealm != null ? securityRealm : "(none)", 

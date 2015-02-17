@@ -57,6 +57,7 @@ public class JasigAuthenticator implements Authenticator {
   
   private static TicketValidator createTicketValidator(Configuration config) {
     AbstractUrlBasedTicketValidator validator = newTicketValidator(config);
+    validator.setEncoding(config.getEncoding());
     validator.setRenew(config.isRenew());
     validator.setURLConnectionFactory(new HttpsURLConnectionFactory(
         config.getSslContext(), config.getHostnameVerifier()));
@@ -133,10 +134,10 @@ public class JasigAuthenticator implements Authenticator {
     }
 
     try {
-      ticket = URLDecoder.decode(ticket, "UTF-8");
+      ticket = URLDecoder.decode(ticket, config.getEncoding());
     }
     catch (UnsupportedEncodingException ex) {
-      assert true;
+      throw new AuthenticationException(ex.getMessage(), ex);
     }
     
     String serviceUrl = serviceUrl(requestPath, queryString);

@@ -42,6 +42,7 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
   protected SimpleAttributeDefinition[] attributes() {
     return new SimpleAttributeDefinition[] { 
         ProfileDefinition.PROTOCOL,
+        ProfileDefinition.ENCODING,
         ProfileDefinition.SERVICE_URL,
         ProfileDefinition.SERVER_URL,
         ProfileDefinition.PROXY_CALLBACK_URL,
