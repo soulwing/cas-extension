@@ -121,7 +121,8 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel)
+        PathAddress parentAddress, ModelNode parentModel,
+        ServiceVerificationHandler verificationHandler)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);
