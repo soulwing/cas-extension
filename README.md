@@ -319,6 +319,81 @@ Note that the *cas* security domain specified here was created in an earlier
 configuration step.  If you have created more than one security domain for 
 CAS, specify the appropriate domain name here.
 
+### Using the Application API
+
+In some web applications, it may be desirable to have direct access to the
+`UserPrincipal` created by the CAS subsystem.  For example, in applications 
+that take responsibility for access control using a framework like Spring 
+Security, or applications that use CAS proxy authentication to gain access 
+to backend services.
+
+Using the application API provided by the CAS subsystem, you can cast the
+return value of `javax.servlet.http.HttpServletRequest.getUserPrincipal` to
+the `UserPrincipal` object provided in the `cas-api` module.  This principal
+includes methods to get the attributes associated with the user (e.g. from 
+a SAML authentication response) as well as a method to obtain a proxy
+authentication ticket.
+
+```
+public interface UserPrincipal extends Principal, Serializable {
+
+  /**
+   * Gets the map of attribute name-value pairs that further describe the
+   * user.
+   * @return attribute map
+   */
+  Map<String, Object> getAttributes();
+  
+  /**
+   * Generates a proxy ticket for use in accessing another service.
+   * @param service name (URL) of the service to access
+   * @return ticket that may be used to authenticate access by this user
+   *    to the given {@code service}
+   * @throws IllegalStateException if no proxy granting ticket is available.
+   */
+  String generateProxyTicket(String service) throws IllegalStateException;
+  
+  /**
+   * Gets the underlying delegate principal.
+   * <p>
+   * The returned object is an instance of a class defined by the CAS client
+   * implementation; e.g. for the JASIG CAS Client the returned object is
+   * an instance of {@link org.jasig.cas.client.Authentication.AttributePrincipal}
+   * @return delegate principal
+   */
+  Object getDelegate();
+  
+}
+```
+
+Assuming that your application uses a Maven, you will need to add a 
+compile-time dependency on the `cas-api` module, as shown below.  Note the
+use of the `provided` scope, which makes the API classes available at 
+compile time, but does not include the module in your application's. 
+`/WEB-INF/lib`.
+
+```
+<dependency>
+  <groupId>org.soulwing.cas</groupId>
+  <artifactId>cas-api</artfiactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <scope>provided</scope>
+</dependency>
+```
+
+In order to have access to this API at runtime, your CAS deployment descriptor
+must include the `<add-api-dependencies/>` element, as shown below.  When this
+element is present, the CAS subsystem will add the necessary classes to your
+application's runtime class path.
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<cas xmlns="urn:soulwing.org:cas:1.0">
+  ...
+  <add-api-dependencies/>
+  ...
+</cas>
+```
 
 Avoiding the Need to Restart/Reload
 -----------------------------------
