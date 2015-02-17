@@ -11,7 +11,5 @@
   isn't required at all)
 * Allow the cas.xml deployment descriptor to specify part (or all) of the
   configuration profile
-* Query string may be butchered by JasigAuthenticationService.constructServiceUrl 
-* Remove all installed services when subsystem removed
 
  
