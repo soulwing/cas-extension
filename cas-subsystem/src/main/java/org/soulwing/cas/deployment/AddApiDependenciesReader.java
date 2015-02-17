@@ -24,51 +24,28 @@ import javax.xml.stream.XMLStreamReader;
 import org.soulwing.cas.extension.Names;
 
 /**
- * A {@link DescriptorReader} for the root element of the deployment 
- * descriptor.
+ * A {@link DescriptorReader} for the profile element of the 
+ * deployment descriptor.
  *
  * @author Carl Harris
  */
-class RootReader implements DescriptorReader {
+class AddApiDependenciesReader extends AbstractDescriptorReader {
 
-  public static final RootReader INSTANCE = new RootReader();
-
-  private DescriptorParser parser;
+  public static final AddApiDependenciesReader INSTANCE = new AddApiDependenciesReader();
   
-  private RootReader() {
+  private AddApiDependenciesReader() {
+    super(Names.ADD_API_DEPENDENCIES);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void init(DescriptorParser parser) {
-    this.parser = parser;    
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void startElement(XMLStreamReader reader, String namespaceUri,
-      String localName, AppConfiguration config) throws XMLStreamException {
-    if (Names.NAMESPACE.equals(namespaceUri)
-        && Names.SUBSYSTEM_NAME.equals(localName)) {
-      parser.push(InnerReader.INSTANCE);
-      return;
-    }
-   
-    parser.stop();
-  }
-
+  
   /**
    * {@inheritDoc}
    */
   @Override
   public void endElement(XMLStreamReader reader, String namespaceUri,
       String localName, AppConfiguration config) throws XMLStreamException {
-    throw new XMLStreamException("unexpected end element", 
-        reader.getLocation());
+    config.setAddDependencies(true);
+    super.endElement(reader, namespaceUri, localName, config);
   }
 
   /**
@@ -77,15 +54,10 @@ class RootReader implements DescriptorReader {
   @Override
   public void characters(XMLStreamReader reader, AppConfiguration config)
       throws XMLStreamException {
-    throw new XMLStreamException("unexpected text", reader.getLocation());
-  }
-
-  static class InnerReader extends AbstractDescriptorReader {
-    static final InnerReader INSTANCE = new InnerReader();
-    
-    private InnerReader() {
-      super(Names.SUBSYSTEM_NAME, ProfileReader.INSTANCE, 
-          AddApiDependenciesReader.INSTANCE);
+    if (!reader.getText().trim().isEmpty()) {
+      throw new XMLStreamException(Names.ADD_API_DEPENDENCIES
+          + "does not allow nested content", 
+          reader.getLocation());
     }
   }
   

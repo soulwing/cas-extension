@@ -27,9 +27,9 @@ package org.soulwing.cas.deployment;
 class AppConfiguration {
 
   public static final String DEFAULT_PROFILE = "default";
-  
 
   private String profileId = DEFAULT_PROFILE;
+  private boolean addDependencies;
   
   /**
    * Gets the identifier of the configuration profile.
@@ -49,5 +49,30 @@ class AppConfiguration {
     }
     this.profileId = profileId;
   }
-  
+
+  /**
+   * Gets the {@code addDependencies} property.
+   * @return property value
+   */
+  public boolean isAddDependencies() {
+    return addDependencies;
+  }
+
+  /**
+   * Sets the {@code addDependencies} property.
+   * @param addDependencies the value to set
+   */
+  public void setAddDependencies(boolean addDependencies) {
+    this.addDependencies = addDependencies;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return String.format("{ profileId=%s addDependencies=%s }", 
+        profileId, addDependencies);
+  }
+
 }

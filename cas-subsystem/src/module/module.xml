@@ -5,7 +5,7 @@
   </resources>
 
   <dependencies>
-    <module name="org.soulwing.cas.api" />
+    <module name="org.soulwing.cas.api" export="true"/>
     <module name="org.jasig.cas.client" slot="${dependency.module.slot}"/>
     <module name="org.picketbox" />
     <module name="org.jboss.staxmapper" />

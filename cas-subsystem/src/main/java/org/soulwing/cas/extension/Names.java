@@ -59,5 +59,6 @@ public interface Names {
 
   String AUTHENTICATION_SERVICE = "authentication-service";  
   String SERVLET_EXTENSION = "servlet-extension";
+  String ADD_API_DEPENDENCIES = "add-api-dependencies";
 
 }

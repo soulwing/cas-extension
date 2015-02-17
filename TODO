@@ -1,15 +1,10 @@
-* Provide the assertion object that resulted from a successful ticket
-  validation to the application; need to decide on a strategy or 
-  strategies (e.g. bound JNDI resource, implicit CDI bean provided through a 
-  portable CDI extension, etc) and also manipulate the deployment's 
-  module dependencies such that it includes the necessary API classes; 
-  probably want the cas.xml descriptor to indicate that the application wants
-  this support    
 * Explore whether the application's configured security domain could be
   probed for presence of the IdentityAssertion login module as a means for
   enabling CAS support (so that in the simplest cases the cas.xml descriptor 
   isn't required at all)
 * Allow the cas.xml deployment descriptor to specify part (or all) of the
   configuration profile
+* Remove all CAS profile services when subsystem is removed
+* Fix hard-coded service name in dependencies deployment processor
 
  

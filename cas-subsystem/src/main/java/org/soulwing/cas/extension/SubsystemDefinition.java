@@ -28,11 +28,11 @@ import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
-import org.jboss.as.server.AbstractDeploymentChainStep;
-import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceController;
-import org.soulwing.cas.deployment.SubsystemDeploymentProcessor;
+import org.soulwing.cas.deployment.DependenciesDeploymentProcessor;
+import org.soulwing.cas.deployment.DescriptorDeploymentProcessor;
+import org.soulwing.cas.deployment.ServletExtensionDeploymentProcessor;
 
 
 /**
@@ -89,22 +89,11 @@ public class SubsystemDefinition extends SimpleResourceDefinition {
         List<ServiceController<?>> newControllers)
         throws OperationFailedException {
 
-      // Add deployment processors here
-      // Remove this if you don't need to hook into the deployers, or you can add
-      // as many as you like
-      // see SubDeploymentProcessor for explanation of the phases
-      context.addStep(new AbstractDeploymentChainStep() {
-        public void execute(DeploymentProcessorTarget processorTarget) {
-          processorTarget.addDeploymentProcessor(
-              Names.SUBSYSTEM_NAME,
-              SubsystemDeploymentProcessor.PHASE,
-              SubsystemDeploymentProcessor.PRIORITY,
-              new SubsystemDeploymentProcessor());
-
-        }
-      }, OperationContext.Stage.RUNTIME);
-
+      DescriptorDeploymentProcessor.addStepHandler(context);
+      DependenciesDeploymentProcessor.addStepHandler(context);
+      ServletExtensionDeploymentProcessor.addStepHandler(context);
     }
+    
   }
   
   static class SubsystemRemove extends AbstractRemoveStepHandler {
