@@ -53,8 +53,7 @@ document provides commands that are used at the CLI prompt.
 The following CLI commands are used to create the subsystem resource and a 
 Wildfly security domain for applications that use CAS authentication.  Note
 that the last command given here is `reload`.  The container must be reloaded
-to activate these components.  Subsequent configuration of the CAS subsystem
-does not require the container to be reloaded.
+to activate these components.  
 
 ```
 batch
@@ -66,6 +65,12 @@ batch
 run-batch
 reload
 ```
+
+Once the CAS subsystem has been added to your Wildfly configuration, it is not
+necessary to reload (e.g. using the CLI) or restart Wildfly in order to change
+the CAS configuration.  See [Avoiding the Need to Reload/Restart] for more
+information.
+
 
 CAS Configuration Profiles
 --------------------------
@@ -92,6 +97,8 @@ CAS 2 protocol with a CAS server named cas.example.org.
 Additional profiles can be created using the same basic syntax, substituting 
 *profile=default* with *profile=some-other-name*.
 
+### Profile Attributes
+
 The complete set of configurable profile attributes is described below.  You
 can also view the description of these attributes using the 
 `:read-resource-description ` CLI operation on a CAS configuration profile.
@@ -115,11 +122,68 @@ can also view the description of these attributes using the
   authentication exchange, a redirect should be sent for the original
   request URL with all of the protocol query parameters removed; 
   true (default) or false
+* *security-realm* -- (Wildfly 9 only) specifies the name of a Security Realm
+  to use to obtain SSL truststore and/or keystore configuration to use when
+  communicating with the CAS server
 
-In addition to these attributes, a profile supports zero or more named 
-*allowed-proxy-chain* resources.  Each proxy chain specifies one or more 
-allowed proxy URLs.  See the help in the CLI for more information.
+### Profile Sub-Resources
 
+A configuration profile supports two kinds of sub-resources:
+
+* *allowed-proxy-chain* -- specifies a named chain of allowed proxy URLs to 
+  be used when validating proxy authentication tickets; you can define as 
+  many proxy chains as needed
+* *hostname-verifier* -- (Wildfly 9 only) specifies a hostname verifier to use
+  when communicating with the CAS server (often needed when the CAS server is
+  using a self-signed certificate)
+
+#### Configuring Allowed Proxy Chains
+
+To add an allowed proxy chain to the *default* profile, use the following
+CLI command.  The name of the chain added by this command is *example*.
+
+```
+/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[http://www.example.org])
+```
+
+To remove the *example* proxy chain from the *default* profile, use the
+follwing CLI command.
+
+```
+/subsystem=cas/profile=default/allowed-proxy-chain=example:remove
+```
+#### Configuring a Hostname Verifier
+
+When creating an HTTPS connection to the CAS server, the underlying SSL 
+support verifies that the name of the host matches a name presented on
+the certificate.  When connecting to a CAS server whose certificate does
+not match the host name, you can use a hostname verifier to allow the
+connection.  
+
+Three types of hostname verification are supported by the CAS subsystem:
+
+* *allow-any* -- no verification is performed; any hostname is allowed
+* *white-list* -- the server hostname is compared to the entries in a 
+  configured list of hostnames to allow
+* *pattern-match* -- the server hostname is matched to one of the entries
+  in a configured list of regular expression patterns
+
+To add any of the supported verifiers to the *default* profile, use *one* of
+ the following CLI commands:
+
+```
+/subsystem=cas/profile=default/hostname-verifier=allow-any:add
+/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[cas.example.org])
+/subsystem=cas/profile=default/hostname-verifier=pattern-match:add(hosts=[".*\.example.org$", "^localhost$"])
+```
+
+To remove a configured hostname verifier, specify the verifier type in the
+remove command.  For example, to remove the *pattern-match* verifier, use
+this command:
+
+```
+/subsystem=cas/profile=default/hostname-verifier=pattern-match:remove
+```
 
 Using SAML
 ----------
@@ -255,6 +319,36 @@ Note that the *cas* security domain specified here was created in an earlier
 configuration step.  If you have created more than one security domain for 
 CAS, specify the appropriate domain name here.
 
+
+Avoiding the Need to Restart/Reload
+-----------------------------------
+
+Configuration profiles can be modified through the CLI without the need to 
+reload (e.g. via the CLI) or restart Wildfly.  You simply need to include 
+the `allow-resource-service-restart=true` header with the command(s) that 
+should be applied without the need for reload.  Configuration profile changes
+that include this header will be *immediately* applied to deployments that 
+are attached to the subject profile.
+
+For example, to change the CAS server URL without the need to reload, use
+this command:
+
+```
+/subsystem=cas/profile=default:write-attribute(name=server-url, value="https://cas2.example.org"){allow-resource-service-restart=true}
+```
+
+When changing more than one configuration characteristic, you may wish to use
+the CLI's *batch* facility.  By executing commands in a batch, you ensure that
+the updated configuration is not applied to any deployment attached to the
+subject profile until all commands in the batch have completed:
+
+```
+batch
+/subsystem=cas/profile=default:write-attribute(name=server-url, value="https://localhost:8443")
+/subsystem=cas/profile=default:write-attribute(name=security-realm, value="LocalhostSslRealm")
+/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[localhost])
+run-batch --headers={allow-resource-service-restart=true}
+```
 
 
 
