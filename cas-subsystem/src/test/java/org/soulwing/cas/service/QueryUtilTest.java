@@ -16,15 +16,14 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.undertow;
+package org.soulwing.cas.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.jmock.Expectations.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import org.junit.Test;
-import org.soulwing.cas.undertow.QueryUtil;
 
 /**
  * Unit tests for {@link QueryUtil}.
@@ -70,4 +69,52 @@ public class QueryUtilTest {
         is(""));
   }
 
+  @Test
+  public void testFindParameterWhenOnlyParameter() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "name=value"),
+        is(equalTo("value")));
+  }
+
+  @Test
+  public void testFindParameterWhenFirst() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "name=value&other=other"),
+        is(equalTo("value")));
+  }
+
+  @Test
+  public void testFindParameterWhenMiddle() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "other=other&name=value&other=other"),
+        is(equalTo("value")));
+  }
+
+  @Test
+  public void testFindParameterWhenLast() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "other=other&name=value"),
+        is(equalTo("value")));
+  }
+
+  @Test
+  public void testFindParameterWhenNonePresent() throws Exception {
+    assertThat(QueryUtil.findParameter("name", ""),
+        is(nullValue()));
+  }
+
+  @Test
+  public void testFindParameterWhenNotPresent() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "other=value"),
+        is(nullValue()));
+  }
+
+  @Test
+  public void testFindParameterWhenSuffixMatchButNotPresent() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "other=value&myname=value"),
+        is(nullValue()));
+  }
+
+  @Test
+  public void testFindParameterWhenHasNoValue() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "name&other=value"),
+        is(nullValue()));
+  }
+  
 }

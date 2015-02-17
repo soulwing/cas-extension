@@ -16,9 +16,8 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.undertow;
+package org.soulwing.cas.service;
 
-import org.soulwing.cas.service.AuthenticationProtocol;
 
 /**
  * Static utility methods.
@@ -76,5 +75,31 @@ class QueryUtil {
     }
     return query.substring(0, i) + query.substring(j + 1);
   }
-  
+
+  /**
+   * Finds a single instance of a parameter name-value pair in a query 
+   * string.
+   * @param param name of the parameter to find.
+   * @param query the subject query
+   * @return value associated with {@code param} if found, or {@code null} if
+   *    {@code param} does not appear in {@code query}
+   */
+  public static String findParameter(String param, String query) {
+    String token = param + "=";
+    int i = query.indexOf(token);
+    if (i == -1) return null;
+    
+    while (i > 0 && query.charAt(i - 1) != '&') {
+      i = query.indexOf(token, i + 1);
+    }
+    if (i == -1) return null;
+    
+    int j = query.indexOf('&', i);
+    if (j == -1) {
+      j = query.length();
+    }
+    
+    return query.substring(query.indexOf('=', i) + 1, j);
+  }
+
 }

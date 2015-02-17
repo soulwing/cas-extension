@@ -23,7 +23,7 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 
-import org.soulwing.cas.service.AuthenticationProtocol;
+import org.soulwing.cas.service.Authenticator;
 
 /**
  * An {@link HttpHandler} that sends a redirect to the request URL if the 
@@ -50,31 +50,25 @@ public class PostAuthRedirectHandler implements HttpHandler {
    */
   @Override
   public void handleRequest(HttpServerExchange exchange) throws Exception {
-    AuthenticationProtocol protocol = exchange.getAttachment(
-        CasAttachments.POST_AUTH_REDIRECT_KEY);
+    Authenticator authenticator = exchange.getAttachment(
+        CasAttachments.AUTHENTICATOR_KEY);
     
-    if (protocol != null) {
-
+    boolean wantsRedirect = 
+        exchange.getAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY) != null;
+    
+    if (authenticator != null && wantsRedirect) {
       exchange.removeAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY);
-      LOGGER.debug("found post auth redirect key for protocol " + protocol);
+      LOGGER.debug("found post auth redirect key");
       
-      String query = exchange.getQueryString();
-      if (query != null && !query.isEmpty()) {
-        query = QueryUtil.removeProtocolParameters(protocol, query);
-        
-        String url = exchange.getRequestURL();
-        if (!query.isEmpty()) {
-          url = url + "?" + query;
-        }
-        
-        LOGGER.debug("sending redirect to " + url);
-        exchange.setResponseCode(302);
-        exchange.getResponseHeaders().put(HttpString.tryFromString("Location"), 
-            url);
-        exchange.endExchange();
-        return;
-      }
-
+      String url = authenticator.postAuthUrl(exchange.getRequestURL(), 
+          exchange.getQueryString());
+      
+      LOGGER.debug("sending redirect to " + url);
+      exchange.setResponseCode(302);
+      exchange.getResponseHeaders().put(HttpString.tryFromString("Location"), 
+          url);
+      exchange.endExchange();
+      return;
     }
 
     next.handleRequest(exchange);

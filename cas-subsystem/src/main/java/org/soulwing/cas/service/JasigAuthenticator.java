@@ -20,7 +20,9 @@ package org.soulwing.cas.service;
 
 import static org.soulwing.cas.service.ServiceLogger.LOGGER;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -99,14 +101,6 @@ public class JasigAuthenticator implements Authenticator {
    * {@inheritDoc}
    */
   @Override
-  public AuthenticationProtocol getProtocol() {
-    return config.getProtocol();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
   public boolean isPostAuthRedirect() {
     return config.isPostAuthRedirect();
   }
@@ -118,7 +112,7 @@ public class JasigAuthenticator implements Authenticator {
   public String loginUrl(String requestPath, String queryString) {
     String serviceUrl = serviceUrl(requestPath, queryString);
     String loginUrl = CommonUtils.constructRedirectUrl(config.getServerUrl(),
-        getProtocol().getServiceParameterName(),
+        config.getProtocol().getServiceParameterName(),
         serviceUrl, config.isRenew(), false);
     
     return loginUrl;
@@ -129,7 +123,21 @@ public class JasigAuthenticator implements Authenticator {
    */
   @Override
   public IdentityAssertion validateTicket(String requestPath,
-      String queryString, String ticket) throws AuthenticationException {
+      String queryString) 
+      throws NoTicketException, AuthenticationException {
+    
+    String ticket = QueryUtil.findParameter(
+        config.getProtocol().getTicketParameterName(), queryString);
+    if (ticket == null) {
+      throw new NoTicketException();
+    }
+
+    try {
+      ticket = URLDecoder.decode(ticket, "UTF-8");
+    }
+    catch (UnsupportedEncodingException ex) {
+      assert true;
+    }
     
     String serviceUrl = serviceUrl(requestPath, queryString);
     if (LOGGER.isDebugEnabled()) {
@@ -145,6 +153,22 @@ public class JasigAuthenticator implements Authenticator {
 
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String postAuthUrl(String requestUrl, String queryString) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(requestUrl);
+    queryString = QueryUtil.removeProtocolParameters(config.getProtocol(), 
+        queryString);
+    if (!queryString.isEmpty()) {
+      sb.append('?');
+      sb.append(queryString);
+    }
+    return sb.toString();
+  }
+
   private String serviceUrl(String requestPath, String queryString) {
     URI uri = URI.create(config.getServiceUrl());
     StringBuilder sb = new StringBuilder();
@@ -152,12 +176,13 @@ public class JasigAuthenticator implements Authenticator {
     sb.append("://");
     sb.append(uri.getAuthority());
     sb.append(requestPath);
+
+    queryString = QueryUtil.removeProtocolParameters(config.getProtocol(), 
+        queryString);
     
-    int location = queryString.indexOf(
-        config.getProtocol().getTicketParameterName() + "=");
-    if (location > 0) {
+    if (!queryString.isEmpty()) {
       sb.append('?');
-      sb.append(queryString.substring(0, location));
+      sb.append(queryString);
     }
   
     return sb.toString();

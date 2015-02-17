@@ -1,5 +1,5 @@
 /*
- * File created on Feb 10, 2015 
+ * File created on Feb 17, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -16,29 +16,19 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.undertow;
-
-import io.undertow.util.AttachmentKey;
-
-import org.soulwing.cas.service.Authenticator;
+package org.soulwing.cas.service;
 
 /**
- * Attachment keys used by CAS.
+ * An exception thrown to indicate that no ticket was present for validation.
  *
  * @author Carl Harris
  */
-interface CasAttachments {
+public class NoTicketException extends AuthenticationException {
 
-  AttachmentKey<IdentityAssertionCredential> CREDENTIAL_KEY =
-      AttachmentKey.create(IdentityAssertionCredential.class);
+  private static final long serialVersionUID = 8215652243960867671L;
 
-  AttachmentKey<Boolean> POST_AUTH_REDIRECT_KEY =
-      AttachmentKey.create(Boolean.class);
-  
-  AttachmentKey<Boolean> AUTH_FAILED_KEY =
-      AttachmentKey.create(Boolean.class);
-  
-  AttachmentKey<Authenticator> AUTHENTICATOR_KEY =
-      AttachmentKey.create(Authenticator.class);
+  public NoTicketException() {
+    super("an authentication ticket was not presented");
+  }
 
 }

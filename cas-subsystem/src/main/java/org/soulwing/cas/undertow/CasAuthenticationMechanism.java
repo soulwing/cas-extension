@@ -25,14 +25,13 @@ import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 
-import java.util.Deque;
-
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.Authenticator;
+import org.soulwing.cas.service.NoTicketException;
 
 /**
  * An {@link AuthenticationMechanism} that uses the CAS protocol.
@@ -64,24 +63,10 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         .newAuthenticator();
     
     exchange.putAttachment(CasAttachments.AUTHENTICATOR_KEY, authenticator);
-    
-    Deque<String> tickets = exchange.getQueryParameters().get(
-        authenticator.getProtocol().getTicketParameterName());
-    String ticket = tickets != null ? tickets.peekFirst() : null;
-        
-    if (ticket == null) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("no authentication ticket; authentication not attempted");
-      }
-      return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
-    }
-    
-    try {
-      String query = QueryUtil.removeProtocolParameters(
-          authenticator.getProtocol(), exchange.getQueryString());
 
+    try {
       IdentityAssertion assertion = authenticator.validateTicket(
-          exchange.getRequestPath(), query, ticket);
+          exchange.getRequestPath(), exchange.getQueryString());
       IdentityAssertionCredential credential = 
           new IdentityAssertionCredential(assertion);
       if (LOGGER.isDebugEnabled()) {
@@ -102,9 +87,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
         if (authenticator.isPostAuthRedirect()) {
           exchange.putAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY, 
-              authenticator.getProtocol());
-        }
-                
+              true);
+        }        
+        
         securityContext.authenticationComplete(account, MECHANISM_NAME, true);
         return AuthenticationMechanismOutcome.AUTHENTICATED;
       }
@@ -120,9 +105,15 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       
       return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
+    catch (NoTicketException ex) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("no ticket present; authentication not attempted");
+      }
+      return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
+    }
     catch (AuthenticationException ex) {
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("authentication failed: " + ex);
+        LOGGER.debug("authentication failed: " + ex.getMessage());
       }
     }
     catch (RuntimeException ex) {
@@ -130,10 +121,8 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     }
     
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("authentication not successful for ticket '"
-          + ticket + "'");
+      LOGGER.debug("authentication not successful");
     }
-    
     securityContext.setAuthenticationRequired();
     return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
   }
@@ -148,10 +137,8 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     Authenticator authenticator = exchange.getAttachment(
         CasAttachments.AUTHENTICATOR_KEY);
     
-    String query = QueryUtil.removeProtocolParameters(
-        authenticator.getProtocol(), exchange.getQueryString());
     String url = authenticator.loginUrl(exchange.getRequestPath(), 
-        query);
+        exchange.getQueryString());
     
     if (exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY) != null) {
       exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);

@@ -29,12 +29,6 @@ import org.soulwing.cas.api.IdentityAssertion;
 public interface Authenticator {
 
   /**
-   * Gets the protocol that will be used by this authenticator.
-   * @return authentication protocol
-   */
-  AuthenticationProtocol getProtocol();
-  
-  /**
    * Produces the URL for the CAS server's login function.
    * @param requestPath the path of the request that requires authentication 
    *    for access
@@ -46,12 +40,15 @@ public interface Authenticator {
   
   /**
    * Validates a service ticket.
-   * @param ticket the subject ticket
+   * @param requestPath path from request URL
+   * @param queryString query string from request URL
    * @return an assertion describing the validation result
+   * @throws NoTicketEception if {@code queryString} does not contain a
+   *    validation ticket
    * @throws AuthenticationException if the ticket cannot be validated
    */
-  IdentityAssertion validateTicket(String requestPath, String queryString, 
-      String ticket) throws AuthenticationException;
+  IdentityAssertion validateTicket(String requestPath, String queryString) 
+      throws NoTicketException, AuthenticationException;
 
   /**
    * Gets a flag that indicates whether, after successful ticket validation,
@@ -60,5 +57,19 @@ public interface Authenticator {
    * @return
    */
   boolean isPostAuthRedirect();
-  
+
+  /**
+   * Gets the protocol-clean URL for a post-auth redirect.
+   * <p>
+   * This method removes any protocol-related parameters from the given
+   * query string and returns the given request URL with the remaining
+   * query string appended to it.
+   * 
+   * @param requestUrl request URL (scheme, authority, and path)
+   * @param queryString subject query string which may contain protocol
+   *    parameters
+   * @return requestUrl with the remaining query appended to it
+   */
+  String postAuthUrl(String requestUrl, String queryString);
+    
 }

@@ -30,6 +30,14 @@ public class AuthenticationException extends Exception {
   /**
    * Constructs a new instance.
    * @param message
+   */
+  public AuthenticationException(String message) {
+    super(message);
+  }
+  
+  /**
+   * Constructs a new instance.
+   * @param message
    * @param cause
    */
   public AuthenticationException(String message, Throwable cause) {
