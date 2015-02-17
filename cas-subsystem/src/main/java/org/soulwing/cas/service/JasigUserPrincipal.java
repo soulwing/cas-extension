@@ -71,4 +71,20 @@ class JasigUserPrincipal implements UserPrincipal {
     return ticket;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Object getDelegate() {
+    return delegate;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return getName();
+  }
+
 }

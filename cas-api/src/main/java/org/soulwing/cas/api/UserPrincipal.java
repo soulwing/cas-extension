@@ -45,4 +45,15 @@ public interface UserPrincipal extends Principal, Serializable {
    */
   String generateProxyTicket(String service) throws IllegalStateException;
   
+  /**
+   * Gets the underlying delegate principal.
+   * <p>
+   * The returned object is an instance of a class defined by the CAS client
+   * implementation; e.g. for the JASIG CAS Client the returned object is
+   * an instance of {@link org.jasig.cas.client.Authentication.AttributePrincipal}
+   * @return delegate principal
+   */
+  Object getDelegate();
+  
+  
 }
