@@ -11,9 +11,6 @@
   isn't required at all)
 * Allow the cas.xml deployment descriptor to specify part (or all) of the
   configuration profile
-* Allow SSL configuration for CAS using a Wildfly security realm to specify
-  the truststore, keystore for client authentication, etc and provide 
-  configuration support for hostname verifier.
 * Query string may be butchered by JasigAuthenticationService.constructServiceUrl 
 * Remove all installed services when subsystem removed
 
