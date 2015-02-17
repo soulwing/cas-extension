@@ -366,7 +366,7 @@ public interface UserPrincipal extends Principal, Serializable {
 }
 ```
 
-Assuming that your application uses a Maven, you will need to add a 
+Assuming that your application uses a Maven build, you will need to add a 
 compile-time dependency on the `cas-api` module, as shown below.  Note the
 use of the `provided` scope, which makes the API classes available at 
 compile time, but does not include the module in your application's. 
