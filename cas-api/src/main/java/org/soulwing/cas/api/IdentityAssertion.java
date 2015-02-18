@@ -66,4 +66,14 @@ public interface IdentityAssertion {
    */
   Map<String, Object> getAttributes();
 
+  /**
+   * Gets the underlying delegate assertion.
+   * <p>
+   * The returned object is an instance of a class defined by the CAS client
+   * implementation; e.g. for the JASIG CAS Client the returned object is
+   * an instance of {@link org.jasig.cas.client.validation.Assertion}
+   * @return delegate principal
+   */
+  Object getDelegate();
+  
 }

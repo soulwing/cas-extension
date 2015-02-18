@@ -92,4 +92,12 @@ class JasigIdentityAssertion implements IdentityAssertion {
     return delegate.getAttributes();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Object getDelegate() {
+    return delegate;
+  }
+
 }

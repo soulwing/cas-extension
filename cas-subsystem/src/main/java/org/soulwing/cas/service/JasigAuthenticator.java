@@ -20,9 +20,7 @@ package org.soulwing.cas.service;
 
 import static org.soulwing.cas.service.ServiceLogger.LOGGER;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.TicketValidationException;
@@ -91,12 +89,7 @@ public class JasigAuthenticator implements Authenticator {
       throw new NoTicketException();
     }
 
-    try {
-      ticket = URLDecoder.decode(ticket, config.getEncoding());
-    }
-    catch (UnsupportedEncodingException ex) {
-      throw new AuthenticationException(ex.getMessage(), ex);
-    }
+    ticket = CommonUtils.urlEncode(ticket);
     
     String serviceUrl = serviceUrl(requestPath, queryString);
     if (LOGGER.isDebugEnabled()) {
@@ -128,7 +121,7 @@ public class JasigAuthenticator implements Authenticator {
     return sb.toString();
   }
 
-  private String serviceUrl(String requestPath, String queryString) {
+  String serviceUrl(String requestPath, String queryString) {
     URI uri = URI.create(config.getServiceUrl());
     StringBuilder sb = new StringBuilder();
     sb.append(uri.getScheme());

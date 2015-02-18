@@ -64,6 +64,20 @@ public class QueryUtilTest {
   }
 
   @Test
+  public void testRemoveParameterWhenSuffixMatchAtStartOfQuery() 
+      throws Exception {
+    assertThat(QueryUtil.removeParameter("name", "myname=value"), 
+        is("myname=value"));
+  }
+
+  @Test
+  public void testRemoveParameterWhenSuffixMatch() 
+      throws Exception {
+    assertThat(QueryUtil.removeParameter("name2", "name1=value1&myname2=value2"), 
+        is("name1=value1&myname2=value2"));
+  }
+
+  @Test
   public void testRemoveEachParameter() throws Exception {
     assertThat(QueryUtil.removeEachParameter("name", "name=value1&name=value2"),
         is(""));
@@ -106,8 +120,14 @@ public class QueryUtilTest {
   }
 
   @Test
-  public void testFindParameterWhenSuffixMatchButNotPresent() throws Exception {
+  public void testFindParameterWhenSuffixMatch() throws Exception {
     assertThat(QueryUtil.findParameter("name", "other=value&myname=value"),
+        is(nullValue()));
+  }
+
+  @Test
+  public void testFindParameterWhenSuffixMatchAtStartOfQuery() throws Exception {
+    assertThat(QueryUtil.findParameter("name", "myname=value"),
         is(nullValue()));
   }
 
