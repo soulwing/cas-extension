@@ -25,16 +25,9 @@ import java.net.URI;
 import java.net.URLDecoder;
 
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Cas10TicketValidator;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
-import org.jasig.cas.client.validation.ProxyList;
-import org.jasig.cas.client.validation.Saml11TicketValidator;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
 import org.soulwing.cas.api.IdentityAssertion;
-import org.soulwing.cas.ssl.HttpsURLConnectionFactory;
 
 /**
  * An {@link Authenticator} that delegates to the JASIG CAS client library.
@@ -50,54 +43,19 @@ public class JasigAuthenticator implements Authenticator {
    * Constructs a new instance.
    * @param config
    */
-  public JasigAuthenticator(Configuration config) {
+  public JasigAuthenticator(Configuration config, TicketValidator validator) {
     this.config = config;
-    this.validator = createTicketValidator(config);
+    this.validator = validator;
   }
-  
-  private static TicketValidator createTicketValidator(Configuration config) {
-    AbstractUrlBasedTicketValidator validator = newTicketValidator(config);
-    validator.setEncoding(config.getEncoding());
-    validator.setRenew(config.isRenew());
-    validator.setURLConnectionFactory(new HttpsURLConnectionFactory(
-        config.getSslContext(), config.getHostnameVerifier()));
-    if (validator instanceof Cas20ProxyTicketValidator) {
-      ((Cas20ProxyTicketValidator) validator).setAcceptAnyProxy(
-          config.isAcceptAnyProxy());
-      ((Cas20ProxyTicketValidator) validator).setAllowEmptyProxyChain(
-          config.isAllowEmptyProxyChain());
-      ((Cas20ProxyTicketValidator) validator).setAllowedProxyChains(
-          new ProxyList(config.getAllowedProxyChains()));
-    }
-    if (validator instanceof Saml11TicketValidator) {
-      ((Saml11TicketValidator) validator).setTolerance(
-          config.getClockSkewTolerance());
-    }
-    
+   
+  /**
+   * Gets the {@code validator} property.
+   * @return property value
+   */
+  TicketValidator getValidator() {
     return validator;
   }
-  
-  private static AbstractUrlBasedTicketValidator newTicketValidator(
-      Configuration config) {
-    switch (config.getProtocol()) {
-      case CAS1_0:
-        return new Cas10TicketValidator(config.getServerUrl());
-      
-      case CAS2_0:
-        if (config.isAcceptAnyProxy() || config.isAllowEmptyProxyChain() 
-            || !config.getAllowedProxyChains().isEmpty()) {
-          return new Cas20ProxyTicketValidator(config.getServerUrl());
-        }
-        return new Cas20ServiceTicketValidator(config.getServerUrl());
-        
-      case SAML1_1:
-        return new Saml11TicketValidator(config.getServerUrl());
-        
-      default:
-        throw new IllegalArgumentException("unrecognized protocol");
-    }    
-  }
-  
+
   /**
    * {@inheritDoc}
    */
