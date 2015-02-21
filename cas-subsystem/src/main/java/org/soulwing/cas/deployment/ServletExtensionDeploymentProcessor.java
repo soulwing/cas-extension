@@ -34,7 +34,6 @@ import org.soulwing.cas.extension.Names;
 import org.soulwing.cas.extension.Profile;
 import org.soulwing.cas.extension.ProfileService;
 import org.soulwing.cas.service.AuthenticationService;
-import org.soulwing.cas.undertow.CasAuthenticationService;
 import org.soulwing.cas.undertow.CasServletExtension;
 import org.wildfly.extension.undertow.deployment.UndertowAttachments;
 
@@ -79,7 +78,7 @@ public class ServletExtensionDeploymentProcessor implements DeploymentUnitProces
     ServiceName authServiceName = ServiceName.of(
         phaseContext.getPhaseServiceName().getParent(), 
         Names.SUBSYSTEM_NAME, Names.AUTHENTICATION_SERVICE);
-    
+
     installAuthenticationService(phaseContext, config, authServiceName);
     
     CasServletExtension extension = new CasServletExtension();
@@ -101,7 +100,7 @@ public class ServletExtensionDeploymentProcessor implements DeploymentUnitProces
     ServiceName profileServiceName =
         ProfileService.ServiceUtil.profileServiceName(config.getProfileId());
         
-    CasAuthenticationService service = new CasAuthenticationService();
+    DeploymentAuthenticationService service = new DeploymentAuthenticationService();
 
     ServiceController<?> controller = phaseContext.getServiceTarget()
         .addService(authServiceName, service)

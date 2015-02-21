@@ -42,7 +42,7 @@ public interface Names {
   String ENCODING = "encoding";
   String SERVICE_URL = "service-url";
   String SERVER_URL = "server-url";
-  String PROXY_CALLBACK_URL = "proxy-callback-url";
+  String PROXY_CALLBACK_PATH = "proxy-callback-path";
   String ACCEPT_ANY_PROXY = "accept-any-proxy";
   String ALLOW_EMPTY_PROXY_CHAIN = "allow-empty-proxy-chain";
   String RENEW = "renew";

@@ -32,11 +32,11 @@ import org.soulwing.cas.service.AuthenticationService;
 public class CasServletExtension extends AbstractService<ServletExtension> 
     implements ServletExtension {
 
-  private final CasAuthenticationMechanism mechanism =
-      new CasAuthenticationMechanism();
+  private final CasAuthenticationService authenticationService =
+      new CasAuthenticationService();
   
   public Injector<AuthenticationService> getAuthenticationServiceInjector() {
-    return mechanism.getAuthenticationServiceInjector();
+    return authenticationService.getServiceInjector();
   }
 
   @Override
@@ -45,12 +45,20 @@ public class CasServletExtension extends AbstractService<ServletExtension>
     
     deploymentInfo.clearLoginMethods();
     deploymentInfo.addFirstAuthenticationMechanism(
-        CasAuthenticationMechanism.MECHANISM_NAME, mechanism);
-    
+        CasAuthenticationMechanism.MECHANISM_NAME, 
+        new CasAuthenticationMechanism(deploymentInfo.getContextPath(), authenticationService));
+
+    deploymentInfo.addInitialHandlerChainWrapper(new HandlerWrapper() {
+      @Override
+      public HttpHandler wrap(HttpHandler handler) {
+        return new ProxyCallbackHttpHandler(handler, authenticationService);
+      } 
+    });
+
     deploymentInfo.addInnerHandlerChainWrapper(new HandlerWrapper() {
       @Override
       public HttpHandler wrap(HttpHandler handler) {
-        return new PostAuthRedirectHandler(handler);
+        return new PostAuthRedirectHttpHandler(handler);
       } 
     });
     

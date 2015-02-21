@@ -25,11 +25,8 @@ import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 
-import org.jboss.msc.inject.Injector;
-import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.service.AuthenticationException;
-import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.Authenticator;
 import org.soulwing.cas.service.NoTicketException;
 
@@ -42,13 +39,20 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
 
   public static final String MECHANISM_NAME = "CAS";
   
-  private final InjectedValue<AuthenticationService> 
-      authenticationService = new InjectedValue<>();
-
-  public Injector<AuthenticationService> getAuthenticationServiceInjector() {
-    return authenticationService;
-  }
+  private final String contextPath;
+  private final CasAuthenticationService authenticationService;
   
+  /**
+   * Constructs a new instance.
+   * @param contextPath 
+   * @param authenticationService
+   */
+  public CasAuthenticationMechanism(
+      String contextPath, CasAuthenticationService authenticationService) {
+    this.contextPath = contextPath;
+    this.authenticationService = authenticationService;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -59,8 +63,8 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
     
-    Authenticator authenticator = authenticationService.getValue()
-        .newAuthenticator();
+    Authenticator authenticator = authenticationService.newAuthenticator(
+        contextPath);
     
     exchange.putAttachment(CasAttachments.AUTHENTICATOR_KEY, authenticator);
 
@@ -99,7 +103,7 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
             + assertion.getPrincipal().getName() + "'");
       }
       
-      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, true);
+      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 403);
       securityContext.authenticationFailed(
           "identity manager does not recognize user", MECHANISM_NAME);
       
@@ -115,6 +119,10 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("authentication failed: " + ex.getMessage());
       }
+
+      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 401);
+      securityContext.authenticationFailed(ex.getMessage(), MECHANISM_NAME);
+      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
     catch (RuntimeException ex) {
       LOGGER.error("CAS authentication exception: " + ex, ex);
@@ -140,9 +148,11 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     String url = authenticator.loginUrl(exchange.getRequestPath(), 
         exchange.getQueryString());
     
-    if (exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY) != null) {
+    Integer failedStatus = 
+        exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY);
+    if (failedStatus != null) {
       exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);
-      return new ChallengeResult(false, 403);
+      return new ChallengeResult(false, failedStatus);
     }
     
     if (LOGGER.isDebugEnabled()) {

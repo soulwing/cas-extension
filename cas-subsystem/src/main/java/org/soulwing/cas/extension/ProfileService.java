@@ -148,7 +148,7 @@ public class ProfileService extends AbstractService<Profile> {
           .resolveModelAttribute(context, model).asString());
       config.setServiceUrl(ProfileDefinition.SERVICE_URL
           .resolveModelAttribute(context, model).asString());
-      config.setProxyCallbackUrl(ProfileDefinition.PROXY_CALLBACK_URL
+      config.setProxyCallbackUrl(ProfileDefinition.PROXY_CALLBACK_PATH
           .resolveModelAttribute(context, model).asString());
       config.setAcceptAnyProxy(ProfileDefinition.ACCEPT_ANY_PROXY
           .resolveModelAttribute(context, model).asBoolean());

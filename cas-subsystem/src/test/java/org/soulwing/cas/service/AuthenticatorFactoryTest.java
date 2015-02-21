@@ -26,6 +26,7 @@ import java.util.Collections;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
+import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
@@ -46,6 +47,7 @@ public class AuthenticatorFactoryTest {
 
   private static final String ENCODING = "someEncoding";
   private static final String SERVER_URL = "someServerURL";
+  private static final String PROXY_CALLBACK_URL = "someProxyCallbackURL";
   private static final boolean RENEW = true;
   private static final long CLOCK_SKEW_TOLERANCE = -1L;
   private static final String[] PROXY_CHAIN = { "someProxyURL" };
@@ -58,6 +60,12 @@ public class AuthenticatorFactoryTest {
 
   @Mock
   private HostnameVerifier hostnameVerifier;
+  
+  @Mock
+  private ProxyCallbackHandler proxyCallbackHandler;
+  
+  @Mock
+  private ProxyGrantingTicketStorage storage;
   
   private SSLContext sslContext;
   
@@ -77,7 +85,7 @@ public class AuthenticatorFactoryTest {
     });
     
     JasigAuthenticator authenticator = (JasigAuthenticator)
-        AuthenticatorFactory.newInstance(config);
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
     
     assertThat(authenticator.getValidator(), 
         instanceOf(Cas10TicketValidator.class));
@@ -86,6 +94,7 @@ public class AuthenticatorFactoryTest {
   @Test
   public void testNewCas2ServiceValidator() throws Exception {
     context.checking(commonConfigExpectations());
+    context.checking(proxyTicketStorageExpectations());
     context.checking(new Expectations() {
       {
         allowing(config).getProtocol();
@@ -100,7 +109,7 @@ public class AuthenticatorFactoryTest {
     });
     
     JasigAuthenticator authenticator = (JasigAuthenticator)
-        AuthenticatorFactory.newInstance(config);
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
     
     assertThat(authenticator.getValidator(), 
         instanceOf(Cas20ServiceTicketValidator.class));
@@ -109,6 +118,7 @@ public class AuthenticatorFactoryTest {
   @Test
   public void testNewCas2ProxyValidatorForAnyProxy() throws Exception {
     context.checking(commonConfigExpectations());
+    context.checking(proxyTicketStorageExpectations());
     context.checking(new Expectations() {
       {
         allowing(config).getProtocol();
@@ -123,7 +133,7 @@ public class AuthenticatorFactoryTest {
     });
     
     JasigAuthenticator authenticator = (JasigAuthenticator)
-        AuthenticatorFactory.newInstance(config);
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
     
     assertThat(authenticator.getValidator(), 
         instanceOf(Cas20ProxyTicketValidator.class));
@@ -133,6 +143,7 @@ public class AuthenticatorFactoryTest {
   public void testNewCas2ProxyValidatorForSpecifiedProxyChains() 
       throws Exception {
     context.checking(commonConfigExpectations());
+    context.checking(proxyTicketStorageExpectations());
     context.checking(new Expectations() {
       {
         allowing(config).getProtocol();
@@ -147,7 +158,7 @@ public class AuthenticatorFactoryTest {
     });
     
     JasigAuthenticator authenticator = (JasigAuthenticator)
-        AuthenticatorFactory.newInstance(config);
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
     
     assertThat(authenticator.getValidator(), 
         instanceOf(Cas20ProxyTicketValidator.class));
@@ -166,7 +177,7 @@ public class AuthenticatorFactoryTest {
     });
     
     JasigAuthenticator authenticator = (JasigAuthenticator)
-        AuthenticatorFactory.newInstance(config);
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
     
     assertThat(authenticator.getValidator(), 
         instanceOf(Saml11TicketValidator.class));
@@ -189,4 +200,12 @@ public class AuthenticatorFactoryTest {
     };
   }
 
+  private Expectations proxyTicketStorageExpectations() throws Exception {
+    return new Expectations() {
+      {
+        oneOf(proxyCallbackHandler).getStorage();
+        will(returnValue(storage));
+      }
+    };
+  }
 }

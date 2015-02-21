@@ -71,5 +71,5 @@ public interface Authenticator {
    * @return requestUrl with the remaining query appended to it
    */
   String postAuthUrl(String requestUrl, String queryString);
-    
+ 
 }

@@ -1,5 +1,5 @@
 /*
- * File created on Feb 10, 2015 
+ * File created on Feb 21, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -16,29 +16,26 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.undertow;
-
-import io.undertow.util.AttachmentKey;
-
-import org.soulwing.cas.service.Authenticator;
+package org.soulwing.cas.service;
 
 /**
- * Attachment keys used by CAS.
+ * A repository of granting tickets for proxy authentication. 
  *
  * @author Carl Harris
  */
-interface CasAttachments {
+public interface ProxyCallbackHandler {
 
-  AttachmentKey<IdentityAssertionCredential> CREDENTIAL_KEY =
-      AttachmentKey.create(IdentityAssertionCredential.class);
-
-  AttachmentKey<Boolean> POST_AUTH_REDIRECT_KEY =
-      AttachmentKey.create(Boolean.class);
+  /**
+   * Handles a proxy callback.
+   * @param query query string from the proxy callback request
+   * @return proxy callback response
+   */
+  ProxyCallbackResponse onProxyCallback(String query);
   
-  AttachmentKey<Integer> AUTH_FAILED_KEY =
-      AttachmentKey.create(Integer.class);
+  /**
+   * Gets the backing storage delegate.
+   * @return delegate
+   */
+  Object getStorage();
   
-  AttachmentKey<Authenticator> AUTHENTICATOR_KEY =
-      AttachmentKey.create(Authenticator.class);
-
 }

@@ -1,5 +1,5 @@
 /*
- * File created on Feb 15, 2015 
+ * File created on Feb 21, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -19,43 +19,53 @@
 package org.soulwing.cas.undertow;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.AbstractService;
 import org.jboss.msc.value.InjectedValue;
-import org.soulwing.cas.extension.Profile;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.Authenticator;
-import org.soulwing.cas.service.AuthenticatorFactory;
+import org.soulwing.cas.service.ProxyCallbackResponse;
 
 /**
- * An MSC service that provides an {@link AuthenticationService}.
+ * An {@link AuthenticationService} that delegates to an injected service
+ * for a deployment and is shared with all of the Undertow components created
+ * by the servlet extension.
  *
  * @author Carl Harris
  */
-public class CasAuthenticationService
-    extends AbstractService<AuthenticationService>
-    implements AuthenticationService {
+class CasAuthenticationService implements AuthenticationService {
 
-  private final InjectedValue<Profile> profile =
+  private final InjectedValue<AuthenticationService> delegate =
       new InjectedValue<>();
-    
-  public Injector<Profile> getProfileInjector() {
-    return profile;
-  }
-    
+
   /**
-   * {@inheritDoc}
+   * Gets the delegate authentication service injector.
+   * @return
    */
-  @Override
-  public AuthenticationService getValue() throws IllegalStateException {
-    return this;
+  public Injector<AuthenticationService> getServiceInjector() {
+    return delegate;
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public Authenticator newAuthenticator() {
-    return AuthenticatorFactory.newInstance(profile.getValue());
+  public Authenticator newAuthenticator(String contextPath) {
+    return delegate.getValue().newAuthenticator(contextPath);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isProxyCallbackPath(String path) {
+    return delegate.getValue().isProxyCallbackPath(path);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public ProxyCallbackResponse handleProxyCallback(String query) {
+    return delegate.getValue().handleProxyCallback(query);
   }
 
 }

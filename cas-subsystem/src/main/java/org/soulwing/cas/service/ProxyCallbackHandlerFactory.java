@@ -1,5 +1,5 @@
 /*
- * File created on Feb 10, 2015 
+ * File created on Feb 21, 2015 
  *
  * Copyright (c) 2014 Virginia Polytechnic Institute and State University
  *
@@ -16,29 +16,17 @@
  * limitations under the License.
  *
  */
-package org.soulwing.cas.undertow;
-
-import io.undertow.util.AttachmentKey;
-
-import org.soulwing.cas.service.Authenticator;
+package org.soulwing.cas.service;
 
 /**
- * Attachment keys used by CAS.
+ * A factory that produces {@link ProxyCallbackHandler} objects.
  *
  * @author Carl Harris
  */
-interface CasAttachments {
+public class ProxyCallbackHandlerFactory {
 
-  AttachmentKey<IdentityAssertionCredential> CREDENTIAL_KEY =
-      AttachmentKey.create(IdentityAssertionCredential.class);
-
-  AttachmentKey<Boolean> POST_AUTH_REDIRECT_KEY =
-      AttachmentKey.create(Boolean.class);
+  public static ProxyCallbackHandler newInstance() {
+    return new JasigProxyCallbackHandler();
+  }
   
-  AttachmentKey<Integer> AUTH_FAILED_KEY =
-      AttachmentKey.create(Integer.class);
-  
-  AttachmentKey<Authenticator> AUTHENTICATOR_KEY =
-      AttachmentKey.create(Authenticator.class);
-
 }

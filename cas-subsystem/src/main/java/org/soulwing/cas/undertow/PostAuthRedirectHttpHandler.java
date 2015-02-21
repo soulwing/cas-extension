@@ -32,7 +32,7 @@ import org.soulwing.cas.service.Authenticator;
  *
  * @author Carl Harris
  */
-public class PostAuthRedirectHandler implements HttpHandler {
+public class PostAuthRedirectHttpHandler implements HttpHandler {
 
   private final HttpHandler next;
   
@@ -40,7 +40,7 @@ public class PostAuthRedirectHandler implements HttpHandler {
    * Constructs a new instance.
    * @param next
    */
-  public PostAuthRedirectHandler(HttpHandler next) {
+  public PostAuthRedirectHttpHandler(HttpHandler next) {
     this.next = next;
   }
 

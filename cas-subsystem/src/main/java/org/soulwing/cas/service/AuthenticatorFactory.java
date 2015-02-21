@@ -18,6 +18,9 @@
  */
 package org.soulwing.cas.service;
 
+import org.jasig.cas.client.proxy.Cas20ProxyRetriever;
+import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
+import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
@@ -38,32 +41,68 @@ public class AuthenticatorFactory {
   /**
    * Constructs a new authenticator.
    * @param config protocol configuration 
+   * @param proxyCallbackUrl proxy callback URL
+   * @param proxyCallbackHandler proxy ticket handler
    * @return authenticator
    */
-  public static Authenticator newInstance(Configuration config) {
-    return new JasigAuthenticator(config, createTicketValidator(config));
+  public static Authenticator newInstance(Configuration config,
+      String proxyCallbackUrl, ProxyCallbackHandler proxyCallbackHandler) {
+    
+    HttpsURLConnectionFactory connectionFactory = 
+        new HttpsURLConnectionFactory(config.getSslContext(), 
+            config.getHostnameVerifier());
+    
+    TicketValidator validator = createTicketValidator(config, 
+        connectionFactory);
+
+    if (validator instanceof Cas20ServiceTicketValidator) {
+      configureServiceValidator(config, proxyCallbackUrl, proxyCallbackHandler,
+          connectionFactory, (Cas20ServiceTicketValidator) validator);
+    }
+    if (validator instanceof Cas20ProxyTicketValidator) {
+      configureProxyValidator(config, (Cas20ProxyTicketValidator)
+          validator);
+    }
+    if (validator instanceof Saml11TicketValidator) {
+      configureSamlValidator(config, (Saml11TicketValidator) validator);
+    }
+    return new JasigAuthenticator(config, validator);
   }
   
-  private static TicketValidator createTicketValidator(Configuration config) {
+  private static TicketValidator createTicketValidator(Configuration config, HttpURLConnectionFactory connectionFactory) {
     AbstractUrlBasedTicketValidator validator = newTicketValidator(config);
     validator.setEncoding(config.getEncoding());
     validator.setRenew(config.isRenew());
-    validator.setURLConnectionFactory(new HttpsURLConnectionFactory(
-        config.getSslContext(), config.getHostnameVerifier()));
-    if (validator instanceof Cas20ProxyTicketValidator) {
-      ((Cas20ProxyTicketValidator) validator).setAcceptAnyProxy(
-          config.isAcceptAnyProxy());
-      ((Cas20ProxyTicketValidator) validator).setAllowEmptyProxyChain(
-          config.isAllowEmptyProxyChain());
-      ((Cas20ProxyTicketValidator) validator).setAllowedProxyChains(
-          new ProxyList(config.getAllowedProxyChains()));
-    }
-    if (validator instanceof Saml11TicketValidator) {
-      ((Saml11TicketValidator) validator).setTolerance(
-          config.getClockSkewTolerance());
-    }
+    validator.setURLConnectionFactory(connectionFactory);
     
     return validator;
+  }
+
+  private static void configureServiceValidator(Configuration config,
+      String proxyCallbackUrl, ProxyCallbackHandler proxyCallbackHandler,
+      HttpURLConnectionFactory connectionFactory, 
+      Cas20ServiceTicketValidator validator) {
+    if (proxyCallbackUrl != null) {
+      validator.setProxyCallbackUrl(proxyCallbackUrl);
+      validator.setProxyGrantingTicketStorage(
+          (ProxyGrantingTicketStorage) proxyCallbackHandler.getStorage());
+      validator.setProxyRetriever(new Cas20ProxyRetriever(
+          config.getServerUrl(), config.getEncoding(), 
+          connectionFactory));
+    }
+  }
+  
+  private static void configureSamlValidator(Configuration config,
+      Saml11TicketValidator validator) {
+    validator.setTolerance(config.getClockSkewTolerance());
+  }
+
+  private static void configureProxyValidator(Configuration config,
+      Cas20ProxyTicketValidator validator) {
+    validator.setAcceptAnyProxy(config.isAcceptAnyProxy());
+    validator.setAllowEmptyProxyChain(config.isAllowEmptyProxyChain());
+    validator.setAllowedProxyChains(
+        new ProxyList(config.getAllowedProxyChains()));
   }
   
   private static AbstractUrlBasedTicketValidator newTicketValidator(

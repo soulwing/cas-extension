@@ -88,11 +88,12 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
-  static final SimpleAttributeDefinition PROXY_CALLBACK_URL =
-      new SimpleAttributeDefinitionBuilder(Names.PROXY_CALLBACK_URL,
+  static final SimpleAttributeDefinition PROXY_CALLBACK_PATH =
+      new SimpleAttributeDefinitionBuilder(Names.PROXY_CALLBACK_PATH,
           ModelType.STRING)
               .setAllowExpression(true)
               .setAllowNull(true)
+              .setDefaultValue(new ModelNode().set("/casProxyCallback"))
               .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
@@ -166,7 +167,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       ENCODING,
       SERVER_URL,
       SERVICE_URL,
-      PROXY_CALLBACK_URL,
+      PROXY_CALLBACK_PATH,
       ACCEPT_ANY_PROXY,
       ALLOW_EMPTY_PROXY_CHAIN,
       RENEW,

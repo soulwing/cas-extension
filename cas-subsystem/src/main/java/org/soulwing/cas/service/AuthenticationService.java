@@ -28,8 +28,23 @@ public interface AuthenticationService {
 
   /**
    * Creates a new authenticator instance.
+   * @param contextPath context path of the requesting application
    * @return authenticator
    */
-  Authenticator newAuthenticator();
+  Authenticator newAuthenticator(String contextPath);
+  
+  /**
+   * Determines whether a given path matches the proxy callback path.
+   * @param path the path to test
+   * @return {@code true} if the request is a proxy callback
+   */
+  boolean isProxyCallbackPath(String path);
+  
+  /**
+   * Handles a proxy granting ticket callback from the CAS server.
+   * @param query the query string from the callback request
+   * @return proxy callback response
+   */
+  ProxyCallbackResponse handleProxyCallback(String query);
   
 }

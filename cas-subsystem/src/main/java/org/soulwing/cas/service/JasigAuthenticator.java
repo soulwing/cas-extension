@@ -39,7 +39,8 @@ public class JasigAuthenticator implements Authenticator {
   
   /**
    * Constructs a new instance.
-   * @param config
+   * @param config configuration profile
+   * @param validator ticket validator
    */
   public JasigAuthenticator(Configuration config, TicketValidator validator) {
     this.config = config;
