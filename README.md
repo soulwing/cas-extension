@@ -33,8 +33,8 @@ Installation
 The module and its dependencies must be installed in the `modules` directory 
 of your Wildfly server.  Thanks to Wildfly's modular design, the installed 
 modules remain isolated in your server's configuration, and will never be seen 
-by applications that do not require CAS support.  Moreover, the various 
-library components needed by this extension will not appear on your 
+by applications that do not require CAS support.  Moreover, the library
+components needed by this extension will not appear on your 
 application's class loader, avoiding any potential for conflict.
 
 In the top level of the build directory:
@@ -75,7 +75,7 @@ information.
 CAS Configuration Profiles
 --------------------------
 
-The CAS subsystem allows you to create one or more configuration profiles.
+Within the CAS subsystem you can create one or more configuration profiles.
 Each profile fully describes the properties needed for the CAS subsystem to
 exchange authentication requests with a given CAS server.  You might use 
 multiple profiles to differentiate servers for *production* versus 
@@ -143,14 +143,14 @@ To add an allowed proxy chain to the *default* profile, use the following
 CLI command.  The name of the chain added by this command is *example*.
 
 ```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[http://www.example.org])
+/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[http://www.example.org]){allow-resource-service-restart=true}
 ```
 
 To remove the *example* proxy chain from the *default* profile, use the
 follwing CLI command.
 
 ```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:remove
+/subsystem=cas/profile=default/allowed-proxy-chain=example:remove{allow-resource-service-restart=true}
 ```
 #### Configuring a Hostname Verifier
 
@@ -172,9 +172,10 @@ To add any of the supported verifiers to the *default* profile, use *one* of
  the following CLI commands:
 
 ```
-/subsystem=cas/profile=default/hostname-verifier=allow-any:add
-/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[cas.example.org])
-/subsystem=cas/profile=default/hostname-verifier=pattern-match:add(hosts=[".*\.example.org$", "^localhost$"])
+/subsystem=cas/profile=default/hostname-verifier=allow-any:add{allow-resource-service-restart=true}
+/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[cas.example.org]){allow-resource-service-restart=true}
+/subsystem=cas/profile=default/hostname-verifier=pattern-match:add(hosts=[".*\.example.org$", "^localhost$"]){allow-resource-service-restart=true}
+
 ```
 
 To remove a configured hostname verifier, specify the verifier type in the
@@ -182,7 +183,7 @@ remove command.  For example, to remove the *pattern-match* verifier, use
 this command:
 
 ```
-/subsystem=cas/profile=default/hostname-verifier=pattern-match:remove
+/subsystem=cas/profile=default/hostname-verifier=pattern-match:remove{allow-resource-service-restart=true}
 ```
 
 Using SAML
@@ -209,7 +210,7 @@ You can modify the configuration of an existing profile using the
 `:write-attribute` CLI operation on the profile:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=protocol, value=SAML-1.1)
+/subsystem=cas/profile=default:write-attribute(name=protocol, value=SAML-1.1){allow-resource-service-restart=true}
 ```
 
 Of course, you can also specify the protocol attribute when creating a 
@@ -231,7 +232,7 @@ You can modify the configuration of the *IdentityAssertion* module in the
 default CAS security domain using the `:write-attribute` CLI command:
 
 ```
-/subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:write-attribute(name="module-options", value={ role-attributes="eduPersonAffiliation, groupMembership" })
+/subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:write-attribute(name="module-options", value={ role-attributes="eduPersonAffiliation, groupMembership" }){allow-resource-service-restart=true}
 ```
 
 Of course, you can also specify the *role-attributes* module option when
@@ -258,8 +259,10 @@ Assuming that you have already configured the your `cas` security domain,
 you can reconfigure the domain to support realm delegation as follows:
 
 ```
+batch
 /subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:remove
 /subsystem=security/security-domain=cas/authentication=classic/login-module=DelegatingIdentityAssertion:add(code=org.soulwing.cas.jaas.DelegatingIdentityAssertionLoginModule, module=org.soulwing.cas, flag=required)
+run-batch --headers={allow-resource-service-restart=true}
 ```
 
 By default, this configuration delegates to the security realm named
@@ -269,7 +272,7 @@ The following command changes the delegate realm name to
 `CasAuthorizationRealm`.
 
 ```
-/subsystem=security/security-domain=cas/authentication=classic/login-module=DelegatingIdentityAssertion:write-attribute(module-options={realm:CasAuthorizationRealm, role-attributes=...})
+/subsystem=security/security-domain=cas/authentication=classic/login-module=DelegatingIdentityAssertion:write-attribute(module-options={realm:CasAuthorizationRealm, role-attributes=...}){allow-resource-service-restart=true}
 ```
 
 Note that you must also specify the `role-attributes` module option (as
