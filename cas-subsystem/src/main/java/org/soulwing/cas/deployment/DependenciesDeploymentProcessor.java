@@ -42,9 +42,6 @@ import org.soulwing.cas.extension.Names;
  */
 public class DependenciesDeploymentProcessor implements DeploymentUnitProcessor {
 
-  // FIXME -- this shouldn't be hard coded like this
-  private static final String MODULE_NAME = "org.soulwing.cas";
-
   private static final Phase PHASE = Phase.DEPENDENCIES;
 
   private static final int PRIORITY = 0x8000;
@@ -78,7 +75,7 @@ public class DependenciesDeploymentProcessor implements DeploymentUnitProcessor 
         DeploymentAttachments.CAS_DESCRIPTOR);
     if (config == null || !config.isAddDependencies()) return;
     
-    ModuleIdentifier moduleId = ModuleIdentifier.create(MODULE_NAME);
+    ModuleIdentifier moduleId = Module.getCallerModule().getIdentifier();
     ModuleLoader loader = Module.getBootModuleLoader();
     ModuleDependency dependency = new ModuleDependency(loader, moduleId, false,
         true, false, false);

@@ -1,5 +1,4 @@
 * Remove all CAS profile services when subsystem is removed
-* Fix hard-coded service name in dependencies deployment processor
 * Explore whether the application's configured security domain could be
   probed for presence of the IdentityAssertion login module as a means for
   enabling CAS support (so that in the simplest cases the cas.xml descriptor 
