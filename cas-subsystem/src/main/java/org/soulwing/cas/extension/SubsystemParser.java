@@ -20,8 +20,10 @@ package org.soulwing.cas.extension;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -30,6 +32,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
 import org.jboss.as.controller.parsing.ParseUtils;
+import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.dmr.ModelNode;
 import org.jboss.dmr.Property;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
@@ -46,6 +49,8 @@ public class SubsystemParser implements ResourceParser {
   private final Deque<List<ModelNode>> opStack = new LinkedList<>();
   
   private final Deque<ResourceReader> stack = new LinkedList<>();
+  
+  private final Map<AttachmentKey<?>, Object> attachments = new HashMap<>();
   
   private List<ModelNode> ops;
   
@@ -87,11 +92,7 @@ public class SubsystemParser implements ResourceParser {
           break;
           
         case CHARACTERS:
-          String text = reader.getText();
-          if (!text.trim().isEmpty()) {
-            throw new XMLStreamException("unexpected text: " 
-                + text, reader.getLocation());
-          }
+          peek().characters(reader, reader.getText());
           break;
           
         default:
@@ -177,7 +178,6 @@ public class SubsystemParser implements ResourceParser {
    */
   @Override
   public void addOperation(ModelNode op, String type, String name) {
-
     PathAddress addr = PathAddress.pathAddress();
     List<ModelNode> ops = opStack.peek();
     if (!ops.isEmpty()) {
@@ -201,6 +201,30 @@ public class SubsystemParser implements ResourceParser {
   @Override
   public ModelNode lastOperation() {
     return ops.get(ops.size() - 1);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public <T> T getAttachment(AttachmentKey<T> key) {
+    return key.cast(attachments.get(key));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public <T> T putAttachment(AttachmentKey<T> key, T value) {
+    return key.cast(attachments.put(key, value));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public <T> T removeAttachment(AttachmentKey<T> key) {
+    return key.cast(attachments.remove(key));
   }
  
 }

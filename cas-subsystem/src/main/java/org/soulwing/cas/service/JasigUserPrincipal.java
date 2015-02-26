@@ -21,6 +21,7 @@ package org.soulwing.cas.service;
 import java.util.Map;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.soulwing.cas.api.Transformer;
 import org.soulwing.cas.api.UserPrincipal;
 
 /**
@@ -33,13 +34,18 @@ class JasigUserPrincipal implements UserPrincipal {
   private static final long serialVersionUID = 1805860723380323513L;
 
   private final AttributePrincipal delegate;
+  private final Map<String, Object> attributes;
     
   /**
    * Constructs a new instance.
    * @param delegate
+   * @param transformers
    */
-  public JasigUserPrincipal(AttributePrincipal delegate) {
+  public JasigUserPrincipal(AttributePrincipal delegate, 
+      Map<String, Transformer<Object, Object>> transformers) {
     this.delegate = delegate;
+    this.attributes = new TransformingMap(delegate.getAttributes(), 
+        transformers);
   }
 
   /**
@@ -55,7 +61,7 @@ class JasigUserPrincipal implements UserPrincipal {
    */
   @Override
   public Map<String, Object> getAttributes() {
-    return delegate.getAttributes();
+    return attributes;
   }
 
   /**

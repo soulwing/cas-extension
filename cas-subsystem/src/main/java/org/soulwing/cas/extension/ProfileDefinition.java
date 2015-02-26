@@ -88,6 +88,16 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition PROXY_CALLBACK_ENABLED =
+      new SimpleAttributeDefinitionBuilder(Names.PROXY_CALLBACK_ENABLED,
+          ModelType.BOOLEAN)
+              .setAllowExpression(false)
+              .setAllowNull(true)
+              .setDefaultValue(new ModelNode(false))
+              .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
+                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
+              .build();
+
   static final SimpleAttributeDefinition PROXY_CALLBACK_PATH =
       new SimpleAttributeDefinitionBuilder(Names.PROXY_CALLBACK_PATH,
           ModelType.STRING)
@@ -167,6 +177,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       ENCODING,
       SERVER_URL,
       SERVICE_URL,
+      PROXY_CALLBACK_ENABLED,
       PROXY_CALLBACK_PATH,
       ACCEPT_ANY_PROXY,
       ALLOW_EMPTY_PROXY_CHAIN,
@@ -206,6 +217,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
     super.registerChildren(resourceRegistration);
     resourceRegistration.registerSubModel(ProxyChainDefinition.INSTANCE);
     resourceRegistration.registerSubModel(HostnameVerifierDefinition.INSTANCE);
+    resourceRegistration.registerSubModel(AttributeTransformDefinition.INSTANCE);
   }
 
   static class ProfileAdd extends AbstractAddStepHandler {

@@ -32,7 +32,7 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
    */
   public ProfileReaderWriter() {
     super(Names.PROFILE, new HostnameVerifierReaderWriter(),
-        new ProxyChainReaderWriter());
+        new ProxyChainReaderWriter(), new AttributeTransformReaderWriter());
   }
 
   /**

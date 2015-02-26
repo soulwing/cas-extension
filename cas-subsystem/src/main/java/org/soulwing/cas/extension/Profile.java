@@ -19,6 +19,7 @@
 package org.soulwing.cas.extension;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import javax.net.ssl.SSLContext;
 
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
+import org.soulwing.cas.api.Transformer;
 import org.soulwing.cas.service.AuthenticationProtocol;
 import org.soulwing.cas.service.Configuration;
 
@@ -41,6 +43,12 @@ public class Profile implements Configuration {
   private final InjectedValue<SSLContext> sslContext =
       new InjectedValue<>();
   
+  private final Map<String, List<String>> allowedProxyChains = 
+      new LinkedHashMap<>();
+  
+  private final Map<String, Transformer<Object, Object>> attributeTransformers =
+      new HashMap<>();
+
   private String securityRealm;
   
   private HostnameVerifier hostnameVerifier;
@@ -66,9 +74,7 @@ public class Profile implements Configuration {
   private long clockSkewTolerance;
   
   private boolean postAuthRedirect;
-  
-  private Map<String, List<String>> allowedProxyChains = new LinkedHashMap<>();
-  
+    
   /**
    * Gets the {@code sslContext} property.
    * @return property value
@@ -327,18 +333,40 @@ public class Profile implements Configuration {
    * {@inheritDoc}
    */
   @Override
+  public Map<String, Transformer<Object, Object>> getAttributeTransformers() {
+    return attributeTransformers;
+  }
+
+  /**
+   * Puts an attribute transformer into the map associated with this profile,
+   * replacing any existing transformer for the given attribute name.
+   * @param attributeName name of the attribute to transform
+   * @param transformer the subject transformer
+   */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  public void putAttributeTransformer(String attributeName, 
+     Transformer transformer) {
+    attributeTransformers.put(attributeName, transformer);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public String toString() {
     return String.format("{ protocol=%s encoding=%s"
-        + " serverUrl=%s serviceUrl=%s proxyCallbackUrl=%s"
-        + " acceptAnyProxy=%s allowEmptyProxyChain=%s allowedProxyChains=%s"
+        + " serverUrl=%s serviceUrl=%s proxyCallbackEnabled=%s"
+        + " proxyCallbackPath=%s acceptAnyProxy=%s allowEmptyProxyChain=%s"
+        + " allowedProxyChains=%s"
         + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s"
-        + " securityRealm=%s hostnameVerifier=%s }",
-        protocol, encoding, serverUrl, serviceUrl, proxyCallbackUrl, 
-        acceptAnyProxy, allowEmptyProxyChain, allowedProxyChains,         
-        renew, clockSkewTolerance, postAuthRedirect,
+        + " securityRealm=%s hostnameVerifier=%s attributeTransformers=%s }",
+        protocol, encoding, serverUrl, serviceUrl, proxyCallbackEnabled, 
+        proxyCallbackPath, acceptAnyProxy, allowEmptyProxyChain, 
+        allowedProxyChains, renew, clockSkewTolerance, postAuthRedirect,
         securityRealm != null ? securityRealm : "(none)", 
         hostnameVerifier != null ? 
-            hostnameVerifier.getClass().getSimpleName() : "(none)");
+            hostnameVerifier.getClass().getSimpleName() : "(none)",
+        attributeTransformers);
   }
 
 }

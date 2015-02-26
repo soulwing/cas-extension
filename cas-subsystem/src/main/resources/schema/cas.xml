@@ -11,6 +11,11 @@
     <allowed-proxy-chain name="summit-proxies">
       <proxy url="https://summit.research.vt.edu"/>
     </allowed-proxy-chain>
+    <attribute-transform name="groupMembership">
+      <transformer name="DistinguishedNameToSimpleName">
+        <option key="component">uugid</option>
+      </transformer>
+    </attribute-transform> 
   </profile>
   
 </subsystem>

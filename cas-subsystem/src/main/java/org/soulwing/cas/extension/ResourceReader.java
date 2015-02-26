@@ -62,4 +62,13 @@ public interface ResourceReader {
    */
   void endElement(XMLStreamReader reader, String namespaceUri, String localName) 
       throws XMLStreamException;
+  
+  /**
+   * Notifies the recipient of text that appears within an element.
+   * @param reader the XML stream being parsed
+   * @param text the subject text
+   * @throws XMLStreamException
+   */
+  void characters(XMLStreamReader reader, String text) throws XMLStreamException;
+  
 }

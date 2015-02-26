@@ -18,10 +18,14 @@
  */
 package org.soulwing.cas.service;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+
+import org.soulwing.cas.api.Transformer;
 
 /**
  * An (immutable) configuration for an {@link Authenticator}.
@@ -126,4 +130,17 @@ public interface Configuration {
    */
   HostnameVerifier getHostnameVerifier();
 
+  /**
+   * Gets the identity assertion attribute transformers associated with this 
+   * configuration.
+   * <p>
+   * The keys of the returned map correspond to the names of attributes that
+   * may be appear in the {@link UserPrincipal} after a successful 
+   * authentication.  The corresponding value is a function that should be
+   * applied to each attribute of the given name to transform the value in
+   * some manner. 
+   * @return attribute transformer map
+   */
+  Map<String, Transformer<Object, Object>> getAttributeTransformers();
+  
 }

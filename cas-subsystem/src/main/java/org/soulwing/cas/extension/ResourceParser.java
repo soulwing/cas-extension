@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.dmr.ModelNode;
 import org.jboss.staxmapper.XMLElementReader;
 
@@ -103,4 +104,10 @@ public interface ResourceParser extends XMLStreamConstants,
    */
   ModelNode lastOperation();
   
+  <T> T getAttachment(AttachmentKey<T> key);
+  
+  <T> T putAttachment(AttachmentKey<T> key, T value);
+
+  <T> T removeAttachment(AttachmentKey<T> key);
+
 }

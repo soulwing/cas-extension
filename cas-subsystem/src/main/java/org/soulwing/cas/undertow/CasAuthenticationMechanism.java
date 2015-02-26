@@ -71,6 +71,7 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     try {
       IdentityAssertion assertion = authenticator.validateTicket(
           exchange.getRequestPath(), exchange.getQueryString());
+      LOGGER.debug("principal: " + assertion.getPrincipal());
       IdentityAssertionCredential credential = 
           new IdentityAssertionCredential(assertion);
       if (LOGGER.isDebugEnabled()) {
@@ -120,9 +121,9 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         LOGGER.debug("authentication failed: " + ex.getMessage());
       }
 
-      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 401);
-      securityContext.authenticationFailed(ex.getMessage(), MECHANISM_NAME);
-      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
+//      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 401);
+//      securityContext.authenticationFailed(ex.getMessage(), MECHANISM_NAME);
+//      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
     catch (RuntimeException ex) {
       LOGGER.error("CAS authentication exception: " + ex, ex);

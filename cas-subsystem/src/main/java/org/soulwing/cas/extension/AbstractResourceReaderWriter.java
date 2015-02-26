@@ -136,6 +136,18 @@ public abstract class AbstractResourceReaderWriter
     parser.pop();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void characters(XMLStreamReader reader, String text)
+      throws XMLStreamException {
+    if (!text.trim().isEmpty()) {
+      throw new XMLStreamException("unexpected text: " 
+          + text, reader.getLocation());
+    }
+  }
+
   protected void handleAttributes(XMLStreamReader reader) 
       throws XMLStreamException {
 

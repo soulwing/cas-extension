@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jasig.cas.client.validation.Assertion;
 import org.soulwing.cas.api.IdentityAssertion;
+import org.soulwing.cas.api.Transformer;
 import org.soulwing.cas.api.UserPrincipal;
 
 /**
@@ -34,14 +35,20 @@ class JasigIdentityAssertion implements IdentityAssertion {
 
   private final Assertion delegate;
   private final UserPrincipal principal; 
+  private final Map<String, Object> attributes;
   
   /**
    * Constructs a new instance.
    * @param delegate
+   * @param transformers
    */
-  public JasigIdentityAssertion(Assertion delegate) {
+  public JasigIdentityAssertion(Assertion delegate,
+      Map<String, Transformer<Object, Object>> transformers) {
     this.delegate = delegate;
-    this.principal = new JasigUserPrincipal(delegate.getPrincipal());
+    this.principal = new JasigUserPrincipal(delegate.getPrincipal(), 
+        transformers);
+    this.attributes = new TransformingMap(delegate.getAttributes(), 
+        transformers);
   }
 
   /**
@@ -89,7 +96,7 @@ class JasigIdentityAssertion implements IdentityAssertion {
    */
   @Override
   public Map<String, Object> getAttributes() {
-    return delegate.getAttributes();
+    return attributes;
   }
 
   /**

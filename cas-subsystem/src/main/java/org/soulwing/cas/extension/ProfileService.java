@@ -22,6 +22,7 @@ import static org.soulwing.cas.extension.ExtensionLogger.LOGGER;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.net.ssl.SSLContext;
@@ -39,10 +40,14 @@ import org.jboss.msc.service.AbstractService;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceName;
+import org.soulwing.cas.api.Transformer;
 import org.soulwing.cas.service.AuthenticationProtocol;
 import org.soulwing.cas.service.Configuration;
 import org.soulwing.cas.ssl.HostnameVerifierFactory;
 import org.soulwing.cas.ssl.HostnameVerifierType;
+import org.soulwing.cas.transformer.TransformerFactory;
+import org.soulwing.cas.transformer.TransformerLoadException;
+import org.soulwing.cas.transformer.TransformerSequence;
 
 /**
  * A service that holds a {@link Configuration}.
@@ -92,6 +97,7 @@ public class ProfileService extends AbstractService<Profile> {
       Profile profile = createProfile(context, model);
       addAllowedProxyChains(resource, profile);
       addHostnameVerifier(resource, profile);
+      addAttributeTransforms(resource, profile);
       
       ProfileService profileService = new ProfileService(profile);
       
@@ -221,6 +227,62 @@ public class ProfileService extends AbstractService<Profile> {
       return hosts.toArray(new String[hosts.size()]);
     }
     
+    private static void addAttributeTransforms(Resource profileResource,
+        Profile config) throws OperationFailedException {
+      for (String name : profileResource.getChildrenNames(
+          Names.ATTRIBUTE_TRANSFORM)) {
+        Resource transformResource = profileResource.getChild(
+            PathElement.pathElement(Names.ATTRIBUTE_TRANSFORM, name));
+        addAttributeTransformers(name, transformResource, config);
+      }
+    }
+    
+    private static void addAttributeTransformers(String attributeName,
+        Resource transformResource, Profile config) 
+        throws OperationFailedException {
+      
+      List<Transformer<?, ?>> transformers = new ArrayList<>();
+      
+      for (String name : transformResource.getChildrenNames(
+          Names.TRANSFORMER)) {
+        ModelNode model = transformResource.getChild(
+            PathElement.pathElement(Names.TRANSFORMER, name)).getModel(); 
+        ModelNode code = model.get(Names.CODE);
+        ModelNode module = model.get(Names.MODULE);
+        ModelNode options = model.get(Names.OPTIONS);
+        try {
+          Transformer<?, ?> transformer = TransformerFactory.getTransformer(
+              code.isDefined() ? code.asString() : null, 
+              module.isDefined() ? module.asString() : null, 
+              toProperties(options));
+          transformers.add(transformer);
+        }
+        catch (TransformerLoadException ex) {
+          throw new OperationFailedException(
+              ex.getMessage(), ex);
+        }
+      }
+      
+      int count = transformers.size();
+      if (count > 1) {
+        config.putAttributeTransformer(attributeName, 
+            new TransformerSequence(transformers));
+      }
+      else if (count == 1) {
+        config.putAttributeTransformer(attributeName,
+            transformers.get(0));
+      }
+    }
+
+    private static Properties toProperties(ModelNode options) {
+      final Properties properties = new Properties();
+      if (options.isDefined()) {
+        for (String key : options.keys()) {
+          properties.put(key, options.get(key).asString());
+        }
+      }
+      return properties;
+    }
   }
 
 }

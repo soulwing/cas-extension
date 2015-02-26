@@ -18,7 +18,10 @@
         minOccurs="0" maxOccurs="1"/>
       <xs:element name="allowed-proxy-chain" type="ProxyChainType"
         minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="attribute-transform" type="AttributeTransformType"
+        minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
+    
     <xs:attribute name="name" use="optional" default="default"/>
     <xs:attribute name="encoding" use="optional" default="UTF-8"/>
     <xs:attribute name="protocol" type="AuthenticationProtocolType" 
@@ -72,6 +75,32 @@
   
   <xs:complexType name="HostType">
     <xs:attribute name="name" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="AttributeTransformType">
+    <xs:sequence>
+      <xs:element name="transformer" type="TransformerType" minOccurs="0"
+        maxOccurs="unbounded"/>      
+    </xs:sequence>
+    <xs:attribute name="name"/>
+  </xs:complexType>
+    
+  <xs:complexType name="TransformerType">
+    <xs:sequence>
+      <xs:element name="option" type="OptionType" minOccurs="0"
+        maxOccurs="unbounded"/>      
+    </xs:sequence>
+    <xs:attribute name="name"/>
+    <xs:attribute name="code" type="xs:anyURI"/>
+    <xs:attribute name="module" type="xs:anyURI" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="OptionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="key"/>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
     
 </xs:schema>

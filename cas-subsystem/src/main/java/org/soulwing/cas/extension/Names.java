@@ -42,6 +42,7 @@ public interface Names {
   String ENCODING = "encoding";
   String SERVICE_URL = "service-url";
   String SERVER_URL = "server-url";
+  String PROXY_CALLBACK_ENABLED = "proxy-callback-enabled";
   String PROXY_CALLBACK_PATH = "proxy-callback-path";
   String ACCEPT_ANY_PROXY = "accept-any-proxy";
   String ALLOW_EMPTY_PROXY_CHAIN = "allow-empty-proxy-chain";
@@ -56,7 +57,14 @@ public interface Names {
   String TYPE = "type";    
   String HOSTS = "hosts";
   String HOST = "host";
-
+  String ATTRIBUTE_TRANSFORM = "attribute-transform";
+  String TRANSFORMER = "transformer";
+  String CODE = "code";
+  String MODULE = "module";
+  String OPTIONS = "options";
+  String OPTION = "option";
+  String KEY = "key";
+  
   String AUTHENTICATION_SERVICE = "authentication-service";  
   String SERVLET_EXTENSION = "servlet-extension";
   String ADD_API_DEPENDENCIES = "add-api-dependencies";

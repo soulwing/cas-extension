@@ -18,31 +18,33 @@
  */
 package org.soulwing.cas.extension;
 
-import org.jboss.as.controller.PathElement;
-import org.jboss.as.controller.descriptions.ModelDescriptionConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 /**
- * Resource path constants.
+ * A reader/writer for a proxy chain resource configuration. 
  *
  * @author Carl Harris
  */
-public interface Paths {
+class AttributeTransformReaderWriter extends AbstractResourceReaderWriter {
+  
+  private static final TransformerReaderWriter TRANSFORMER_RW = 
+      new TransformerReaderWriter();
+  
+  /**
+   * Constructs a new instance.
+   */
+  public AttributeTransformReaderWriter() {
+    super(Names.ATTRIBUTE_TRANSFORM, TRANSFORMER_RW);
+  }
 
-  PathElement SUBSYSTEM  = 
-      PathElement.pathElement(ModelDescriptionConstants.SUBSYSTEM, 
-          Names.SUBSYSTEM_NAME);
-  
-  PathElement PROFILE = PathElement.pathElement(Names.PROFILE);
-  
-  PathElement PROXY_CHAIN = PathElement.pathElement(Names.PROXY_CHAIN);
-  
-  PathElement SERVER_HOST_VERIFIER = PathElement.pathElement(
-      Names.HOSTNAME_VERIFIER);
-
-  PathElement ATTRIBUTE_TRANSFORM = PathElement.pathElement(
-      Names.ATTRIBUTE_TRANSFORM);
-  
-  PathElement TRANSFORMER = 
-      PathElement.pathElement(Names.TRANSFORMER);
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void handleAttributes(XMLStreamReader reader)
+      throws XMLStreamException {
+    super.handleAttributes(reader);
+  }
 
 }
