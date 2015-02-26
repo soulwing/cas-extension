@@ -45,6 +45,7 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
         ProfileDefinition.ENCODING,
         ProfileDefinition.SERVICE_URL,
         ProfileDefinition.SERVER_URL,
+        ProfileDefinition.PROXY_CALLBACK_ENABLED,
         ProfileDefinition.PROXY_CALLBACK_PATH,
         ProfileDefinition.ACCEPT_ANY_PROXY,
         ProfileDefinition.ALLOW_EMPTY_PROXY_CHAIN,

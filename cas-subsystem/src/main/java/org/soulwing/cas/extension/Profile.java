@@ -53,7 +53,9 @@ public class Profile implements Configuration {
 
   private String serviceUrl;
 
-  private String proxyCallbackUrl;
+  private boolean proxyCallbackEnabled;
+  
+  private String proxyCallbackPath;
 
   private boolean acceptAnyProxy;
 
@@ -184,20 +186,36 @@ public class Profile implements Configuration {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isProxyCallbackEnabled() {
+    return proxyCallbackEnabled;
+  }
+
+  /**
+   * Sets the {@code proxyCallbackEnabled} property.
+   * @param proxyCallbackEnabled the value to set
+   */
+  public void setProxyCallbackEnabled(boolean proxyCallbackEnabled) {
+    this.proxyCallbackEnabled = proxyCallbackEnabled;
+  }
+
+  /**
    * Gets the {@code proxyCallbackUrl} property.
    * @return property value
    */
   @Override
-  public String getProxyCallbackUrl() {
-    return proxyCallbackUrl;
+  public String getProxyCallbackPath() {
+    return proxyCallbackPath;
   }
 
   /**
-   * Sets the {@code proxyCallbackUrl} property.
-   * @param proxyCallbackUrl the value to set
+   * Sets the {@code proxyCallbackPath} property.
+   * @param proxyCallbackPath the value to set
    */
-  public void setProxyCallbackUrl(String proxyCallbackUrl) {
-    this.proxyCallbackUrl = proxyCallbackUrl;
+  public void setProxyCallbackPath(String proxyCallbackPath) {
+    this.proxyCallbackPath = proxyCallbackPath;
   }
 
   /**
@@ -248,17 +266,13 @@ public class Profile implements Configuration {
   }
 
   /**
-   * {@inheritDoc}
+   * Puts an allowed proxy chain into the map associated with profile,
+   * replacing any existing chain with the same name.
+   * @param name name of the chain
+   * @param chain the subject chain
    */
   public void putAllowedProxyChain(String name, List<String> chain) {
     allowedProxyChains.put(name, chain);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void removeAllowedProxyChain(String name) {
-    allowedProxyChains.remove(name);
   }
 
   /**

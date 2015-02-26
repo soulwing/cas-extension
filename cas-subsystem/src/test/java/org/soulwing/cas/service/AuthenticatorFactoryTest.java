@@ -190,6 +190,8 @@ public class AuthenticatorFactoryTest {
         will(returnValue(ENCODING));
         atLeast(1).of(config).getServerUrl();
         will(returnValue(SERVER_URL));
+        allowing(config).isProxyCallbackEnabled();
+        will(returnValue(true));
         atLeast(1).of(config).isRenew();
         will(returnValue(RENEW));
         atLeast(1).of(config).getSslContext();

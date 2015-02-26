@@ -98,7 +98,8 @@ public class JasigAuthenticator implements Authenticator {
     }
 
     try {
-      return new JasigIdentityAssertion(validator.validate(ticket, serviceUrl));
+      return new JasigIdentityAssertion(validator.validate(ticket, serviceUrl),
+          config.getAttributeTransformers());
     }
     catch (TicketValidationException ex) {
       throw new AuthenticationException(ex.getMessage(), ex);

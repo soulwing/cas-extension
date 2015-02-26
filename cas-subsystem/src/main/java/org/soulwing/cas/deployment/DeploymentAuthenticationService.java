@@ -74,7 +74,7 @@ class DeploymentAuthenticationService
    */
   @Override
   public boolean isProxyCallbackPath(String path) {
-    return profile.getValue().getProxyCallbackUrl().equals(path);
+    return profile.getValue().getProxyCallbackPath().equals(path);
   }
 
   /**
@@ -87,14 +87,14 @@ class DeploymentAuthenticationService
 
   private String proxyCallbackUrl(String contextPath) {
     Configuration config = profile.getValue();
-    if (config.getProxyCallbackUrl() == null) return null;
+    if (config.getProxyCallbackPath() == null) return null;
     URI uri = URI.create(config.getServiceUrl());
     StringBuilder sb = new StringBuilder();
     sb.append(uri.getScheme());
     sb.append("://");
     sb.append(uri.getAuthority());
     sb.append(contextPath);
-    String proxyCallbackPath = config.getProxyCallbackUrl();
+    String proxyCallbackPath = config.getProxyCallbackPath();
     if (!proxyCallbackPath.startsWith("/") && !contextPath.endsWith("/")) {
       sb.append("/");
     }

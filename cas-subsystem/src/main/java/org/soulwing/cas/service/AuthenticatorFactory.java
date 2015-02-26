@@ -82,7 +82,7 @@ public class AuthenticatorFactory {
       String proxyCallbackUrl, ProxyCallbackHandler proxyCallbackHandler,
       HttpURLConnectionFactory connectionFactory, 
       Cas20ServiceTicketValidator validator) {
-    if (proxyCallbackUrl != null) {
+    if (config.isProxyCallbackEnabled()) {
       validator.setProxyCallbackUrl(proxyCallbackUrl);
       validator.setProxyGrantingTicketStorage(
           (ProxyGrantingTicketStorage) proxyCallbackHandler.getStorage());

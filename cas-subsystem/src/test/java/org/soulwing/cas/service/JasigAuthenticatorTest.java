@@ -23,6 +23,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
@@ -34,6 +38,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.soulwing.cas.api.IdentityAssertion;
+import org.soulwing.cas.api.Transformer;
 
 /**
  * Unit tests for {@link JasigAuthenticator}.
@@ -52,6 +57,9 @@ public class JasigAuthenticatorTest {
 
   private static final String SERVICE_URL = "https://service";
 
+  private static final Map<String, Transformer<Object, Object>> TRANSFORMERS =
+      new HashMap<>();
+  
   @Rule
   public final JUnitRuleMockery context = new JUnitRuleMockery();
   
@@ -100,6 +108,10 @@ public class JasigAuthenticatorTest {
       {
         allowing(assertion).getPrincipal();
         will(returnValue(principal));
+        allowing(assertion).getAttributes();
+        will(returnValue(Collections.emptyMap()));
+        allowing(principal).getAttributes();
+        will(returnValue(Collections.emptyMap()));
         oneOf(validator).validate(TICKET, SERVICE_URL + REQUEST_PATH);
         will(returnValue(assertion));
       }
@@ -172,6 +184,8 @@ public class JasigAuthenticatorTest {
         will(returnValue(PROTOCOL));
         allowing(config).getServiceUrl();
         will(returnValue(SERVICE_URL));
+        allowing(config).getAttributeTransformers();
+        will(returnValue(TRANSFORMERS));
       }
     };
   }

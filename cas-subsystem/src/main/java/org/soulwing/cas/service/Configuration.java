@@ -55,10 +55,17 @@ public interface Configuration {
   String getServiceUrl();
   
   /**
+   * Gets a flag that indicates whether a proxy granting ticket should be
+   * requested with each authentication request.
+   * @return
+   */
+  boolean isProxyCallbackEnabled();
+  
+  /**
    * Gets the CAS proxy callback path.
    * @return proxy callback path
    */
-  String getProxyCallbackUrl();
+  String getProxyCallbackPath();
   
   /**
    * Gets a flag indicating whether any proxy should be accepted in a
