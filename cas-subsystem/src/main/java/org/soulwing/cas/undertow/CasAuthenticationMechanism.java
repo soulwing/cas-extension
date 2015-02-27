@@ -23,6 +23,8 @@ import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
 import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.server.handlers.CookieImpl;
 import io.undertow.util.HttpString;
 
 import org.soulwing.cas.api.IdentityAssertion;
@@ -38,6 +40,15 @@ import org.soulwing.cas.service.NoTicketException;
 public class CasAuthenticationMechanism implements AuthenticationMechanism {
 
   public static final String MECHANISM_NAME = "CAS";
+
+  public static final String NOT_AUTHORIZED_MESSAGE = 
+      "identity manager does not recognize user '%s'";
+
+  public static final String STATUS_COOKIE = "cas-status";
+
+  public static final int MAX_RETRIES = 2;
+
+  
   
   private final String contextPath;
   private final CasAuthenticationService authenticationService;
@@ -59,6 +70,7 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   @Override
   public AuthenticationMechanismOutcome authenticate(
       HttpServerExchange exchange, SecurityContext securityContext) {
+    
     if (!securityContext.isAuthenticationRequired()) {
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
@@ -71,44 +83,22 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     try {
       IdentityAssertion assertion = authenticator.validateTicket(
           exchange.getRequestPath(), exchange.getQueryString());
-      LOGGER.debug("principal: " + assertion.getPrincipal());
+      
       IdentityAssertionCredential credential = 
           new IdentityAssertionCredential(assertion);
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("valid ticket");
-      }
-   
-      Account account = securityContext.getIdentityManager()
-          .verify(assertion.getPrincipal().getName(), credential);
       
-      if (account != null) {
-        
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("authentication complete: " 
-              + " user=" + account.getPrincipal().getName()
-              + " roles=" + account.getRoles());
-        }
-        
-        exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
-        if (authenticator.isPostAuthRedirect()) {
-          exchange.putAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY, 
-              true);
-        }        
-        
-        securityContext.authenticationComplete(account, MECHANISM_NAME, true);
-        return AuthenticationMechanismOutcome.AUTHENTICATED;
-      }
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("identity manager does not recognize user '"
-            + assertion.getPrincipal().getName() + "'");
-      }
+      Account account = authorize(credential, securityContext);
       
-      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 403);
-      securityContext.authenticationFailed(
-          "identity manager does not recognize user", MECHANISM_NAME);
+      resetRetryCount(exchange);
       
-      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
+      exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
+      if (authenticator.isPostAuthRedirect()) {
+        exchange.putAttachment(CasAttachments.POST_AUTH_REDIRECT_KEY, 
+            true);
+      }        
+        
+      securityContext.authenticationComplete(account, MECHANISM_NAME, true);
+      return AuthenticationMechanismOutcome.AUTHENTICATED;
     }
     catch (NoTicketException ex) {
       if (LOGGER.isDebugEnabled()) {
@@ -116,24 +106,18 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       }
       return AuthenticationMechanismOutcome.NOT_ATTEMPTED;
     }
-    catch (AuthenticationException ex) {
+    catch (AuthorizationException ex) {
+      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 403);
+      securityContext.authenticationFailed(ex.getMessage(), MECHANISM_NAME);
+      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
+    }
+    catch (AuthenticationException | RuntimeException ex) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("authentication failed: " + ex.getMessage());
       }
-
-//      exchange.putAttachment(CasAttachments.AUTH_FAILED_KEY, 401);
-//      securityContext.authenticationFailed(ex.getMessage(), MECHANISM_NAME);
-//      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
+      securityContext.setAuthenticationRequired();
+      return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
     }
-    catch (RuntimeException ex) {
-      LOGGER.error("CAS authentication exception: " + ex, ex);
-    }
-    
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("authentication not successful");
-    }
-    securityContext.setAuthenticationRequired();
-    return AuthenticationMechanismOutcome.NOT_AUTHENTICATED;
   }
 
   /**
@@ -143,18 +127,27 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   public ChallengeResult sendChallenge(HttpServerExchange exchange,
       SecurityContext context) {
     
+    Integer failedStatus = 
+        exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY);
+    if (failedStatus != null) {
+      exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);
+      resetRetryCount(exchange);
+      return new ChallengeResult(false, failedStatus);
+    }
+        
+    if (getRetryCount(exchange) >= MAX_RETRIES) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("authentication failed: too many retries");
+      }
+      resetRetryCount(exchange);
+      return new ChallengeResult(false, 401);
+    }
+    
     Authenticator authenticator = exchange.getAttachment(
         CasAttachments.AUTHENTICATOR_KEY);
     
     String url = authenticator.loginUrl(exchange.getRequestPath(), 
         exchange.getQueryString());
-    
-    Integer failedStatus = 
-        exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY);
-    if (failedStatus != null) {
-      exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);
-      return new ChallengeResult(false, failedStatus);
-    }
     
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("responding with redirect to '" + url + "'");
@@ -164,6 +157,93 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         HttpString.tryFromString("Location"), url);
     
     return new ChallengeResult(true, 302);
+  }
+
+  /**
+   * Gets the authentication retry count from a session cookie.
+   * @param exchange subject exchange
+   * @return current retry count
+   */
+  private int getRetryCount(HttpServerExchange exchange) {
+    int retries = 0;
+    
+    Cookie cookie = exchange.getRequestCookies().get(STATUS_COOKIE);
+    if (cookie == null) {
+      cookie = newCookie();
+    }
+    else {
+      try {
+        String value = cookie.getValue();
+        retries = Integer.parseInt(value) + 1;
+        if (retries < 0 || retries > MAX_RETRIES) {
+          retries = MAX_RETRIES;
+        }
+      }
+      catch (NumberFormatException ex) {
+        retries = MAX_RETRIES;
+      }
+      finally {
+        cookie.setValue(Integer.toString(retries));
+      }
+    }
+
+    exchange.getResponseCookies().put(STATUS_COOKIE, cookie);
+    return retries;
+  }
+
+  /**
+   * Resets the authentication retry count in the session cookie.
+   * @param exchange the subject exchange
+   */
+  private void resetRetryCount(HttpServerExchange exchange) {
+    Cookie cookie = newCookie();
+    cookie.setValue("-1");
+    exchange.getResponseCookies().put(STATUS_COOKIE, cookie);
+  }
+
+  /**
+   * Creates a new cookie for the authentication retry count.
+   * @return cookie
+   */
+  private Cookie newCookie() {
+    Cookie cookie;
+    cookie = new CookieImpl(STATUS_COOKIE, "0");
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    return cookie;
+  }
+
+  /**
+   * Authorizes the user associated with the given assertion credential via
+   * the container's identity manager.
+   * @param credential the subject user credential
+   * @param securityContext security context
+   * @return authorized user's account object
+   * @throws AuthorizationException if the user is not authorized
+   */
+  private Account authorize(IdentityAssertionCredential credential,
+      SecurityContext securityContext) throws AuthorizationException {
+    
+    String name = credential.getIdentityAssertion().getPrincipal().getName();
+  
+    Account account = securityContext.getIdentityManager().verify(
+        name, credential);
+    
+    if (account == null) {
+      String message = String.format(NOT_AUTHORIZED_MESSAGE, name);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(message);
+      }
+      throw new AuthorizationException(message);
+    }
+      
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("authorization successful: " 
+          + " user=" + account.getPrincipal().getName()
+          + " roles=" + account.getRoles());
+    }
+    
+    return account;
   }
 
 }
