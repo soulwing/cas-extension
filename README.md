@@ -106,8 +106,10 @@ can also view the description of these attributes using the
 * *server-url* -- URL for the CAS server
 * *service-url* -- URL for the application/service/container
 * *protocol* -- authentication protocol; CAS-1.0, CAS-2.0 (default), SAML-1.1
-* *proxy-callback-url* -- URL for proxy granting ticket callbacks; default is
-  no URL
+* *proxy-callback-enabled* -- flag indicating whether a proxy granting ticket
+  should be requested with each ticket validation (CAS-2.0 only)
+* *proxy-callback-path* -- URL path for proxy granting ticket callbacks
+  (CAS-2.0 only); default is `/casProxyCallback`
 * *accept-any-proxy* -- flag indicating whether any proxy is acceptable; 
   true or false (default)
 * *allow-empty-proxy-chain* -- flag indicating whether an empty proxy chain
@@ -128,7 +130,7 @@ can also view the description of these attributes using the
 
 ### Profile Sub-Resources
 
-A configuration profile supports two kinds of sub-resources:
+A configuration profile supports three kinds of sub-resources:
 
 * *allowed-proxy-chain* -- specifies a named chain of allowed proxy URLs to 
   be used when validating proxy authentication tickets; you can define as 
@@ -136,6 +138,8 @@ A configuration profile supports two kinds of sub-resources:
 * *hostname-verifier* -- (Wildfly 9 only) specifies a hostname verifier to use
   when communicating with the CAS server (often needed when the CAS server is
   using a self-signed certificate)
+* *attribute-transform* -- specifies one or more transform functions to 
+  apply to SAML response attributes; see [Using SAML]
 
 #### Configuring Allowed Proxy Chains
 
@@ -222,9 +226,9 @@ configuration profile:
 
 ### Specifying Role Attributes
 
-The *role-attributes* module option is used to specify a list of attribute 
-names whose values will be be mapped to role names by the *IdentityAssertion* 
-login module.  In this example, the multi-valued attributes 
+The *role-attributes* module option is used to specify a list of 
+attribute names whose values will be be mapped to role names by the 
+*IdentityAssertion* login module.  In this example, the multi-valued attributes 
 *eduPersonAffiliation* and *groupMembership* are assumed to contain the names
 of roles that should be granted to the authenticated user.
 
@@ -242,6 +246,104 @@ creating a security domain:
 /subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:add(module=org.soulwing.cas, code=org.soulwing.cas.jaas.IdentityAssertionLoginModule, flag=required, module-options={ role-attributes="eduPersonAffiliation, groupMembership" })
 ```
 
+### Transforming Role Attribute Values
+
+You may wish to apply one or more transformation functions to attribute values
+returned in the SAML payload.  For example, group membership attributes in
+the response may be LDAP distinguished names, but you may prefer to use just
+the common name component of the group name as a role name.  Or perhaps you
+wish to perform a regular expression pattern substitution on returned 
+attribute values. You can configure `attribute-transform` resources in a CAS
+profile in order to meet these needs.
+
+Each configured attribute transform applies to a specific named SAML response
+attribute.  Each defined transform can specify one or more transformation
+functions to apply to each value of the given attribute name.  The extension
+provides three built-in transformers (see [Built-In Transformers]).  
+Additionally, you may define your own transformers; see [Custom Transformers].
+
+Suppose you wish to apply a transform to a SAML response attribute
+named `groupMembership` to replace an LDAP distinguished name with its common
+name component. You would start by creating the attribute transform
+resource in the corresponding CAS profile.  For example:
+
+```
+/subsystem=cas/profile=default/attribute-transform=groupMembership:add
+```
+
+After creating the attribute transform resource, you would then add the 
+`DistinguishedToSimpleName` transformer to it.  Suppose that each LDAP
+group name contains a `GID` attribute that specifies the simple name of 
+the group.  You would then create the transformer using the following
+command:
+
+```
+/subsystem=cas/profile=default/attribute-transform=groupMembership/transformer=DistinguishedToSimpleName:add(options={name-component=GID})
+```
+
+You can apply more than one transformer to a given attribute.  For example,
+to perform a pattern replacement and flatten case for the `eduPersonAffiliation`
+attribute, we could define an attribute transform as follows:
+
+```
+/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation:add
+/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation/transformer=ReplacePattern:add(options={pattern="^VT-", replacement=""})
+/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation/transformer=FlattenCase:add
+```
+
+#### Built-In Transformers
+
+##### ReplacePattern
+
+The `ReplacePattern` transformer uses a regular expression pattern to match
+text in an attribute value and replace it.
+
+| Option | Description | Default |
+----------------------------------
+| pattern | Specifies the regular expression to match (the supported syntax is the same as that of java.util.regex.Pattern) | (none) |
+| replacement | Specifies the replacement text; use $n (n = 1, 2, ...) to refer to groups specified in the pattern | empty string |
+| replace-all | Specifies that all instances of the given pattern should be replaced | false | 
+
+##### FlattenCase
+
+The `FlattenCase` transformer flattens character case in an attribute value.
+
+| Option | Description | Default |
+----------------------------------
+| use-upper-case | Specifies that upper case should be used | false |
+ 
+##### DistinguishedToSimpleName
+
+| Option | Description | Default |
+----------------------------------
+| name-component | Specifies the name component to extract from a distinguished name | CN |
+| fail-on-error | Flag indicating whether invalid LDAP names should throw an error | false |
+
+#### Custom Transformers
+
+You can define your own transformers by extending the `AttributeTransformer`
+class in the `cas-api` Maven module.  Install your custom transformer as a
+Wildfly module that depends on the `org.soulwing.cas.api` module.  You can
+then add your transformer to an attribute transform, by specifying the `code`
+and `module` parameters to the transformer add operation.  
+
+For example, suppose that you've implemented a transformer whose fully 
+qualified class name is `org.example.FooTransformer` and installed it 
+in a Wildfly module named `org.foo.transformer`.  You could then add it
+to an attribute transform as follows:
+
+```
+/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module="org.example.transformer", options={...})
+```
+
+Options specified in the add operation are passed to your transformer's
+`initialize` method.
+
+The name of the transformer (specified as `Foo` in this example) is not 
+significant, and could be anything that would be meaningful to someone looking
+at the transform configuration.
+ 
+ 
 Delegating Authorization to a Security Realm
 --------------------------------------------
 
