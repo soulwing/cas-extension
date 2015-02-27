@@ -298,8 +298,8 @@ attribute, we could define an attribute transform as follows:
 The `ReplacePattern` transformer uses a regular expression pattern to match
 text in an attribute value and replace it.
 
-| Option | Description | Default |
-----------------------------------
+|  Option   | Description  | Default      |
+| --------- |------------- | ------------ |
 | pattern | Specifies the regular expression to match (the supported syntax is the same as that of java.util.regex.Pattern) | (none) |
 | replacement | Specifies the replacement text; use $n (n = 1, 2, ...) to refer to groups specified in the pattern | empty string |
 | replace-all | Specifies that all instances of the given pattern should be replaced | false | 
