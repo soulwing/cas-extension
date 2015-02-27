@@ -300,27 +300,22 @@ text in an attribute value and replace it.
 
 |  Option     | Description                                   | Default      |
 | ----------- |---------------------------------------------- | ------------ |
-| pattern     | Specifies the regular expression to match (the 
-                supported syntax is the same as that of 
-               `java.util.regex.Pattern`)                     | (none)       |
-| replacement | Specifies the replacement text; use $n
-                (n = 1, 2, ...) to refer to groups specified  |
-                in the pattern                                | empty string |
-| replace-all | Specifies that all instances of the given 
-               pattern should be replaced                     | false        | 
+| pattern     | Specifies the regular expression to match (the supported syntax is the same as that of `java.util.regex.Pattern`) | (none)       |
+| replacement | Specifies the replacement text; use $n (n = 1, 2, ...) to refer to groups specified in the pattern | empty string |
+| replace-all | Specifies that all instances of the given pattern should be replaced | false        | 
 
 ##### FlattenCase
 
 The `FlattenCase` transformer flattens character case in an attribute value.
 
-| Option | Description | Default |
-----------------------------------
+|  Option     | Description                                   | Default      |
+| ----------- |---------------------------------------------- | ------------ |
 | use-upper-case | Specifies that upper case should be used | false |
  
 ##### DistinguishedToSimpleName
 
-| Option | Description | Default |
-----------------------------------
+|  Option     | Description                                   | Default      |
+| ----------- |---------------------------------------------- | ------------ |
 | name-component | Specifies the name component to extract from a distinguished name | CN |
 | fail-on-error | Flag indicating whether invalid LDAP names should throw an error | false |
 
