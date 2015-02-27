@@ -336,7 +336,7 @@ in a Wildfly module named `org.foo.transformer`.  You could then add it
 to an attribute transform as follows:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module="org.example.transformer", options={...})
+/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module=org.example.transformer, options={...})
 ```
 
 Options specified in the add operation are passed to your transformer's
