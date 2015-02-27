@@ -314,6 +314,9 @@ The `FlattenCase` transformer flattens character case in an attribute value.
  
 ##### DistinguishedToSimpleName
 
+The `DistinguishedToSimpleName` transformer replaces a LDAP distinguished name
+with one of its component names.
+
 |  Option     | Description                                   | Default      |
 | ----------- |---------------------------------------------- | ------------ |
 | name-component | Specifies the name component to extract from a distinguished name | CN |
