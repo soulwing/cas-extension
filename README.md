@@ -298,24 +298,27 @@ attribute, we could define an attribute transform as follows:
 The `ReplacePattern` transformer uses a regular expression pattern to match
 text in an attribute value and replace it.
 
-| Option | Description | Default |
-----------------------------------
-| pattern | Specifies the regular expression to match (the supported syntax is the same as that of java.util.regex.Pattern) | (none) |
+|  Option     | Description                                   | Default      |
+| ----------- |---------------------------------------------- | ------------ |
+| pattern     | Specifies the regular expression to match (the supported syntax is the same as that of `java.util.regex.Pattern`) | (none)       |
 | replacement | Specifies the replacement text; use $n (n = 1, 2, ...) to refer to groups specified in the pattern | empty string |
-| replace-all | Specifies that all instances of the given pattern should be replaced | false | 
+| replace-all | Specifies that all instances of the given pattern should be replaced | false        | 
 
 ##### FlattenCase
 
 The `FlattenCase` transformer flattens character case in an attribute value.
 
-| Option | Description | Default |
-----------------------------------
+|  Option     | Description                                   | Default      |
+| ----------- |---------------------------------------------- | ------------ |
 | use-upper-case | Specifies that upper case should be used | false |
  
 ##### DistinguishedToSimpleName
 
-| Option | Description | Default |
-----------------------------------
+The `DistinguishedToSimpleName` transformer replaces a LDAP distinguished name
+with one of its component names.
+
+|  Option     | Description                                   | Default      |
+| ----------- |---------------------------------------------- | ------------ |
 | name-component | Specifies the name component to extract from a distinguished name | CN |
 | fail-on-error | Flag indicating whether invalid LDAP names should throw an error | false |
 
@@ -333,7 +336,7 @@ in a Wildfly module named `org.foo.transformer`.  You could then add it
 to an attribute transform as follows:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module="org.example.transformer", options={...})
+/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module=org.example.transformer, options={...})
 ```
 
 Options specified in the add operation are passed to your transformer's
