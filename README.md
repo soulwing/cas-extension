@@ -134,28 +134,13 @@ A configuration profile supports three kinds of sub-resources:
 
 * *allowed-proxy-chain* -- specifies a named chain of allowed proxy URLs to 
   be used when validating proxy authentication tickets; you can define as 
-  many proxy chains as needed
+  many proxy chains as needed; see [Using Proxy Authentication]
 * *hostname-verifier* -- (Wildfly 9 only) specifies a hostname verifier to use
   when communicating with the CAS server (often needed when the CAS server is
   using a self-signed certificate)
 * *attribute-transform* -- specifies one or more transform functions to 
   apply to SAML response attributes; see [Using SAML]
 
-#### Configuring Allowed Proxy Chains
-
-To add an allowed proxy chain to the *default* profile, use the following
-CLI command.  The name of the chain added by this command is *example*.
-
-```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[http://www.example.org]){allow-resource-service-restart=true}
-```
-
-To remove the *example* proxy chain from the *default* profile, use the
-follwing CLI command.
-
-```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:remove{allow-resource-service-restart=true}
-```
 #### Configuring a Hostname Verifier
 
 When creating an HTTPS connection to the CAS server, the underlying SSL 
@@ -346,7 +331,7 @@ The name of the transformer (specified as `Foo` in this example) is not
 significant, and could be anything that would be meaningful to someone looking
 at the transform configuration.
  
- 
+
 Delegating Authorization to a Security Realm
 --------------------------------------------
 
@@ -386,6 +371,7 @@ roles.
 
 Of course, you can also specify the `module-options` attribute when adding
 the `DelegatingIdentityAssertion`.
+
 
 Application Deployment
 ----------------------
@@ -502,6 +488,161 @@ application's runtime class path.
   ...
 </cas>
 ```
+
+Using Proxy Authentication
+--------------------------
+
+CAS proxy authentication is designed to allow a front-end web application to
+access back-end services on behalf of CAS-authenticated user.  The front-end
+web application uses CAS to authenticate the user.  When it needs to access
+a back-end service as the logged in user, it requests a proxy authentication
+ticket for the user from the CAS server, and presents the proxy ticket to 
+the back-end service.  The back-end service presents the ticket to the CAS 
+server for validation, just as it would have done if the user had (or could)
+access the service directly using a browser.
+
+The extension provides full support for CAS proxy authentication, including
+support for requesting a proxy granting ticket callback from the CAS server, 
+requesting proxy authentication tickets from the CAS server, and validation 
+of proxy authentication tickets presented to an application.  
+
+### Requesting Proxy Granting Ticket Callbacks
+
+> Note that **most CAS servers require the requesting application to be 
+> explicitly authorized to use proxy authentication**.  Contact your CAS 
+> server administrator before trying use this feature.
+
+In order to request proxy authentication tickets from the CAS server, a
+front-end application must request a *proxy granting ticket (PGT) callback* 
+when redirecting the user to the CAS server for authentication.  If an 
+authorized application requests a PGT callback, the CAS server sends
+the proxy granting ticket to the application by means of an HTTP request to
+the URL specified by the application.  
+
+PGT callbacks are enabled by setting the `proxy-callback-enabled` profile 
+attribute to `true`.  For example, to enable PGT callbacks in the *default* 
+profile, use the following CLI command:
+
+```
+/subsystem=cas/profile=default:write-attribute(name=proxy-callback-enabled, value=true)
+```
+
+You can also set this attribute when adding a new profile; it is set to 
+*false* by default.
+
+The URL passed to the CAS server for the PGT callback is derived from the
+context path of a deployed CAS-enabled application.  Suppose we have deployed
+a CAS-enabled web application with a context path of `/myapp`.  Suppose that
+the *service-url* attribute of the CAS profile used with this application is
+`https://webapp.example.org`.  The default PGT callback URL that would be
+derived for an authentication request to `/myapp` would then be:
+
+```
+https://webapp.example.org/myapp/casProxyCallback
+```
+
+The CAS extension in running in Wildfly listens for HTTP requests for this
+URL to accept the proxy granting ticket from the CAS server on behalf of the
+web application at `/myapp`.  Note that the application need not (and in 
+fact cannot) handle these HTTP requests itself -- it is handled by the CAS
+extension in a manner that is completely transparent to the application.  
+
+If you wish to use something other than `/casProxyCallback` to distinguish 
+PGT callback requests, configure the *proxy-callback-path* attribute in the
+profile.  
+
+### Requesting Proxy Authentication Tickets
+
+> An application that wishes to request proxy authentication tickets from
+> the CAS server must use a CAS profile in which PGT callbacks have been 
+> enabled (as shown in the previous section).  Moreover, the application's
+> CAS deployment descriptor must include the `<add-api-dependencies/>` element
+> to enable the necessary API (as discussed in [Using the Application API]).
+
+When an application needs a proxy authentication ticket to access a backend
+service for a given user, it gets the authenticated principal from the 
+associated `HttpServletRequest`, casts the principal to 
+`org.soulwing.cas.api.UserPrincipal` and invokes the `generateProxyTicket`
+method to obtain a proxy ticket:
+
+```
+import javax.servlet.http.HttpServletRequest;
+import org.soulwing.cas.api.UserPrincipal;
+...
+HttpServletRequest request = ...
+String backendServiceUrl = ...
+
+UserPrinicpal principal = (UserPrincipal) request.getUserPrincipal();
+String ticket = principal.generateProxyTicket(backendServiceUrl); 
+``` 
+
+### Validating Proxy Authentication Tickets
+
+When configuring a CAS profile for a backend service application that 
+wishes to accept proxy authentication tickets, you must enable proxy ticket
+validation by either adding one or more allowed proxy chains or by enabling
+the *acceptAnyProxy* profile attribute.
+
+#### Configuring Allowed Proxy Chains
+
+To add an allowed proxy chain to the *default* profile, use the following
+CLI command.  The name of the chain added by this command is *example*.
+
+```
+/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[https://webapp.example.org])
+```
+
+This configuration allows a front-end application with the service URL
+`https://webapp.example.org` to act as a proxy for users of a backend 
+service associated with this profile.
+
+To remove the *example* proxy chain from the *default* profile, use the
+follwing CLI command.
+
+```
+/subsystem=cas/profile=default/allowed-proxy-chain=example:remove
+```
+
+#### Accepting Any Proxy
+
+In some configurations, you may wish to allow any application to proxy for
+users of a given backend service.  In this case, enable the `accept-any-proxy`
+profile attribute.  For example, to enable this attribute in the *default*
+profile, use this CLI command:
+
+```
+/subsystem=cas/profile=default:write-attribute(name=accept-any-proxy, value=true)
+```
+
+You can also enable this attribute when creating the profile.
+
+#### Accepting Service Tickets and Proxy Tickets
+
+Sometimes, a given application may provide both a browser-based user interface
+as well as services to be used by other applications.  For example, a 
+blogging application might provide a user interface to allow users to post
+and read blog entries, while also providing a REST API to allow blog feeds 
+to be integrated in the UI of other applications.  In this case, you may wish
+to allow either ordinary service tickets or proxy tickets to be validated.
+
+If you have configured the application's CAS profile with one or more allowed 
+proxy chains, you will find that ordinary service tickets (i.e those issued 
+when a user attempts to access the application directly) are not accepted.  
+In this case, you must enable the *allow-empty-proxy-chain* profile
+attribute.  For example, in the default profile we could configure this as
+follows:
+
+```
+/subsystem=cas/profile=default:write-attribute(name=allow-empty-proxy-chain, value=true)
+```
+
+With this configuration, in addition to accepting tickets whose chain of
+proxies matches one of those explicitly allowed by the profile, tickets that
+have no proxy chain (i.e. ordinary service tickets) will be accepted.
+
+If the application's profile is configured to allow any proxy, then it is
+not necessary to enable the `allow-empty-proxy-chain` profile attribute.
+
 
 Avoiding the Need to Restart/Reload
 -----------------------------------
