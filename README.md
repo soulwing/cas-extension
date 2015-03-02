@@ -581,7 +581,7 @@ String ticket = principal.generateProxyTicket(backendServiceUrl);
 When configuring a CAS profile for a backend service application that 
 wishes to accept proxy authentication tickets, you must enable proxy ticket
 validation by either adding one or more allowed proxy chains or by enabling
-the *acceptAnyProxy* profile attribute.
+the *accept-any-proxy* profile attribute.
 
 #### Configuring Allowed Proxy Chains
 
