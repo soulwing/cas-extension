@@ -1,0 +1,14 @@
+<subsystem xmlns="urn:soulwing.org:cas:1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:soulwing.org:cas:1.0 ../../../src/main/resources/schema/cas.xsd">
+
+  <profile name="test-profile"
+    service-url="someServiceUrl"
+    server-url="someServerUrl"
+    proxy-callback-path="/someProxyCallbackPath">
+    <allowed-proxy-chain name="test-proxy-chain">
+      <proxy url="someProxyUrl"/>
+    </allowed-proxy-chain>
+  </profile>
+      
+</subsystem>

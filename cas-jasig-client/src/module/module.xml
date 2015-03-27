@@ -1,0 +1,15 @@
+<module xmlns="urn:jboss:module:1.1" name="${module.name}" 
+  slot="${module.slot}">
+  <resources>
+    <resource-root path="cas-client-core-${version.org.jasig.cas.client}.jar" />
+  </resources>
+  <dependencies>
+    <module name="org.opensaml" slot="${module.slot}"/>
+    <module name="org.apache.commons.codec" />
+    <module name="org.apache.santuario.xmlsec" />
+    <module name="org.slf4j" />
+    <module name="org.joda.time" />    
+    <module name="javax.servlet.api" />
+    <module name="javax.api" />
+  </dependencies>
+</module>
