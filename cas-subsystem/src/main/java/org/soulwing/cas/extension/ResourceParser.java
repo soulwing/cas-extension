@@ -27,15 +27,24 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.dmr.ModelNode;
-import org.jboss.staxmapper.XMLElementReader;
 
 /**
  * A parser for a system resource configuration.
  *
  * @author Carl Harris
  */
-public interface ResourceParser extends XMLStreamConstants, 
-    XMLElementReader<List<ModelNode>>{
+public interface ResourceParser extends XMLStreamConstants {
+
+  /**
+   * Parse an element and all of its nested content.
+   *
+   * @param reader the stream reader
+   * @param ops empty list of operations that will be appended as the
+   *    parsing operation discovers management elements
+   * @throws XMLStreamException if an error occurs
+   */
+  void readElement(XMLStreamReader reader, List<ModelNode> ops) 
+      throws XMLStreamException;
 
   /**
    * Pushes a reader onto to the top of the parser stack.

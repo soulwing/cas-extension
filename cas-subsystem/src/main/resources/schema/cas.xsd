@@ -3,13 +3,31 @@
   elementFormDefault="qualified" attributeFormDefault="unqualified"
   version="1.0">
 
-  <!-- The subsystem root element -->
   <xs:element name="subsystem" type="SubsystemType" />
-
+  <xs:element name="cas" type="DeploymentDescriptorType" />
+  
   <xs:complexType name="SubsystemType">
     <xs:all>
       <xs:element name="profile" type="ProfileType" />
     </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="DeploymentDescriptorType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="profile-ref" type="ProfileRefType"/>
+        <xs:element name="profile" type="ProfileType" />
+      </xs:choice>
+      <xs:element name="add-api-dependencies" type="ApiDependenciesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="ProfileRefType">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
+  <xs:complexType name="ApiDependenciesType">
+    <xs:sequence/>
   </xs:complexType>
 
   <xs:complexType name="ProfileType">
