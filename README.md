@@ -28,6 +28,20 @@ This extension uses the JASIG Java CAS Client library to perform the CAS
 protocol operations, and exposes most of the features of the client through 
 configuration attributes expressed as part of the Wildfly management model.
 
+Build
+-----
+
+Run Maven at the top level of the source tree:
+
+```
+mvn -P wildfly8 clean install
+```
+
+### Pre-Built Binary
+
+If you don't want to build it yourself, you can download a current binary:
+
+* [cas-modules-1.0.0-SNAPSHOT-modules.tar.gz] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.md5))
 
 Installation
 ------------
