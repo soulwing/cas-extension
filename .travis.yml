@@ -4,3 +4,7 @@ script: mvn deploy --settings target/travis/settings.xml
 branches:
   except:
   - travis
+env:
+  global:
+  - secure: HyWsMdz1ap1a4OIjtd5UeVk2wj/y8r9UI6ECOvMgD4waPfIHVAShnLh66cL/TFpd4SGokWAUc/h9GZMEU+09hAFLt4WtlxciJG2JaCvdN4sADJm5B7vXxQi1eBDbNULFEkDtjflqIoPiwthauG8zZPKR1y8fgHxW2xWGkL+lyZg=
+  - secure: MHRqoWt8PPbPPhV0zPl/zWB6lFy6W4/YBIvSR7emO3806PiDTo8AK+ez0TJoLxn03UoSSJcvZxXib6O4BRHdOYqx5avNsDuWN/m2YzdqRrdSnaCZt/fIccbwyKk4c0UuwD514JipQEdeNtPOqI7Z4hP9mMD9sq0rZ6ieAsLnwZA=
