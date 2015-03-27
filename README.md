@@ -134,7 +134,7 @@ A configuration profile supports three kinds of sub-resources:
 
 * *allowed-proxy-chain* -- specifies a named chain of allowed proxy URLs to 
   be used when validating proxy authentication tickets; you can define as 
-  many proxy chains as needed; see [Using Proxy Authentication]
+  many proxy chains as needed; see [Using Proxy Authentication] (#using-proxy-authentication)
 * *hostname-verifier* -- (Wildfly 9 only) specifies a hostname verifier to use
   when communicating with the CAS server (often needed when the CAS server is
   using a self-signed certificate)
