@@ -40,7 +40,7 @@ application's class loader, avoiding any potential for conflict.
 
 ### From Source
 
-Clone this repository and then runMaven at the top level of the source tree.
+Clone this repository and then run Maven at the top level of the source tree.
 ```
 mvn -P wildfly8 clean install
 ```
