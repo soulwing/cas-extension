@@ -68,8 +68,8 @@ reload
 
 Once the CAS subsystem has been added to your Wildfly configuration, it is not
 necessary to reload (e.g. using the CLI) or restart Wildfly in order to change
-the CAS configuration.  See [Avoiding the Need to Reload/Restart] 
-(#avoiding-the-need-to-reloadrestart) for more information.
+the CAS configuration.  See [Avoiding the Need to Restart/Reload] 
+(#avoiding-the-need-to-restartreload) for more information.
 
 
 CAS Configuration Profiles
