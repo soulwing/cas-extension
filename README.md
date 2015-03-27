@@ -1,6 +1,8 @@
 cas-extension
 =============
 
+[![Build Status](https://travis-ci.org/soulwing/cas-extension.svg?branch=master)](https://travis-ci.org/soulwing/cas-extension)
+
 A Wildfly extension module that supports web application authentication using 
 the Central Authentication Service (CAS) protocol.  
 
