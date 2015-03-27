@@ -40,15 +40,16 @@ application's class loader, avoiding any potential for conflict.
 
 ### From Source
 
-1. Clone this repository.
-2. Run Maven at the top level of the source tree:
+Clone this repository and then runMaven at the top level of the source tree.
 ```
 mvn -P wildfly8 clean install
 ```
-3. Install
+
+Install the extension.
 ```
 tar -C ${WILDFLY_HOME} -xpvf cas-modules/target/cas-modules-{VERSION}-modules.tar.gz
 ```
+
 ### Using a Pre-Built Binary
 
 If you don't want to build it yourself, you can download a current binary:
