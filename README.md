@@ -68,8 +68,8 @@ reload
 
 Once the CAS subsystem has been added to your Wildfly configuration, it is not
 necessary to reload (e.g. using the CLI) or restart Wildfly in order to change
-the CAS configuration.  See [Avoiding the Need to Reload/Restart] for more
-information.
+the CAS configuration.  See [Avoiding the Need to Reload/Restart] 
+(#avoiding-the-need-to-reload-restart) for more information.
 
 
 CAS Configuration Profiles
@@ -84,8 +84,8 @@ environment.
 
 By convention, a profile named *default* is used for application deployments 
 that don't specify a particular configuration profile.  See [Application 
-Deployment] below to learn how an application can specify a CAS configuration 
-profile.
+Deployment] (#application-deployment) to learn how an application can specify a 
+CAS configuration profile.
 
 The following CLI command creates the default configuration profile using the 
 CAS 2 protocol with a CAS server named cas.example.org.
@@ -134,12 +134,13 @@ A configuration profile supports three kinds of sub-resources:
 
 * *allowed-proxy-chain* -- specifies a named chain of allowed proxy URLs to 
   be used when validating proxy authentication tickets; you can define as 
-  many proxy chains as needed; see [Using Proxy Authentication] (#using-proxy-authentication)
+  many proxy chains as needed; see [Using Proxy Authentication] 
+  (#using-proxy-authentication)
 * *hostname-verifier* -- (Wildfly 9 only) specifies a hostname verifier to use
   when communicating with the CAS server (often needed when the CAS server is
   using a self-signed certificate)
 * *attribute-transform* -- specifies one or more transform functions to 
-  apply to SAML response attributes; see [Using SAML]
+  apply to SAML response attributes; see [Using SAML] (#using-saml)
 
 #### Configuring a Hostname Verifier
 
@@ -244,8 +245,9 @@ profile in order to meet these needs.
 Each configured attribute transform applies to a specific named SAML response
 attribute.  Each defined transform can specify one or more transformation
 functions to apply to each value of the given attribute name.  The extension
-provides three built-in transformers (see [Built-In Transformers]).  
-Additionally, you may define your own transformers; see [Custom Transformers].
+provides three built-in transformers (see [Built-In Transformers] 
+(#built-in-transformers)).  Additionally, you may define your own transformers; 
+see [Custom Transformers] (#custom-transformers).
 
 Suppose you wish to apply a transform to a SAML response attribute
 named `groupMembership` to replace an LDAP distinguished name with its common
