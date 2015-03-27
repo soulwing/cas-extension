@@ -69,8 +69,8 @@
     <profile>
       <id>wildfly9</id>
       <properties>
-        <version.org.wildfly>9.0.0.Alpha2-SNAPSHOT</version.org.wildfly>
-        <version.org.wildfly.core>1.0.0.Alpha18-SNAPSHOT</version.org.wildfly.core>
+        <version.org.wildfly>9.0.0.Beta1</version.org.wildfly>
+        <version.org.wildfly.core>1.0.0.Beta2</version.org.wildfly.core>
       </properties>
       <dependencyManagement>
         <dependencies>
