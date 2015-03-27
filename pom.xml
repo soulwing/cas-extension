@@ -21,7 +21,7 @@
     <module.name>cas</module.name>
   </properties>
   <scm>
-    <connection>scm:git:https://github.com/soulwing/${project.artifactId}.git</connection>
+    <connection>scm:git:git@github.com:soulwing/${project.artifactId}.git</connection>
     <developerConnection>${project.scm.connection}</developerConnection>
     <url>https://github.com/soulwing/${project.artifactId}</url>
   </scm>
