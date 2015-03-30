@@ -3,8 +3,8 @@ cas-extension
 
 [![Build Status](https://travis-ci.org/soulwing/cas-extension.svg?branch=master)](https://travis-ci.org/soulwing/cas-extension)
 
-A Wildfly extension module that supports web application authentication using 
-the Central Authentication Service (CAS) protocol.  
+A Wildfly extension module that supports Java web application authentication
+using the Central Authentication Service (CAS) protocol.  
 
 This extension provides container-managed support for CAS, such that web 
 applications can use the Java EE standard security mechanisms; for example, 
