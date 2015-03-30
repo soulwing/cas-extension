@@ -47,7 +47,7 @@ mvn -P wildfly8 clean install
 
 Install the extension.
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-modules/target/cas-modules-{VERSION}-modules.tar.gz
+tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.tar.gz
 ```
 
 ### Using a Pre-Built Binary
