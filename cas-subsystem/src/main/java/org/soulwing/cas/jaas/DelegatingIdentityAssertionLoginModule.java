@@ -55,8 +55,6 @@ public class DelegatingIdentityAssertionLoginModule
 
   public static final String REALM = "realm";
   
-  public static final String ROLE_ATTRIBUTES = "role-attributes";
-  
   public static final String DEFAULT_REALM = "ApplicationRealm";
   
   private String realmName;
