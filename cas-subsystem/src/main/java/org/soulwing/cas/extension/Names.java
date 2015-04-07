@@ -25,11 +25,11 @@ package org.soulwing.cas.extension;
  */
 public interface Names {
 
-  static final String SUBSYSTEM_NAME = "cas";
+  String SUBSYSTEM_NAME = "cas";
   
-  static final int VERSION_MAJOR = 1;
+  int VERSION_MAJOR = 1;
 
-  static final int VERSION_MINOR = 0;
+  int VERSION_MINOR = 0;
 
   String NAMESPACE = String.format("urn:soulwing.org:%s:%d.%d",
       SUBSYSTEM_NAME, VERSION_MAJOR, VERSION_MINOR);  
