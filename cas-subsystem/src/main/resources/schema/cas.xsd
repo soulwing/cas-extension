@@ -8,7 +8,7 @@
   
   <xs:complexType name="SubsystemType">
     <xs:all>
-      <xs:element name="profile" type="ProfileType" />
+      <xs:element name="cas-profile" type="ProfileType" />
     </xs:all>
   </xs:complexType>
 
@@ -16,7 +16,7 @@
     <xs:sequence>
       <xs:choice>
         <xs:element name="profile-ref" type="ProfileRefType"/>
-        <xs:element name="profile" type="ProfileType" />
+        <xs:element name="profile" type="ProfileRefType" />
       </xs:choice>
       <xs:element name="add-api-dependencies" type="ApiDependenciesType"/>
     </xs:sequence>

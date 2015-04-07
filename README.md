@@ -91,11 +91,11 @@ The following CLI command creates the default configuration profile using the
 CAS 2 protocol with a CAS server named cas.example.org.
 
 ```
-/subsystem=cas/profile=default:add(server-url=https://cas.example.org, service-url=https://webapp.example.org)
+/subsystem=cas/cas-profile=default:add(server-url=https://cas.example.org, service-url=https://webapp.example.org)
 ```
 
 Additional profiles can be created using the same basic syntax, substituting 
-*profile=default* with *profile=some-other-name*.
+*cas-profile=default* with *cas-profile=some-other-name*.
 
 ### Profile Attributes
 
@@ -162,9 +162,9 @@ To add any of the supported verifiers to the *default* profile, use *one* of
  the following CLI commands:
 
 ```
-/subsystem=cas/profile=default/hostname-verifier=allow-any:add{allow-resource-service-restart=true}
-/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[cas.example.org]){allow-resource-service-restart=true}
-/subsystem=cas/profile=default/hostname-verifier=pattern-match:add(hosts=[".*\.example.org$", "^localhost$"]){allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default/hostname-verifier=allow-any:add{allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default/hostname-verifier=white-list:add(hosts=[cas.example.org]){allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default/hostname-verifier=pattern-match:add(hosts=[".*\.example.org$", "^localhost$"]){allow-resource-service-restart=true}
 
 ```
 
@@ -173,7 +173,7 @@ remove command.  For example, to remove the *pattern-match* verifier, use
 this command:
 
 ```
-/subsystem=cas/profile=default/hostname-verifier=pattern-match:remove{allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default/hostname-verifier=pattern-match:remove{allow-resource-service-restart=true}
 ```
 
 Using SAML
@@ -200,14 +200,14 @@ You can modify the configuration of an existing profile using the
 `:write-attribute` CLI operation on the profile:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=protocol, value=SAML-1.1){allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default:write-attribute(name=protocol, value=SAML-1.1){allow-resource-service-restart=true}
 ```
 
 Of course, you can also specify the protocol attribute when creating a 
 configuration profile:
 
 ```
-/subsystem=cas/profile=default-saml:add(protocol=SAML-1.1, server-url=...)
+/subsystem=cas/cas-profile=default-saml:add(protocol=SAML-1.1, server-url=...)
 ```
 
 ### Specifying Role Attributes
@@ -255,7 +255,7 @@ name component. You would start by creating the attribute transform
 resource in the corresponding CAS profile.  For example:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=groupMembership:add
+/subsystem=cas/cas-profile=default/attribute-transform=groupMembership:add
 ```
 
 After creating the attribute transform resource, you would then add the 
@@ -265,7 +265,7 @@ the group.  You would then create the transformer using the following
 command:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=groupMembership/transformer=DistinguishedToSimpleName:add(options={name-component=GID})
+/subsystem=cas/cas-profile=default/attribute-transform=groupMembership/transformer=DistinguishedToSimpleName:add(options={name-component=GID})
 ```
 
 You can apply more than one transformer to a given attribute.  For example,
@@ -273,9 +273,9 @@ to perform a pattern replacement and flatten case for the `eduPersonAffiliation`
 attribute, we could define an attribute transform as follows:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation:add
-/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation/transformer=ReplacePattern:add(options={pattern="^VT-", replacement=""})
-/subsystem=cas/profile=default/attribute-transform=eduPersonAffiliation/transformer=FlattenCase:add
+/subsystem=cas/cas-profile=default/attribute-transform=eduPersonAffiliation:add
+/subsystem=cas/cas-profile=default/attribute-transform=eduPersonAffiliation/transformer=ReplacePattern:add(options={pattern="^VT-", replacement=""})
+/subsystem=cas/cas-profile=default/attribute-transform=eduPersonAffiliation/transformer=FlattenCase:add
 ```
 
 #### Built-In Transformers
@@ -323,7 +323,7 @@ in a Wildfly module named `org.foo.transformer`.  You could then add it
 to an attribute transform as follows:
 
 ```
-/subsystem=cas/profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module=org.example.transformer, options={...})
+/subsystem=cas/cas-profile=default/attribute-transform=someAttributeName/transformer=Foo:add(code=org.example.FooTransformer, module=org.example.transformer, options={...})
 ```
 
 Options specified in the add operation are passed to your transformer's
@@ -526,7 +526,7 @@ attribute to `true`.  For example, to enable PGT callbacks in the *default*
 profile, use the following CLI command:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=proxy-callback-enabled, value=true)
+/subsystem=cas/cas-profile=default:write-attribute(name=proxy-callback-enabled, value=true)
 ```
 
 You can also set this attribute when adding a new profile; it is set to 
@@ -591,7 +591,7 @@ To add an allowed proxy chain to the *default* profile, use the following
 CLI command.  The name of the chain added by this command is *example*.
 
 ```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:add(proxies=[https://webapp.example.org])
+/subsystem=cas/cas-profile=default/allowed-proxy-chain=example:add(proxies=[https://webapp.example.org])
 ```
 
 This configuration allows a front-end application with the service URL
@@ -602,7 +602,7 @@ To remove the *example* proxy chain from the *default* profile, use the
 follwing CLI command.
 
 ```
-/subsystem=cas/profile=default/allowed-proxy-chain=example:remove
+/subsystem=cas/cas-profile=default/allowed-proxy-chain=example:remove
 ```
 
 #### Accepting Any Proxy
@@ -613,7 +613,7 @@ profile attribute.  For example, to enable this attribute in the *default*
 profile, use this CLI command:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=accept-any-proxy, value=true)
+/subsystem=cas/cas-profile=default:write-attribute(name=accept-any-proxy, value=true)
 ```
 
 You can also enable this attribute when creating the profile.
@@ -635,7 +635,7 @@ attribute.  For example, in the default profile we could configure this as
 follows:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=allow-empty-proxy-chain, value=true)
+/subsystem=cas/cas-profile=default:write-attribute(name=allow-empty-proxy-chain, value=true)
 ```
 
 With this configuration, in addition to accepting tickets whose chain of
@@ -660,7 +660,7 @@ For example, to change the CAS server URL without the need to reload, use
 this command:
 
 ```
-/subsystem=cas/profile=default:write-attribute(name=server-url, value="https://cas2.example.org"){allow-resource-service-restart=true}
+/subsystem=cas/cas-profile=default:write-attribute(name=server-url, value="https://cas2.example.org"){allow-resource-service-restart=true}
 ```
 
 When changing more than one configuration characteristic, you may wish to use
@@ -670,9 +670,9 @@ subject profile until all commands in the batch have completed:
 
 ```
 batch
-/subsystem=cas/profile=default:write-attribute(name=server-url, value="https://localhost:8443")
-/subsystem=cas/profile=default:write-attribute(name=security-realm, value="LocalhostSslRealm")
-/subsystem=cas/profile=default/hostname-verifier=white-list:add(hosts=[localhost])
+/subsystem=cas/cas-profile=default:write-attribute(name=server-url, value="https://localhost:8443")
+/subsystem=cas/cas-profile=default:write-attribute(name=security-realm, value="LocalhostSslRealm")
+/subsystem=cas/cas-profile=default/hostname-verifier=white-list:add(hosts=[localhost])
 run-batch --headers={allow-resource-service-restart=true}
 ```
 

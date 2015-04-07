@@ -2,7 +2,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="urn:soulwing.org:cas:1.0 cas.xsd">
 
-  <profile name="cas-production"
+  <cas-profile name="cas-production"
     service-url="https://summit.research.vt.edu"
     server-url="https://auth.vt.edu/cas">
     <hostname-verifier type="pattern-match">
@@ -16,6 +16,6 @@
         <option key="component">uugid</option>
       </transformer>
     </attribute-transform> 
-  </profile>
+  </cas-profile>
   
 </subsystem>

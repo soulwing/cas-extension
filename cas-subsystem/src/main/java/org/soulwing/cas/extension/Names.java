@@ -37,7 +37,7 @@ public interface Names {
   String NAME = "name";
   String URL = "url";
   
-  String PROFILE = "profile";
+  String PROFILE = "cas-profile";
   String PROTOCOL = "protocol";
   String ENCODING = "encoding";
   String SERVICE_URL = "service-url";
