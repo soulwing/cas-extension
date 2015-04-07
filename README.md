@@ -1,8 +1,10 @@
 cas-extension
 =============
 
-A Wildfly extension module that supports web application authentication using 
-the Central Authentication Service (CAS) protocol.  
+[![Build Status](https://travis-ci.org/soulwing/cas-extension.svg?branch=master)](https://travis-ci.org/soulwing/cas-extension)
+
+A Wildfly extension module that supports Java web application authentication
+using the Central Authentication Service (CAS) protocol.  
 
 This extension provides container-managed support for CAS, such that web 
 applications can use the Java EE standard security mechanisms; for example, 
@@ -26,7 +28,6 @@ This extension uses the JASIG Java CAS Client library to perform the CAS
 protocol operations, and exposes most of the features of the client through 
 configuration attributes expressed as part of the Wildfly management model.
 
-
 Installation
 ------------
 
@@ -37,9 +38,35 @@ by applications that do not require CAS support.  Moreover, the library
 components needed by this extension will not appear on your 
 application's class loader, avoiding any potential for conflict.
 
-In the top level of the build directory:
+### From Source
+
+Clone this repository and then run Maven at the top level of the source tree.
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-modules/target/cas-modules-1.0.0-SNAPSHOT-modules.tar.gz
+mvn -P wildfly8 clean install
+```
+
+Install the extension.
+```
+tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.tar.gz
+```
+
+### Using a Pre-Built Binary
+
+If you don't want to build it yourself, you can download a current binary:
+
+* [cas-modules-1.0.0-modules.tar.gz] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.tar.gz.md5))
+* [cas-modules-1.0.0-modules.zip] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.zip) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.zip.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.zip.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.0/cas-modules-1.0.0-modules.zip.md5))
+
+Install the `tar.gz` binary using:
+
+```
+tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.0-modules.tar.gz
+```
+
+Install the `zip` binary using:
+
+```
+unzip cas-modules-1.0.0-modules.zip -d ${WILDFLY_HOME}
 ```
 
 Configuration
