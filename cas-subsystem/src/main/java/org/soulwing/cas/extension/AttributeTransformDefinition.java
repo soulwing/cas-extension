@@ -47,7 +47,7 @@ public class AttributeTransformDefinition extends SimpleResourceDefinition {
   
   private AttributeTransformDefinition() {
     super(Paths.ATTRIBUTE_TRANSFORM, 
-        ResourceUtil.getResolver(Names.PROFILE, Names.ATTRIBUTE_TRANSFORM),
+        ResourceUtil.getResolver(Names.CAS_PROFILE, Names.ATTRIBUTE_TRANSFORM),
         AttributeTransformAdd.INSTANCE,
         AttributeTransformRemove.INSTANCE);
   }
@@ -82,7 +82,7 @@ public class AttributeTransformDefinition extends SimpleResourceDefinition {
         new AttributeTransformAdd();
     
     private AttributeTransformAdd() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**
@@ -126,7 +126,7 @@ public class AttributeTransformDefinition extends SimpleResourceDefinition {
         new AttributeTransformRemove();
     
     private AttributeTransformRemove() {      
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**

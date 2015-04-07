@@ -70,7 +70,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
   private ProxyChainDefinition() {
     super(Paths.PROXY_CHAIN, 
         ResourceUtil.getResolver(
-            Names.PROFILE, Names.PROXY_CHAIN),
+            Names.CAS_PROFILE, Names.PROXY_CHAIN),
         ProxyChainAdd.INSTANCE,
         ProxyChainRemove.INSTANCE);
   }
@@ -94,7 +94,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
     static final ProxyChainAdd INSTANCE = new ProxyChainAdd();
     
     private ProxyChainAdd() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**
@@ -135,7 +135,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
     static final ProxyChainRemove INSTANCE = new ProxyChainRemove();
       
     private ProxyChainRemove() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**

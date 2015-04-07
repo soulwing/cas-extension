@@ -78,7 +78,7 @@ public class TransformerDefinition extends SimpleResourceDefinition {
   
   private TransformerDefinition() {
     super(Paths.TRANSFORMER, 
-        ResourceUtil.getResolver(Names.PROFILE, Names.ATTRIBUTE_TRANSFORM, 
+        ResourceUtil.getResolver(Names.CAS_PROFILE, Names.ATTRIBUTE_TRANSFORM,
             Names.TRANSFORMER),
         TransformerAdd.INSTANCE,
         TransformerRemove.INSTANCE);
@@ -104,7 +104,7 @@ public class TransformerDefinition extends SimpleResourceDefinition {
         new TransformerAdd();
     
     private TransformerAdd() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**
@@ -154,7 +154,7 @@ public class TransformerDefinition extends SimpleResourceDefinition {
         new TransformerRemove();
     
     private TransformerRemove() {      
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**

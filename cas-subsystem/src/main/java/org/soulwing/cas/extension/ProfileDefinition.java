@@ -190,7 +190,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
 
   private ProfileDefinition() {
     super(Paths.PROFILE,
-        ResourceUtil.getResolver(Names.PROFILE),
+        ResourceUtil.getResolver(Names.CAS_PROFILE),
         ProfileAdd.INSTANCE,
         ProfileRemove.INSTANCE);
   }
@@ -290,7 +290,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
      * Constructs a new instance.
      */
     private ProfileWriteAttributeHandler() {
-      super(Names.PROFILE, ProfileDefinition.attributes());
+      super(Names.CAS_PROFILE, ProfileDefinition.attributes());
     }
     
     /**

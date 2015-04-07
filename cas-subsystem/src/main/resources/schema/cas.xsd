@@ -14,18 +14,18 @@
 
   <xs:complexType name="DeploymentDescriptorType">
     <xs:sequence>
-      <xs:choice>
-        <xs:element name="profile-ref" type="ProfileRefType"/>
-        <xs:element name="profile" type="ProfileRefType" />
-      </xs:choice>
-      <xs:element name="add-api-dependencies" type="ApiDependenciesType"/>
+      <xs:element name="profile" type="ProfileRefType" />
+      <xs:element name="add-api-dependencies" type="ApiDependenciesType"
+          minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:simpleType name="ProfileRefType">
-    <xs:restriction base="xs:string"/>
-  </xs:simpleType>
-  
+  <xs:complexType name="ProfileRefType">
+    <xs:simpleContent>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleContent>
+  </xs:complexType>
+
   <xs:complexType name="ApiDependenciesType">
     <xs:sequence/>
   </xs:complexType>

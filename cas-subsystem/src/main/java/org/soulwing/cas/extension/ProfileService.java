@@ -85,7 +85,7 @@ public class ProfileService extends AbstractService<Profile> {
     }
     
     public static ServiceName profileServiceName(String profileName) {
-      return ServiceName.of(Names.SUBSYSTEM_NAME, Names.PROFILE, profileName);
+      return ServiceName.of(Names.SUBSYSTEM_NAME, Names.CAS_PROFILE, profileName);
     }
 
     public static ServiceController<?> installService(
@@ -123,7 +123,7 @@ public class ProfileService extends AbstractService<Profile> {
     private static String profileName(PathAddress profileAddress) {
       PathElement pathElement = profileAddress.getLastElement();
       String key = pathElement.getKey();
-      if (!key.equals(Names.PROFILE)) {
+      if (!key.equals(Names.CAS_PROFILE)) {
         throw new IllegalArgumentException("not a profile address");
       }
       return pathElement.getValue();

@@ -70,7 +70,7 @@ class HostnameVerifierDefinition extends SimpleResourceDefinition {
   private HostnameVerifierDefinition() {
     super(Paths.SERVER_HOST_VERIFIER, 
         ResourceUtil.getResolver(
-            Names.PROFILE, Names.HOSTNAME_VERIFIER),
+            Names.CAS_PROFILE, Names.HOSTNAME_VERIFIER),
         HostnameVerifierAdd.INSTANCE,
         HostnameVerifierRemove.INSTANCE);
   }
@@ -99,7 +99,7 @@ class HostnameVerifierDefinition extends SimpleResourceDefinition {
     static final HostnameVerifierAdd INSTANCE = new HostnameVerifierAdd();
     
     private HostnameVerifierAdd() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
     
     /**
@@ -152,14 +152,14 @@ class HostnameVerifierDefinition extends SimpleResourceDefinition {
       PathAddress verifierAddr = null;
       for (int i = pa.size() - 1; i > 0; i--) {
           PathElement pe = pa.getElement(i);
-          if (Names.PROFILE.equals(pe.getKey())) {
+          if (Names.CAS_PROFILE.equals(pe.getKey())) {
               verifierAddr = pa.subAddress(0, i + 1);
               break;
           }
       }
 
       assert verifierAddr != null : 
-        "operationToValidate did not have an address with " + Names.PROFILE;
+        "operationToValidate did not have an address with " + Names.CAS_PROFILE;
       return Util.getEmptyOperation("validate-host-verifier", 
           verifierAddr.toModelNode());
     }
@@ -171,7 +171,7 @@ class HostnameVerifierDefinition extends SimpleResourceDefinition {
     static final HostnameVerifierRemove INSTANCE = new HostnameVerifierRemove();
     
     private HostnameVerifierRemove() {
-      super(Names.PROFILE);
+      super(Names.CAS_PROFILE);
     }
 
     /**
