@@ -33,16 +33,21 @@ class JasigUserPrincipal implements UserPrincipal {
 
   private static final long serialVersionUID = 1805860723380323513L;
 
+  private final Authenticator authenticator;
   private final AttributePrincipal delegate;
   private final Map<String, Object> attributes;
+
     
   /**
    * Constructs a new instance.
+   * @param authenticator
    * @param delegate
    * @param transformers
    */
-  public JasigUserPrincipal(AttributePrincipal delegate, 
+  public JasigUserPrincipal(Authenticator authenticator,
+      AttributePrincipal delegate,
       Map<String, Transformer<Object, Object>> transformers) {
+    this.authenticator = authenticator;
     this.delegate = delegate;
     this.attributes = new TransformingMap(delegate.getAttributes(), 
         transformers);
@@ -75,6 +80,22 @@ class JasigUserPrincipal implements UserPrincipal {
       throw new IllegalStateException("proxy granting ticket unavailable");
     }
     return ticket;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getLogoutUrl() {
+    return generateLogoutUrl(null);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String generateLogoutUrl(String path) {
+    return authenticator.logoutUrl(path);
   }
 
   /**

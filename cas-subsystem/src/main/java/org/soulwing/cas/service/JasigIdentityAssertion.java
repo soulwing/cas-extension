@@ -33,6 +33,7 @@ import org.soulwing.cas.api.UserPrincipal;
  */
 class JasigIdentityAssertion implements IdentityAssertion {
 
+  private final Authenticator authenticator;
   private final Assertion delegate;
   private final UserPrincipal principal; 
   private final Map<String, Object> attributes;
@@ -42,11 +43,12 @@ class JasigIdentityAssertion implements IdentityAssertion {
    * @param delegate
    * @param transformers
    */
-  public JasigIdentityAssertion(Assertion delegate,
-      Map<String, Transformer<Object, Object>> transformers) {
+  public JasigIdentityAssertion(Authenticator authenticator,
+      Assertion delegate, Map<String, Transformer<Object, Object>> transformers) {
+    this.authenticator = authenticator;
     this.delegate = delegate;
-    this.principal = new JasigUserPrincipal(delegate.getPrincipal(), 
-        transformers);
+    this.principal = new JasigUserPrincipal(authenticator,
+        delegate.getPrincipal(), transformers);
     this.attributes = new TransformingMap(delegate.getAttributes(), 
         transformers);
   }

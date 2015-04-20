@@ -82,6 +82,43 @@ public class JasigAuthenticator implements Authenticator {
    * {@inheritDoc}
    */
   @Override
+  public String logoutUrl(String path) {
+    if (path != null && !path.startsWith("/")) {
+      throw new IllegalArgumentException(
+        "must specify an absolute path for an application resource");
+    }
+    final StringBuilder url = new StringBuilder();
+    final String serverUrl = config.getServerUrl();
+    url.append(serverUrl);
+    if (!serverUrl.endsWith("/")) {
+      url.append("/");
+    }
+    url.append("logout");
+    if (path != null) {
+      url.append("?url=");
+      url.append(CommonUtils.urlEncode(applicationUrl(path)));
+    }
+    return url.toString();
+  }
+
+  private String applicationUrl(String path) {
+    if (!path.startsWith("/")) {
+      throw new IllegalArgumentException(
+          "must specify an absolute path for an application resource");
+    }
+    URI uri = URI.create(config.getServiceUrl());
+    StringBuilder sb = new StringBuilder();
+    sb.append(uri.getScheme());
+    sb.append("://");
+    sb.append(uri.getAuthority());
+    sb.append(path);
+    return sb.toString();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public IdentityAssertion validateTicket(String requestPath,
       String queryString) 
       throws NoTicketException, AuthenticationException {
@@ -105,7 +142,8 @@ public class JasigAuthenticator implements Authenticator {
     }
 
     try {
-      return new JasigIdentityAssertion(validator.validate(ticket, serviceUrl),
+      return new JasigIdentityAssertion(this,
+          validator.validate(ticket, serviceUrl),
           config.getAttributeTransformers());
     }
     catch (TicketValidationException ex) {

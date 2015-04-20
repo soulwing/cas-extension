@@ -37,7 +37,14 @@ public interface Authenticator {
    * @return CAS server login URL
    */
   String loginUrl(String requestPath, String queryString);
-  
+
+  /**
+   * Produces the URL for the CAS server's logout function.
+   * @param path an application path to offer as a post-logout action
+   * @return CAS server logout URL
+   */
+  String logoutUrl(String path);
+
   /**
    * Validates a service ticket.
    * @param requestPath path from request URL

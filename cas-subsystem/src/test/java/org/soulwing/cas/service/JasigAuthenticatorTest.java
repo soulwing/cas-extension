@@ -19,6 +19,7 @@
 package org.soulwing.cas.service;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidationException;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -54,6 +56,8 @@ public class JasigAuthenticatorTest {
   private static final String REQUEST_PATH = "/app/path";
 
   private static final AuthenticationProtocol PROTOCOL = AuthenticationProtocol.CAS2_0;
+
+  private static final String SERVER_URL = "https://server";
 
   private static final String SERVICE_URL = "https://service";
 
@@ -123,16 +127,16 @@ public class JasigAuthenticatorTest {
     assertThat(identityAssertion.getDelegate(),
         is(sameInstance((Object) assertion)));
     
-    assertThat(identityAssertion.getPrincipal().getDelegate(), 
+    assertThat(identityAssertion.getPrincipal().getDelegate(),
         is(sameInstance((Object) principal)));
   }
 
   @Test
   public void testPostAuthUrl() throws Exception {
     context.checking(commonConfigExpectations());
-    assertThat(authenticator.postAuthUrl(APPLICATION_URL, 
-        "name=value&" + PROTOCOL.getServiceParameterName() + "=someServiceURL&"
-        + PROTOCOL.getTicketParameterName() + "=" + TICKET),
+    assertThat(authenticator.postAuthUrl(APPLICATION_URL,
+            "name=value&" + PROTOCOL.getServiceParameterName() + "=someServiceURL&"
+                + PROTOCOL.getTicketParameterName() + "=" + TICKET),
         is(equalTo(APPLICATION_URL + "?name=value")));
   }
   
@@ -189,4 +193,50 @@ public class JasigAuthenticatorTest {
       }
     };
   }
+
+  @Test
+  public void testLogoutUrlWithNoPath() throws Exception {
+    context.checking(new Expectations() {
+      {
+        allowing(config).getServerUrl();
+        will(returnValue(SERVER_URL));
+        allowing(config).getServiceUrl();
+        will(returnValue(SERVICE_URL));
+      }
+    });
+
+    assertThat(authenticator.logoutUrl(null),
+        is(equalTo(SERVER_URL + "/logout")));
+  }
+
+  @Test
+  public void testLogoutUrlWithAbsolutePath() throws Exception {
+    context.checking(new Expectations() {
+      {
+        allowing(config).getServerUrl();
+        will(returnValue(SERVER_URL));
+        allowing(config).getServiceUrl();
+        will(returnValue(SERVICE_URL));
+      }
+    });
+
+    assertThat(authenticator.logoutUrl("/application/path"),
+        is(equalTo(SERVER_URL + "/logout?url="
+          + CommonUtils.urlEncode(SERVICE_URL + "/application/path"))));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testLogoutUrlWithRelativePath() throws Exception {
+    context.checking(new Expectations() {
+      {
+        allowing(config).getServerUrl();
+        will(returnValue(SERVER_URL));
+        allowing(config).getServiceUrl();
+        will(returnValue(SERVICE_URL));
+      }
+    });
+
+    authenticator.logoutUrl("relative/path");
+  }
+
 }
