@@ -477,6 +477,20 @@ public interface UserPrincipal extends Principal, Serializable {
   String generateProxyTicket(String service) throws IllegalStateException;
   
   /**
+   * Gets the CAS logout URL.
+   * @return URL to which the user can be redirected for CAS logout
+   */
+  String getLogoutUrl();
+
+  /**
+   * Gets the CAS logout URL that includes a reference back to an application
+   * path that should be offered to the user as a post-logout action.
+   * @param path application path (including the context path)
+   * @return URL to which the user can be redirected for CAS logout
+   */
+  String generateLogoutUrl(String path);
+  
+  /**
    * Gets the underlying delegate principal.
    * <p>
    * The returned object is an instance of a class defined by the CAS client
