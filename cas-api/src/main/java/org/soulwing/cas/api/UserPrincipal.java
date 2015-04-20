@@ -47,7 +47,7 @@ public interface UserPrincipal extends Principal, Serializable {
 
   /**
    * Gets the CAS logout URL.
-   * @return URL to which the user can be redirect for CAS logout
+   * @return URL to which the user can be redirected for CAS logout
    */
   String getLogoutUrl();
 
@@ -55,7 +55,7 @@ public interface UserPrincipal extends Principal, Serializable {
    * Gets the CAS logout URL that includes a reference back to an application
    * path that should be offered to the user as a post-logout action.
    * @param path application path (including the context path)
-   * @return URL to which the user can be redirect for CAS logout
+   * @return URL to which the user can be redirected for CAS logout
    */
   String generateLogoutUrl(String path);
 
