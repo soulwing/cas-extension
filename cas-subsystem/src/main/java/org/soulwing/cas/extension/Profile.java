@@ -282,6 +282,14 @@ public class Profile implements Configuration {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isProxySupported() {
+    return isAcceptAnyProxy() || !getAllowedProxyChains().isEmpty();
+  }
+
+  /**
    * Gets the {@code renew} property.
    * @return property value
    */

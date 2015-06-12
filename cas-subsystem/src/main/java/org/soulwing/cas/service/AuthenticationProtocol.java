@@ -27,6 +27,7 @@ public enum AuthenticationProtocol {
 
   CAS1_0("CAS-1.0"),
   CAS2_0("CAS-2.0"),
+  CAS3_0("CAS-3.0"),
   SAML1_1("SAML-1.1", "TARGET", "SAMLart");
   
 

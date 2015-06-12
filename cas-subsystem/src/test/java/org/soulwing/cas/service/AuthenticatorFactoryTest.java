@@ -30,6 +30,8 @@ import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.Cas30ProxyTicketValidator;
+import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.client.validation.Saml11TicketValidator;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -39,7 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link AuthenticationFactory}.
+ * Unit tests for {@link AuthenticatorFactory}.
  *
  * @author Carl Harris
  */
@@ -99,12 +101,8 @@ public class AuthenticatorFactoryTest {
       {
         allowing(config).getProtocol();
         will(returnValue(AuthenticationProtocol.CAS2_0));
-        allowing(config).isAcceptAnyProxy();
+        allowing(config).isProxySupported();
         will(returnValue(false));
-        allowing(config).isAllowEmptyProxyChain();
-        will(returnValue(false));
-        allowing(config).getAllowedProxyChains();
-        will(returnValue(Collections.emptyList()));        
       }
     });
     
@@ -116,19 +114,36 @@ public class AuthenticatorFactoryTest {
   }
 
   @Test
-  public void testNewCas2ProxyValidatorForAnyProxy() throws Exception {
+  public void testNewCas3ServiceValidator() throws Exception {
+    context.checking(commonConfigExpectations());
+    context.checking(proxyTicketStorageExpectations());
+    context.checking(new Expectations() {
+      {
+        allowing(config).getProtocol();
+        will(returnValue(AuthenticationProtocol.CAS3_0));
+        allowing(config).isProxySupported();
+        will(returnValue(false));
+      }
+    });
+
+    JasigAuthenticator authenticator = (JasigAuthenticator)
+        AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL,
+            proxyCallbackHandler);
+
+    assertThat(authenticator.getValidator(),
+        instanceOf(Cas30ServiceTicketValidator.class));
+  }
+
+  @Test
+  public void testNewCas2ProxyValidator() throws Exception {
     context.checking(commonConfigExpectations());
     context.checking(proxyTicketStorageExpectations());
     context.checking(new Expectations() {
       {
         allowing(config).getProtocol();
         will(returnValue(AuthenticationProtocol.CAS2_0));
-        allowing(config).isAcceptAnyProxy();
+        allowing(config).isProxySupported();
         will(returnValue(true));
-        atLeast(1).of(config).isAllowEmptyProxyChain();
-        will(returnValue(true));
-        atLeast(1).of(config).getAllowedProxyChains();
-        will(returnValue(Collections.emptyList()));        
       }
     });
     
@@ -140,29 +155,25 @@ public class AuthenticatorFactoryTest {
   }
 
   @Test
-  public void testNewCas2ProxyValidatorForSpecifiedProxyChains() 
-      throws Exception {
+  public void testNewCas3ProxyValidator() throws Exception {
     context.checking(commonConfigExpectations());
     context.checking(proxyTicketStorageExpectations());
     context.checking(new Expectations() {
       {
         allowing(config).getProtocol();
-        will(returnValue(AuthenticationProtocol.CAS2_0));
-        allowing(config).isAcceptAnyProxy();
-        will(returnValue(false));
-        atLeast(1).of(config).isAllowEmptyProxyChain();
+        will(returnValue(AuthenticationProtocol.CAS3_0));
+        allowing(config).isProxySupported();
         will(returnValue(true));
-        atLeast(1).of(config).getAllowedProxyChains();
-        will(returnValue(Collections.singletonList(PROXY_CHAIN)));        
       }
     });
-    
+
     JasigAuthenticator authenticator = (JasigAuthenticator)
         AuthenticatorFactory.newInstance(config, PROXY_CALLBACK_URL, proxyCallbackHandler);
-    
-    assertThat(authenticator.getValidator(), 
-        instanceOf(Cas20ProxyTicketValidator.class));
+
+    assertThat(authenticator.getValidator(),
+        instanceOf(Cas30ProxyTicketValidator.class));
   }
+
 
   @Test
   public void testNewSaml11Validator() throws Exception {
@@ -198,6 +209,12 @@ public class AuthenticatorFactoryTest {
         will(returnValue(sslContext));
         atLeast(1).of(config).getHostnameVerifier();
         will(returnValue(hostnameVerifier));
+        allowing(config).isAcceptAnyProxy();
+        will(returnValue(true));
+        allowing(config).isAllowEmptyProxyChain();
+        will(returnValue(true));
+        allowing(config).getAllowedProxyChains();
+        will(returnValue(Collections.emptyList()));
       }
     };
   }

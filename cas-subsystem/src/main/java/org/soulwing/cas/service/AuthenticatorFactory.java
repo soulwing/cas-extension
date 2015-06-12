@@ -25,6 +25,8 @@ import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas10TicketValidator;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.Cas30ProxyTicketValidator;
+import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.client.validation.ProxyList;
 import org.jasig.cas.client.validation.Saml11TicketValidator;
 import org.jasig.cas.client.validation.TicketValidator;
@@ -112,12 +114,17 @@ public class AuthenticatorFactory {
         return new Cas10TicketValidator(config.getServerUrl());
       
       case CAS2_0:
-        if (config.isAcceptAnyProxy() 
-            || !config.getAllowedProxyChains().isEmpty()) {
+        if (config.isProxySupported()) {
           return new Cas20ProxyTicketValidator(config.getServerUrl());
         }
         return new Cas20ServiceTicketValidator(config.getServerUrl());
-        
+
+      case CAS3_0:
+        if (config.isProxySupported()) {
+          return new Cas30ProxyTicketValidator(config.getServerUrl());
+        }
+        return new Cas30ServiceTicketValidator(config.getServerUrl());
+
       case SAML1_1:
         return new Saml11TicketValidator(config.getServerUrl());
         

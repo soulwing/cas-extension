@@ -91,7 +91,13 @@ public interface Configuration {
    * @return list of proxy chains
    */
   List<String[]> getAllowedProxyChains();
-  
+
+  /**
+   * Determines whether this configuration supports proxy ticket validation.
+   * @return {@code true} if this configuration supports proxy ticket validation
+   */
+  boolean isProxySupported();
+
   /**
    * Gets a flag indicating whether the user should be compelled to 
    * re-authenticate.
