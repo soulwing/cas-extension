@@ -2,6 +2,7 @@ cas-extension
 =============
 
 [![Build Status](https://travis-ci.org/soulwing/cas-extension.svg?branch=master)](https://travis-ci.org/soulwing/cas-extension)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.soulwing.cas/cas-extension/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.soulwing.cas%20a%3Acas-extension*)
 
 A Wildfly extension module that supports Java web application authentication
 using the Central Authentication Service (CAS) protocol.  
