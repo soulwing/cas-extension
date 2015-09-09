@@ -61,13 +61,13 @@ If you don't want to build it yourself, you can download a current binary:
 Install the `tar.gz` binary using:
 
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.1-modules.tar.gz
+tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.3-modules.tar.gz
 ```
 
 Install the `zip` binary using:
 
 ```
-unzip cas-modules-1.0.1-modules.zip -d ${WILDFLY_HOME}
+unzip cas-modules-1.0.3-modules.zip -d ${WILDFLY_HOME}
 ```
 
 Configuration
