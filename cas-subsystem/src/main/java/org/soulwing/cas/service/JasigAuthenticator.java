@@ -36,6 +36,9 @@ import org.soulwing.cas.api.IdentityAssertion;
  */
 public class JasigAuthenticator implements Authenticator {
 
+  public static final String LOGIN_PATH = "login";
+  public static final String LOGOUT_PATH = "logout";
+
   private final Configuration config;
   private final TicketValidator validator;
   
@@ -71,7 +74,8 @@ public class JasigAuthenticator implements Authenticator {
   @Override
   public String loginUrl(String requestPath, String queryString) {
     String serviceUrl = serviceUrl(requestPath, queryString);
-    String loginUrl = CommonUtils.constructRedirectUrl(config.getServerUrl(),
+    String loginUrl = CommonUtils.constructRedirectUrl(
+        appendPathToUrl(config.getServerUrl(), LOGIN_PATH),
         config.getProtocol().getServiceParameterName(),
         serviceUrl, config.isRenew(), false);
     
@@ -89,16 +93,22 @@ public class JasigAuthenticator implements Authenticator {
     }
     final StringBuilder url = new StringBuilder();
     final String serverUrl = config.getServerUrl();
-    url.append(serverUrl);
-    if (!serverUrl.endsWith("/")) {
-      url.append("/");
-    }
-    url.append("logout");
+    url.append(appendPathToUrl(serverUrl, LOGOUT_PATH));
     if (path != null) {
       url.append("?url=");
       url.append(CommonUtils.urlEncode(applicationUrl(path)));
     }
     return url.toString();
+  }
+
+  private String appendPathToUrl(String url, String path) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(url);
+    if (!url.endsWith("/") && !path.startsWith("/")) {
+      sb.append("/");
+    }
+    sb.append(path);
+    return sb.toString();    
   }
 
   private String applicationUrl(String path) {
