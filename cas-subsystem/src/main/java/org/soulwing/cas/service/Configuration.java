@@ -99,6 +99,13 @@ public interface Configuration {
   boolean isProxySupported();
 
   /**
+   * Gets the name of an HTTP header that is used to store the original request
+   * path when running behind a reverse proxy.
+   * @return request header name or {@code null} if none has been set
+   */
+  String getOriginalRequestPathHeader();
+
+  /**
    * Gets a flag indicating whether the user should be compelled to 
    * re-authenticate.
    * @return flag state

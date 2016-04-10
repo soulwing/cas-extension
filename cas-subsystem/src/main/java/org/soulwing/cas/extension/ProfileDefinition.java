@@ -128,6 +128,15 @@ public class ProfileDefinition extends SimpleResourceDefinition {
                   AttributeAccess.Flag.STORAGE_CONFIGURATION)
               .build();
 
+  static final SimpleAttributeDefinition ORIGINAL_REQUEST_PATH_HEADER =
+      new SimpleAttributeDefinitionBuilder(Names.ORIGINAL_REQUEST_PATH_HEADER,
+          ModelType.STRING)
+          .setAllowExpression(true)
+          .setAllowNull(true)
+          .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
+              AttributeAccess.Flag.STORAGE_CONFIGURATION)
+          .build();
+
   static final SimpleAttributeDefinition RENEW =
       new SimpleAttributeDefinitionBuilder(Names.RENEW,
           ModelType.BOOLEAN)
@@ -181,6 +190,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       PROXY_CALLBACK_PATH,
       ACCEPT_ANY_PROXY,
       ALLOW_EMPTY_PROXY_CHAIN,
+      ORIGINAL_REQUEST_PATH_HEADER,
       RENEW,
       CLOCK_SKEW_TOLERANCE,
       POST_AUTH_REDIRECT,

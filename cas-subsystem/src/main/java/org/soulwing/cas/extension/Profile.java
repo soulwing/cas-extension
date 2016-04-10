@@ -69,6 +69,8 @@ public class Profile implements Configuration {
 
   private boolean allowEmptyProxyChain;
 
+  private String originalRequestPathHeader;
+
   private boolean renew;
   
   private long clockSkewTolerance;
@@ -287,6 +289,19 @@ public class Profile implements Configuration {
   @Override
   public boolean isProxySupported() {
     return isAcceptAnyProxy() || !getAllowedProxyChains().isEmpty();
+  }
+
+  @Override
+  public String getOriginalRequestPathHeader() {
+    return originalRequestPathHeader;
+  }
+
+  /**
+   * Sets the {@code originalRequestPathHeader} property.
+   * @param originalRequestPathHeader the property value to set
+   */
+  public void setOriginalRequestPathHeader(String originalRequestPathHeader) {
+    this.originalRequestPathHeader = originalRequestPathHeader;
   }
 
   /**

@@ -47,6 +47,7 @@ public interface Names {
   String PROXY_CALLBACK_PATH = "proxy-callback-path";
   String ACCEPT_ANY_PROXY = "accept-any-proxy";
   String ALLOW_EMPTY_PROXY_CHAIN = "allow-empty-proxy-chain";
+  String ORIGINAL_REQUEST_PATH_HEADER = "original-request-path-header";
   String RENEW = "renew";
   String PROXY_CHAIN = "allowed-proxy-chain";  
   String PROXIES = "proxies";
