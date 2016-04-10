@@ -112,6 +112,10 @@
       <artifactId>cas-client-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jasig.cas.client</groupId>
+      <artifactId>cas-client-support-saml</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-core</artifactId>
       <optional>true</optional>

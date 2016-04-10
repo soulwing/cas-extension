@@ -16,7 +16,7 @@
   </description>
   <properties>
     <version.io.undertow>1.0.14.Final</version.io.undertow>
-    <version.org.jasig.cas.client>3.3.4-SNAPSHOT</version.org.jasig.cas.client>
+    <version.org.jasig.cas.client>3.4.1</version.org.jasig.cas.client>
     <module.name>cas</module.name>
   </properties>
   <scm>
@@ -51,6 +51,11 @@
       <dependency>
         <groupId>org.jasig.cas.client</groupId>
         <artifactId>cas-client-core</artifactId>
+        <version>${version.org.jasig.cas.client}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jasig.cas.client</groupId>
+        <artifactId>cas-client-support-saml</artifactId>
         <version>${version.org.jasig.cas.client}</version>
       </dependency>
       <dependency>
