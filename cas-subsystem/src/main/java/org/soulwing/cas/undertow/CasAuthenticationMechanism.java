@@ -187,6 +187,8 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       }
     }
 
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
     exchange.getResponseCookies().put(STATUS_COOKIE, cookie);
     return retries;
   }
