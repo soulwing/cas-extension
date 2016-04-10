@@ -74,8 +74,8 @@
     <profile>
       <id>wildfly9</id>
       <properties>
-        <version.org.wildfly>9.0.0.Beta1</version.org.wildfly>
-        <version.org.wildfly.core>1.0.0.Beta2</version.org.wildfly.core>
+        <version.org.wildfly>9.0.2.Final</version.org.wildfly>
+        <version.org.wildfly.core>1.0.2.Final</version.org.wildfly.core>
       </properties>
       <dependencyManagement>
         <dependencies>
@@ -105,7 +105,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <version.org.wildfly>8.2.0.Final</version.org.wildfly>
+        <version.org.wildfly>8.2.1.Final</version.org.wildfly>
       </properties>
       <dependencyManagement>
         <dependencies>
