@@ -39,14 +39,31 @@ by applications that do not require CAS support.  Moreover, the library
 components needed by this extension will not appear on your 
 application's class loader, avoiding any potential for conflict.
 
-### From Source
+### Building From Source
 
 Clone this repository and then run Maven at the top level of the source tree.
+
+#### Wildfly 10
+
+Make sure you're using JDK version 8 and run Maven as follows.
+
+```
+mvn -P wildfly-core -P wildfly10 clean install
+```
+
+#### Wildfly 9
+
+```
+mvn -P wildfly-core -P wildfly9 clean install
+```
+
+#### Wildfly 8
+
 ```
 mvn -P wildfly8 clean install
 ```
 
-Install the extension.
+#### Install the Extension
 ```
 tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.tar.gz
 ```
