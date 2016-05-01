@@ -15,7 +15,6 @@
     An extension for Wildfly that supports CAS authentication.
   </description>
   <properties>
-    <version.io.undertow>1.0.14.Final</version.io.undertow>
     <version.org.jasig.cas.client>3.4.1</version.org.jasig.cas.client>
     <module.name>cas</module.name>
   </properties>
@@ -74,8 +73,9 @@
     <profile>
       <id>wildfly9</id>
       <properties>
-        <version.org.wildfly>9.0.0.Beta1</version.org.wildfly>
-        <version.org.wildfly.core>1.0.0.Beta2</version.org.wildfly.core>
+        <version.org.wildfly>9.0.2.Final</version.org.wildfly>
+        <version.org.wildfly.core>1.0.2.Final</version.org.wildfly.core>
+        <version.io.undertow>1.2.9.Final</version.io.undertow>
       </properties>
       <dependencyManagement>
         <dependencies>
@@ -105,7 +105,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <version.org.wildfly>8.2.0.Final</version.org.wildfly>
+        <version.org.wildfly>8.2.1.Final</version.org.wildfly>
+        <version.io.undertow>1.1.8.Final</version.io.undertow>
       </properties>
       <dependencyManagement>
         <dependencies>

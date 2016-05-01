@@ -55,19 +55,20 @@ tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.t
 
 If you don't want to build it yourself, you can download a current binary:
 
-* [cas-modules-1.0.3-modules.tar.gz] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.tar.gz) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.tar.gz.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.tar.gz.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.tar.gz.md5))
-* [cas-modules-1.0.3-modules.zip] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.zip) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.zip.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.zip.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.1/cas-modules-1.0.3-modules.zip.md5))
+* [cas-modules-1.0.4-modules.tar.gz] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.tar.gz) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.tar.gz.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.tar.gz.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.tar.gz.md5))
+* [cas-modules-1.0.4-modules.zip] 
+(https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.zip) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.zip.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.zip.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.4/cas-modules-1.0.4-modules.zip.md5))
 
 Install the `tar.gz` binary using:
 
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.3-modules.tar.gz
+tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.4-modules.tar.gz
 ```
 
 Install the `zip` binary using:
 
 ```
-unzip cas-modules-1.0.3-modules.zip -d ${WILDFLY_HOME}
+unzip cas-modules-1.0.4-modules.zip -d ${WILDFLY_HOME}
 ```
 
 Configuration
