@@ -30,6 +30,12 @@
   <artifactId>cas-demo</artifactId>
   <packaging>pom</packaging>
 
+  <name>CAS Demo Application</name>
+  <description>
+    Demonstrates the use of CAS authentication for both a front-end web 
+    application and a back-end web service.
+  </description>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

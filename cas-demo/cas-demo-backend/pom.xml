@@ -30,6 +30,11 @@
   <artifactId>cas-demo-backend</artifactId>
   <packaging>war</packaging>
 
+  <name>CAS Demo Back-End</name>
+  <description>
+    This module builds a simple back-end web service as a WAR file.
+  </description>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.spec</groupId>

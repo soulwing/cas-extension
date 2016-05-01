@@ -29,10 +29,9 @@
 
   <artifactId>cas-demo-app</artifactId>
   <packaging>ear</packaging>
-  <name>CAS Demo Application</name>
+  <name>CAS Demo Deployment Artifact</name>
   <description>
-    A demonstration the use of CAS authentication for
-    both a front-end web application and a back-end web service.
+    This module builds an EAR with the demo frontend and backend components.
   </description>
   <build>
     <plugins>
