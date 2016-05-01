@@ -1,0 +1,8 @@
+batch
+/extension=org.soulwing.cas:add(module=org.soulwing.cas)
+/subsystem=cas:add
+/subsystem=security/security-domain=cas:add
+/subsystem=security/security-domain=cas/authentication=classic:add
+/subsystem=security/security-domain=cas/authentication=classic/login-module=IdentityAssertion:add(module=org.soulwing.cas, code=org.soulwing.cas.jaas.IdentityAssertionLoginModule, flag=required)
+run-batch
+reload
