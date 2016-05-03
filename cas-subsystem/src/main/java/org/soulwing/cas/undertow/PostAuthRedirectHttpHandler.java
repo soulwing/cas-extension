@@ -28,7 +28,8 @@ import org.soulwing.cas.service.Authenticator;
 /**
  * An {@link HttpHandler} that sends a redirect to the request URL if the 
  * URL contains the CAS protocol's ticket parameter and the 
- * {@link POST_AUTH_ATTACHMENT_KEY} attachment is set.
+ * {@linkplain CasAttachments#POST_AUTH_REDIRECT_KEY redirect} attachment is
+ * set.
  *
  * @author Carl Harris
  */

@@ -20,15 +20,15 @@ package org.soulwing.cas.api;
 
 /**
  * A function that transforms a value of type {@code S} to a value of type
- * {@link T}.
+ * {@code T}.
  *
  * @author Carl Harris
  */
 public interface Transformer<S, T> {
 
   /**
-   * Transforms an attribute value of type {@link S} to a corresponding 
-   * value of type {@link T}.
+   * Transforms an attribute value of type {@code S} to a corresponding
+   * value of type {@code T}.
    * @param value the source value to transform
    * @return transformed value
    */

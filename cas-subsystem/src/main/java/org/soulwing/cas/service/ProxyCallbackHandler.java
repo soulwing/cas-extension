@@ -19,7 +19,7 @@
 package org.soulwing.cas.service;
 
 /**
- * A repository of granting tickets for proxy authentication. 
+ * A handler for proxy callbacks.
  *
  * @author Carl Harris
  */

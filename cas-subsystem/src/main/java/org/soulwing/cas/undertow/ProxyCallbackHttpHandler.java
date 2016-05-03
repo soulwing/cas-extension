@@ -41,8 +41,8 @@ public class ProxyCallbackHttpHandler implements HttpHandler {
   
   /**
    * Constructs a new instance.
-   * @param next
-   * @param authenticationService
+   * @param next next handler
+   * @param authenticationService service delegate
    */
   public ProxyCallbackHttpHandler(HttpHandler next,
       AuthenticationService authenticationService) {

@@ -35,7 +35,8 @@ public class IdentityAssertionCredential
 
   /**
    * Constructs a new instance.
-   * @param ticket
+   * @param identityAssertion identity assertion from a successful CAS
+   *     authentication
    */
   public IdentityAssertionCredential(IdentityAssertion identityAssertion) {
     this.identityAssertion = identityAssertion;

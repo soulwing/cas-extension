@@ -19,8 +19,7 @@
 package org.soulwing.cas.service;
 
 /**
- * An exception thrown to indicate that a proxy callback handler failed to
- * handle a callback.
+ * A response for a proxy callback request.
  *
  * @author Carl Harris
  */
