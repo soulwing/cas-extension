@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.extension;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,9 +39,11 @@ import org.soulwing.cas.service.Configuration;
  *
  * @author Carl Harris
  */
-public class Profile implements Configuration {
+public class Profile implements Configuration, Serializable {
 
-  private final InjectedValue<SSLContext> sslContext =
+  private static final long serialVersionUID = 6170159365985362873L;
+
+  private final transient InjectedValue<SSLContext> sslContext =
       new InjectedValue<>();
   
   private final Map<String, List<String>> allowedProxyChains = 

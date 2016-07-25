@@ -20,6 +20,7 @@ package org.soulwing.cas.service;
 
 import static org.soulwing.cas.service.ServiceLogger.LOGGER;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -34,13 +35,15 @@ import org.soulwing.cas.api.IdentityAssertion;
  *
  * @author Carl Harris
  */
-public class JasigAuthenticator implements Authenticator {
+public class JasigAuthenticator implements Authenticator, Serializable {
+
+  private static final long serialVersionUID = 364417311301329226L;
 
   public static final String LOGIN_PATH = "login";
   public static final String LOGOUT_PATH = "logout";
 
   private final Configuration config;
-  private final TicketValidator validator;
+  private final transient TicketValidator validator;
   
   /**
    * Constructs a new instance.

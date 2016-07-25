@@ -20,6 +20,8 @@ package org.soulwing.cas.undertow;
 
 import io.undertow.security.idm.Credential;
 
+import java.io.Serializable;
+
 import org.soulwing.cas.api.IdentityAssertion;
 import org.soulwing.cas.jaas.IdentityAssertionHolder;
 
@@ -29,7 +31,9 @@ import org.soulwing.cas.jaas.IdentityAssertionHolder;
  * @author Carl Harris
  */
 public class IdentityAssertionCredential 
-    implements Credential, IdentityAssertionHolder {
+    implements Credential, IdentityAssertionHolder, Serializable {
+
+  private static final long serialVersionUID = -7355252883140571658L;
 
   private final IdentityAssertion identityAssertion;
 

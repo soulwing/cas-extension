@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.service;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
@@ -31,7 +32,9 @@ import org.soulwing.cas.api.UserPrincipal;
  *
  * @author Carl Harris
  */
-class JasigIdentityAssertion implements IdentityAssertion {
+class JasigIdentityAssertion implements IdentityAssertion, Serializable {
+
+  private static final long serialVersionUID = 309684827031727467L;
 
   private final Authenticator authenticator;
   private final Assertion delegate;
