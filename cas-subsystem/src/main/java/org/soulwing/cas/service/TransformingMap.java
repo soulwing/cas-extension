@@ -18,6 +18,7 @@
  */
 package org.soulwing.cas.service;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -40,7 +41,9 @@ import org.soulwing.cas.api.Transformer;
  *
  * @author Carl Harris
  */
-class TransformingMap extends AbstractMap<String, Object> {
+class TransformingMap extends AbstractMap<String, Object> implements Serializable {
+
+  private static final long serialVersionUID = -217419703730591133L;
 
   private final Lock lock = new ReentrantLock();
   private final Map<String, Object> delegate;
