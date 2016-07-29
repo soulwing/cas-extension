@@ -21,7 +21,7 @@
   <parent>
     <artifactId>cas-extension</artifactId>
     <groupId>org.soulwing.cas</groupId>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
