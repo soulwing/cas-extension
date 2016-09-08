@@ -78,7 +78,7 @@ If you don't want to build it yourself, you can download the [latest binary dist
 gpg --verify cas-extension-1.0.6-wildfly10.tar.gz.asc
 ```
 
-You can get my PGP public key from [Keybase] (https://keybase.io/ceharris) or OneName (https://onename.com/ceharris) or almost any PGP keyserver (key fingerprint is `5CD3 C1D5 CD3D AC5C 1040  75CC DF48 BD89 3F1F 38CE`). If you don't happen to trust enough to the people who signed my key, I'll be happy to do an online key signing with you using Google Hangouts or Skype.
+You can get my PGP public key from [Keybase] (https://keybase.io/ceharris) or [onename] (https://onename.com/ceharris) or almost any PGP key server (key fingerprint is `5CD3 C1D5 CD3D AC5C 1040  75CC DF48 BD89 3F1F 38CE`). If you don't happen to trust enough to the people who signed my key, I'll be happy to do an online key signing with you using Google Hangouts or Skype.
 
 #### Install the `tar.gz` binary using
 
