@@ -70,22 +70,20 @@ tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.t
 
 ### Using a Pre-Built Binary
 
-If you don't want to build it yourself, you can download a current binary:
+If you don't want to build it yourself, you can download the [latest binary distribution](https://github.com/soulwing/cas-extension/releases/tag/1.0.6)
 
-* [cas-modules-1.0.6-modules.tar.gz] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.tar.gz) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.tar.gz.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.tar.gz.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.tar.gz.md5))
-* [cas-modules-1.0.6-modules.zip] 
-(https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.zip) ([PGP] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.zip.asc) [SHA1] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.zip.sha1) [MD5] (https://oss.sonatype.org/content/groups/public/org/soulwing/cas/cas-modules/1.0.6/cas-modules-1.0.6-modules.zip.md5))
-
-Install the `tar.gz` binary using:
+#### Verify the signature on the `tar.gz` binary
 
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-modules-1.0.6-modules.tar.gz
+gpg --verify cas-extension-1.0.6-wildfly10.tar.gz.asc
 ```
 
-Install the `zip` binary using:
+You can get my PGP public key from [Keybase] (https://keybase.io/ceharris) or OneName (https://onename.com/ceharris) or almost any PGP keyserver (key fingerprint is `5CD3 C1D5 CD3D AC5C 1040  75CC DF48 BD89 3F1F 38CE`). If you don't happen to trust enough to the people who signed my key, I'll be happy to do an online key signing with you using Google Hangouts or Skype.
+
+#### Install the `tar.gz` binary using
 
 ```
-unzip cas-modules-1.0.6-modules.zip -d ${WILDFLY_HOME}
+tar -C ${WILDFLY_HOME} -xpvf cas-extension-1.0.6-wildfly10.tar.gz
 ```
 
 Configuration
