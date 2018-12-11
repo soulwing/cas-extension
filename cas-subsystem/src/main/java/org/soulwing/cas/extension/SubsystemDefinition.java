@@ -24,7 +24,6 @@ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.operations.common.GenericSubsystemDescribeHandler;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
@@ -85,8 +84,7 @@ public class SubsystemDefinition extends SimpleResourceDefinition {
      */
     @Override
     public void performBoottime(OperationContext context, ModelNode operation,
-        ModelNode model, ServiceVerificationHandler verificationHandler,
-        List<ServiceController<?>> newControllers)
+        ModelNode model)
         throws OperationFailedException {
 
       DescriptorDeploymentProcessor.addStepHandler(context);
