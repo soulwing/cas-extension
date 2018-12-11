@@ -24,7 +24,6 @@ import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.RestartParentResourceAddHandler;
 import org.jboss.as.controller.RestartParentResourceRemoveHandler;
-import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleListAttributeDefinition;
@@ -121,8 +120,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel,
-        ServiceVerificationHandler verificationHandler)
+        PathAddress parentAddress, ModelNode parentModel)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);
@@ -152,8 +150,7 @@ class ProxyChainDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel,
-        ServiceVerificationHandler verificationHandler)
+        PathAddress parentAddress, ModelNode parentModel)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);

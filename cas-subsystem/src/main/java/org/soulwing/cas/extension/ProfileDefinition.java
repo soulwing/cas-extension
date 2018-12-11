@@ -27,7 +27,6 @@ import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.RestartParentWriteAttributeHandler;
-import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleAttributeDefinition;
 import org.jboss.as.controller.SimpleAttributeDefinitionBuilder;
 import org.jboss.as.controller.SimpleResourceDefinition;
@@ -244,18 +243,19 @@ public class ProfileDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void performRuntime(OperationContext context,
-        ModelNode operation, ModelNode model,
-        ServiceVerificationHandler verificationHandler,
-        List<ServiceController<?>> newControllers)
+        ModelNode operation, ModelNode model)
         throws OperationFailedException {
 
       ServiceController<?> controller = 
           ProfileService.ServiceUtil.installService(context, model, 
               PathAddress.pathAddress(
                   operation.get(ModelDescriptionConstants.OP_ADDR)));
-      
-      newControllers.add(
-          (ServiceController<?>) controller);
+
+      //,
+      //        ServiceVerificationHandler verificationHandler,
+      //        List<ServiceController<?>> newControllers
+      //newControllers.add(
+      //    (ServiceController<?>) controller);
     }
 
   }
@@ -316,8 +316,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel,
-        ServiceVerificationHandler verificationHandler)
+        PathAddress parentAddress, ModelNode parentModel)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);

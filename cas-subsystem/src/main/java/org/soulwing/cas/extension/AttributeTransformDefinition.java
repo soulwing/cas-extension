@@ -24,7 +24,6 @@ import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.PathAddress;
 import org.jboss.as.controller.RestartParentResourceAddHandler;
 import org.jboss.as.controller.RestartParentResourceRemoveHandler;
-import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.controller.SimpleResourceDefinition;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.dmr.ModelNode;
@@ -102,8 +101,7 @@ public class AttributeTransformDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel,
-        ServiceVerificationHandler verificationHandler)
+        PathAddress parentAddress, ModelNode parentModel)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);
@@ -134,8 +132,7 @@ public class AttributeTransformDefinition extends SimpleResourceDefinition {
      */
     @Override
     protected void recreateParentService(OperationContext context,
-        PathAddress parentAddress, ModelNode parentModel,
-        ServiceVerificationHandler verificationHandler)
+        PathAddress parentAddress, ModelNode parentModel)
         throws OperationFailedException {
       ProfileService.ServiceUtil.installService(context, parentModel, 
           parentAddress);
