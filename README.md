@@ -43,6 +43,14 @@ application's class loader, avoiding any potential for conflict.
 
 Clone this repository and then run Maven at the top level of the source tree.
 
+#### Wildfly 14
+
+Make sure you're using JDK version 8 and run Maven as follows.
+
+```
+mvn -P wildfly-core -P wildfly14 clean install
+```
+
 #### Wildfly 10
 
 Make sure you're using JDK version 8 and run Maven as follows.
