@@ -42,26 +42,7 @@ application's class loader, avoiding any potential for conflict.
 ### Building From Source
 
 Clone this repository and then run Maven at the top level of the source tree.
-
-#### Wildfly 10
-
-Make sure you're using JDK version 8 and run Maven as follows.
-
-```
-mvn -P wildfly-core -P wildfly10 clean install
-```
-
-#### Wildfly 9
-
-```
-mvn -P wildfly-core -P wildfly9 clean install
-```
-
-#### Wildfly 8
-
-```
-mvn -P wildfly8 clean install
-```
+This will be a version of the extension that is compatible with Wildfly 11 and up.
 
 #### Install the Extension
 ```
@@ -70,12 +51,12 @@ tar -C ${WILDFLY_HOME} -zxpvf cas-modules/target/cas-modules-{VERSION}-modules.t
 
 ### Using a Pre-Built Binary
 
-If you don't want to build it yourself, you can download the [latest binary distribution](https://github.com/soulwing/cas-extension/releases/tag/1.0.6)
+If you don't want to build it yourself, you can download the [latest binary distribution](https://github.com/soulwing/cas-extension/releases/tag/2.0.0)
 
 #### Verify the signature on the `tar.gz` binary
 
 ```
-gpg --verify cas-extension-1.0.6-wildfly10.tar.gz.asc
+gpg --verify cas-extension-2.0.0.tar.gz.asc
 ```
 
 You can get my PGP public key from [Keybase] (https://keybase.io/ceharris) or [onename] (https://onename.com/ceharris) or almost any PGP key server (key fingerprint is `5CD3 C1D5 CD3D AC5C 1040  75CC DF48 BD89 3F1F 38CE`). If you don't happen to trust enough to the people who signed my key, I'll be happy to do an online key signing with you using Google Hangouts or Skype.
@@ -83,7 +64,7 @@ You can get my PGP public key from [Keybase] (https://keybase.io/ceharris) or [o
 #### Install the `tar.gz` binary using
 
 ```
-tar -C ${WILDFLY_HOME} -xpvf cas-extension-1.0.6-wildfly10.tar.gz
+tar -C ${WILDFLY_HOME} -xpvf cas-extension-2.0.0.tar.gz
 ```
 
 Configuration
