@@ -3,15 +3,16 @@
   <parent>
     <groupId>org.soulwing.cas</groupId>
     <artifactId>cas-extension</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
   </parent>
-  <artifactId>cas-api</artifactId>
-  <name>CAS Extension API</name>
+  <artifactId>cas-jasig-client</artifactId>
+  <name>CAS JASIG Client</name>
+  <packaging>pom</packaging>
   <properties>
-    <module.name>org.soulwing.cas.api</module.name>
-    <module.path>org/soulwing/cas/api</module.path>
-    <module.slot>main</module.slot>
-    <module.directory>${project.build.directory}/modules/${module.path}/${module.slot}</module.directory>
+    <module.name>org.jasig.cas.client</module.name>
+    <module.slot>${project.parent.artifactId}</module.slot>
+    <module.path>org/jasig/cas/client/${module.slot}</module.path>
+    <module.directory>${project.build.directory}/modules/${module.path}</module.directory>
   </properties>
   <build>
     <plugins>
@@ -47,22 +48,31 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-module-artifact</id>
+            <id>copy-module-dependencies</id>
             <goals>
-              <goal>run</goal>
+              <goal>copy-dependencies</goal>
             </goals>
-            <phase>package</phase>
+            <phase>prepare-package</phase>
             <configuration>
-              <target>
-                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="${module.directory}/" force="true" />
-              </target>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${module.directory}</outputDirectory>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.jasig.cas.client</groupId>
+      <artifactId>cas-client-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas.client</groupId>
+      <artifactId>cas-client-support-saml</artifactId>
+    </dependency>
+  </dependencies>
 </project>

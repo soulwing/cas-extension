@@ -19,52 +19,36 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>cas-extension</artifactId>
+    <artifactId>cas-demo</artifactId>
     <groupId>org.soulwing.cas</groupId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>cas-demo</artifactId>
-  <packaging>pom</packaging>
+  <artifactId>cas-demo-frontend</artifactId>
+  <packaging>war</packaging>
 
-  <name>CAS Demo Application</name>
+  <name>CAS Demo Front-End</name>
   <description>
-    Demonstrates the use of CAS authentication for both a front-end web 
-    application and a back-end web service.
+    This module builds a simple front-end web application as a WAR file.
   </description>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.spec</groupId>
-        <artifactId>jboss-javaee-web-7.0</artifactId>
-        <version>1.0.2.Final</version>
-        <type>pom</type>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.soulwing.cas</groupId>
-        <artifactId>cas-api</artifactId>
-        <version>${project.version}</version>
-        <scope>provided</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <groupId>org.soulwing.cas</groupId>
-      <artifactId>cas-modules</artifactId>
+      <groupId>org.jboss.spec</groupId>
+      <artifactId>jboss-javaee-web-7.0</artifactId>
       <type>pom</type>
-      <version>${project.version}</version>
     </dependency>
+
+    <!-- Needed only when access to the CAS principal is needed; e.g.
+         when using proxy authentication and in some custom authorization
+         scenarios -->
+    <dependency>
+      <groupId>org.soulwing.cas</groupId>
+      <artifactId>cas-api</artifactId>
+    </dependency>
+
   </dependencies>
 
-  <modules>
-    <module>cas-demo-frontend</module>
-    <module>cas-demo-backend</module>
-    <module>cas-demo-app</module>
-  </modules>
 
 </project>
