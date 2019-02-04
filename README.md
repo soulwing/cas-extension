@@ -42,7 +42,11 @@ application's class loader, avoiding any potential for conflict.
 ### Building From Source
 
 Clone this repository and then run Maven at the top level of the source tree.
-This will be a version of the extension that is compatible with Wildfly 11 and up.
+This will create a version of the extension that is compatible with Wildfly 11 and up.
+
+```
+mvn clean install
+```
 
 #### Install the Extension
 ```
