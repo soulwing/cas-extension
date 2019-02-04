@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.soulwing.cas</groupId>
     <artifactId>cas-extension</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
   </parent>
   <artifactId>cas-opensaml</artifactId>
   <packaging>pom</packaging>
