@@ -18,8 +18,6 @@
  */
 package org.soulwing.cas.extension;
 
-import java.util.List;
-
 import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.AbstractRemoveStepHandler;
 import org.jboss.as.controller.AttributeDefinition;
@@ -51,7 +49,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   static final SimpleAttributeDefinition PROTOCOL =
       new SimpleAttributeDefinitionBuilder(Names.PROTOCOL,
           ModelType.STRING)
-              .setAllowExpression(false)
+              .setAllowExpression(true)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode().set(AuthenticationProtocol.CAS2_0.toString()))
               .setValidator(new EnumValidator<>(AuthenticationProtocol.class, true, false))
@@ -62,7 +60,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   static final SimpleAttributeDefinition ENCODING =
       new SimpleAttributeDefinitionBuilder(Names.ENCODING,
           ModelType.STRING)
-              .setAllowExpression(false)
+              .setAllowExpression(true)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode().set("UTF-8"))
               .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
@@ -90,7 +88,7 @@ public class ProfileDefinition extends SimpleResourceDefinition {
   static final SimpleAttributeDefinition PROXY_CALLBACK_ENABLED =
       new SimpleAttributeDefinitionBuilder(Names.PROXY_CALLBACK_ENABLED,
           ModelType.BOOLEAN)
-              .setAllowExpression(false)
+              .setAllowExpression(true)
               .setAllowNull(true)
               .setDefaultValue(new ModelNode(false))
               .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
