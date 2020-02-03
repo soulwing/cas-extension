@@ -126,7 +126,14 @@ public interface Configuration {
    * @return flag state
    */
   boolean isPostAuthRedirect();
-  
+
+  /**
+   * Gets a flag that indicates whether tracking the login attempts
+   * with the 'cas-status' cookie is enabled.
+   * @return flag state
+   */
+  boolean isCasStatusCookieEnabled();
+
   /**
    * Gets the SSL context to use in negotiations with the CAS server.
    * @return SSL context or {@code null} to indicate that the default SSL

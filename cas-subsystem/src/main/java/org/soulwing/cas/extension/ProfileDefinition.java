@@ -174,6 +174,16 @@ public class ProfileDefinition extends SimpleResourceDefinition {
 	                  AttributeAccess.Flag.STORAGE_CONFIGURATION)
 	              .build();
 
+  static final SimpleAttributeDefinition CAS_STATUS_COOKIE_ENABLED =
+          new SimpleAttributeDefinitionBuilder(Names.CAS_STATUS_COOKIE_ENABLED,
+                  ModelType.BOOLEAN)
+                  .setAllowExpression(true)
+                  .setRequired(false)
+                  .setDefaultValue(new ModelNode(true))
+                  .setFlags(AttributeAccess.Flag.RESTART_RESOURCE_SERVICES,
+                          AttributeAccess.Flag.STORAGE_CONFIGURATION)
+                  .build();
+
   public static final ProfileDefinition INSTANCE =
       new ProfileDefinition();
 
@@ -191,7 +201,8 @@ public class ProfileDefinition extends SimpleResourceDefinition {
       RENEW,
       CLOCK_SKEW_TOLERANCE,
       POST_AUTH_REDIRECT,
-      SECURITY_REALM
+      SECURITY_REALM,
+      CAS_STATUS_COOKIE_ENABLED
     };
   }
 

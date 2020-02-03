@@ -52,7 +52,8 @@ public class ProfileReaderWriter extends AbstractResourceReaderWriter {
         ProfileDefinition.RENEW,
         ProfileDefinition.CLOCK_SKEW_TOLERANCE,
         ProfileDefinition.POST_AUTH_REDIRECT,
-        ProfileDefinition.SECURITY_REALM
+        ProfileDefinition.SECURITY_REALM,
+        ProfileDefinition.CAS_STATUS_COOKIE_ENABLED
     };
   }
   

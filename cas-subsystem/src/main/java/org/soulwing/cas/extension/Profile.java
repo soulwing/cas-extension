@@ -79,7 +79,9 @@ public class Profile implements Configuration, Serializable {
   private long clockSkewTolerance;
   
   private boolean postAuthRedirect;
-    
+
+  private boolean casStatusCookieEnabled;
+
   /**
    * Gets the {@code sslContext} property.
    * @return property value
@@ -353,6 +355,21 @@ public class Profile implements Configuration, Serializable {
    */
   public void setPostAuthRedirect(boolean postAuthRedirect) {
     this.postAuthRedirect = postAuthRedirect;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isCasStatusCookieEnabled() {
+    return casStatusCookieEnabled;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setCasStatusCookieEnabled(boolean set) {
+    this.casStatusCookieEnabled = set;
   }
 
   /**
