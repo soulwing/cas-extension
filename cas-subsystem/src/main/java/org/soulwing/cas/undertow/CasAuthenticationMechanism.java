@@ -56,7 +56,7 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     return profile;
   }
 
-  private CasStatusCookie casStatusCookie;
+  private NoCasStatusCookie casStatusCookie;
 
   /**
    * Constructs a new instance.
@@ -67,6 +67,15 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       String contextPath, CasAuthenticationService authenticationService) {
     this.contextPath = contextPath;
     this.authenticationService = authenticationService;
+
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("cookie is enabled: " + profile.getValue().isCasStatusCookieEnabled());
+    }
+    if (profile.getValue().isCasStatusCookieEnabled()) {
+      this.casStatusCookie = new CasStatusCookie();
+    } else {
+      this.casStatusCookie = new NoCasStatusCookie();
+    }
   }
 
   /**

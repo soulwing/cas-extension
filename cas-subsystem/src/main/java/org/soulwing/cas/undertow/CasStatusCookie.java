@@ -7,7 +7,7 @@ import io.undertow.server.handlers.CookieImpl;
 /** Handles setting and counting the 'cas-status' cookie.
  * @author Stephan Fuhrmann
  *  */
-class CasStatusCookie {
+class CasStatusCookie extends NoCasStatusCookie {
     public static final String STATUS_COOKIE = "cas-status";
 
     static final int MAX_RETRIES = 2;
@@ -17,6 +17,7 @@ class CasStatusCookie {
      * @param exchange subject exchange
      * @return true if the retry count is exceeded
      */
+    @Override
     boolean isRetryCountExceeded(HttpServerExchange exchange) {
         return getRetryCount(exchange) >= MAX_RETRIES;
     }
@@ -26,7 +27,7 @@ class CasStatusCookie {
      * @param exchange subject exchange
      * @return current retry count
      */
-    int getRetryCount(HttpServerExchange exchange) {
+    private int getRetryCount(HttpServerExchange exchange) {
         int retries = 0;
 
         Cookie cookie = exchange.getRequestCookies().get(STATUS_COOKIE);
@@ -59,6 +60,7 @@ class CasStatusCookie {
      * Resets the authentication retry count in the session cookie.
      * @param exchange the subject exchange
      */
+    @Override
     void resetRetryCount(HttpServerExchange exchange) {
         Cookie cookie = newCookie();
         cookie.setValue("-1");
