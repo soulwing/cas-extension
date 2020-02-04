@@ -402,14 +402,16 @@ public class Profile implements Configuration, Serializable {
         + " proxyCallbackPath=%s acceptAnyProxy=%s allowEmptyProxyChain=%s"
         + " allowedProxyChains=%s"
         + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s"
-        + " securityRealm=%s hostnameVerifier=%s attributeTransformers=%s }",
+        + " securityRealm=%s hostnameVerifier=%s attributeTransformers=%s "
+        + " casStatuscasStatusCookieEnabled=%s }",
         protocol, encoding, serverUrl, serviceUrl, proxyCallbackEnabled, 
         proxyCallbackPath, acceptAnyProxy, allowEmptyProxyChain, 
         allowedProxyChains, renew, clockSkewTolerance, postAuthRedirect,
         securityRealm != null ? securityRealm : "(none)", 
         hostnameVerifier != null ? 
             hostnameVerifier.getClass().getSimpleName() : "(none)",
-        attributeTransformers);
+        attributeTransformers,
+        casStatusCookieEnabled);
   }
 
 }
