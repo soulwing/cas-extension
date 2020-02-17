@@ -23,14 +23,9 @@ import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
 import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
 import io.undertow.util.HttpString;
 
-import org.jboss.msc.inject.Injector;
-import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.api.IdentityAssertion;
-import org.soulwing.cas.extension.Profile;
 import org.soulwing.cas.service.AuthenticationException;
 import org.soulwing.cas.service.Authenticator;
 import org.soulwing.cas.service.NoTicketException;
@@ -49,8 +44,6 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
 
   private final String contextPath;
   private final CasAuthenticationService authenticationService;
-  private final InjectedValue<Profile> profile =
-      new InjectedValue<>();
 
   private NoCasStatusCookie casStatusCookie;
 
