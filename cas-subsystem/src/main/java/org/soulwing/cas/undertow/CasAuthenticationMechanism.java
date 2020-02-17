@@ -52,10 +52,6 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   private final InjectedValue<Profile> profile =
       new InjectedValue<>();
 
-  public Injector<Profile> getProfileInjector() {
-    return profile;
-  }
-
   private NoCasStatusCookie casStatusCookie;
 
   /**
@@ -68,10 +64,12 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
     this.contextPath = contextPath;
     this.authenticationService = authenticationService;
 
+    boolean casStatusCookieEnabled =
+    authenticationService.getConfiguration().isCasStatusCookieEnabled();
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("cookie is enabled: " + profile.getValue().isCasStatusCookieEnabled());
+      LOGGER.debug("cookie is enabled: " + casStatusCookieEnabled);
     }
-    if (profile.getValue().isCasStatusCookieEnabled()) {
+    if (casStatusCookieEnabled) {
       this.casStatusCookie = new CasStatusCookie();
     } else {
       this.casStatusCookie = new NoCasStatusCookie();

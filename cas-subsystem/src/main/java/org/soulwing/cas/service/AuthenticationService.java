@@ -46,5 +46,10 @@ public interface AuthenticationService {
    * @return proxy callback response
    */
   ProxyCallbackResponse handleProxyCallback(String query);
-  
+
+  /**
+   * Returns the configuration for this authentication service.
+   * @return configuration instance
+   */
+  Configuration getConfiguration();
 }

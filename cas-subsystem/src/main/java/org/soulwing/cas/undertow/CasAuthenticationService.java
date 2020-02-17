@@ -22,6 +22,7 @@ import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
 import org.soulwing.cas.service.AuthenticationService;
 import org.soulwing.cas.service.Authenticator;
+import org.soulwing.cas.service.Configuration;
 import org.soulwing.cas.service.ProxyCallbackResponse;
 
 /**
@@ -68,4 +69,11 @@ class CasAuthenticationService implements AuthenticationService {
     return delegate.getValue().handleProxyCallback(query);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Configuration getConfiguration() {
+    return delegate.getValue().getConfiguration();
+  }
 }
