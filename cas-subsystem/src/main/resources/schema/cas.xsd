@@ -54,6 +54,7 @@
     <xs:attribute name="clock-skew-tolerance" type="xs:long"/>
     <xs:attribute name="post-auth-redirect" type="xs:boolean"/>  
     <xs:attribute name="security-realm" type="xs:string"/>
+    <xs:attribute name="cas-status-cookie-enabled" type="xs:boolean" use="optional" default="true"/>
   </xs:complexType>
   
   <xs:simpleType name="AuthenticationProtocolType">
