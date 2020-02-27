@@ -168,7 +168,9 @@ public class ProfileService extends AbstractService<Profile> {
           .resolveModelAttribute(context, model).asLong());
       config.setPostAuthRedirect(ProfileDefinition.POST_AUTH_REDIRECT
           .resolveModelAttribute(context, model).asBoolean());
-      
+      config.setCasStatusCookieEnabled(ProfileDefinition.CAS_STATUS_COOKIE_ENABLED
+          .resolveModelAttribute(context, model).asBoolean());
+
       ModelNode securityRealm = ProfileDefinition.SECURITY_REALM
           .resolveModelAttribute(context, model);
       if (securityRealm.isDefined()) {

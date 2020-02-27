@@ -100,6 +100,9 @@ class DeploymentAuthenticationService
     }
     sb.append(proxyCallbackPath);
     return sb.toString();
-  }  
+  }
 
+  public Configuration getConfiguration() {
+    return profile.getValue();
+  }
 }

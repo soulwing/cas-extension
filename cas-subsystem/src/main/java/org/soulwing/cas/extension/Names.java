@@ -66,6 +66,7 @@ public interface Names {
   String OPTIONS = "options";
   String OPTION = "option";
   String KEY = "key";
+  String CAS_STATUS_COOKIE_ENABLED = "cas-status-cookie-enabled";
   
   String AUTHENTICATION_SERVICE = "authentication-service";  
   String SERVLET_EXTENSION = "servlet-extension";

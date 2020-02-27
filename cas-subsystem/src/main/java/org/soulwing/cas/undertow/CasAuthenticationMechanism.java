@@ -23,8 +23,6 @@ import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
 import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.server.handlers.CookieImpl;
 import io.undertow.util.HttpString;
 
 import org.soulwing.cas.api.IdentityAssertion;
@@ -44,15 +42,11 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
   public static final String NOT_AUTHORIZED_MESSAGE = 
       "identity manager does not recognize user '%s'";
 
-  public static final String STATUS_COOKIE = "cas-status";
-
-  public static final int MAX_RETRIES = 2;
-
-  
-  
   private final String contextPath;
   private final CasAuthenticationService authenticationService;
-  
+
+  private NoCasStatusCookie casStatusCookie;
+
   /**
    * Constructs a new instance.
    * @param contextPath 
@@ -62,6 +56,17 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
       String contextPath, CasAuthenticationService authenticationService) {
     this.contextPath = contextPath;
     this.authenticationService = authenticationService;
+
+    boolean casStatusCookieEnabled =
+    authenticationService.getConfiguration().isCasStatusCookieEnabled();
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("cookie is enabled: " + casStatusCookieEnabled);
+    }
+    if (casStatusCookieEnabled) {
+      this.casStatusCookie = new CasStatusCookie();
+    } else {
+      this.casStatusCookie = new NoCasStatusCookie();
+    }
   }
 
   /**
@@ -88,8 +93,8 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
           new IdentityAssertionCredential(assertion);
       
       Account account = authorize(credential, securityContext);
-      
-      resetRetryCount(exchange);
+
+      casStatusCookie.resetRetryCount(exchange);
       
       exchange.putAttachment(CasAttachments.CREDENTIAL_KEY, credential);
       if (authenticator.isPostAuthRedirect()) {
@@ -131,15 +136,15 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         exchange.getAttachment(CasAttachments.AUTH_FAILED_KEY);
     if (failedStatus != null) {
       exchange.removeAttachment(CasAttachments.AUTH_FAILED_KEY);
-      resetRetryCount(exchange);
+      casStatusCookie.resetRetryCount(exchange);
       return new ChallengeResult(false, failedStatus);
     }
         
-    if (getRetryCount(exchange) >= MAX_RETRIES) {
+    if (casStatusCookie.isRetryCountExceeded(exchange)) {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("authentication failed: too many retries");
       }
-      resetRetryCount(exchange);
+      casStatusCookie.resetRetryCount(exchange);
       return new ChallengeResult(false, 401);
     }
     
@@ -157,62 +162,6 @@ public class CasAuthenticationMechanism implements AuthenticationMechanism {
         HttpString.tryFromString("Location"), url);
     
     return new ChallengeResult(true, 302);
-  }
-
-  /**
-   * Gets the authentication retry count from a session cookie.
-   * @param exchange subject exchange
-   * @return current retry count
-   */
-  private int getRetryCount(HttpServerExchange exchange) {
-    int retries = 0;
-    
-    Cookie cookie = exchange.getRequestCookies().get(STATUS_COOKIE);
-    if (cookie == null) {
-      cookie = newCookie();
-    }
-    else {
-      try {
-        String value = cookie.getValue();
-        retries = Integer.parseInt(value) + 1;
-        if (retries < 0 || retries > MAX_RETRIES) {
-          retries = MAX_RETRIES;
-        }
-      }
-      catch (NumberFormatException ex) {
-        retries = MAX_RETRIES;
-      }
-      finally {
-        cookie.setValue(Integer.toString(retries));
-      }
-    }
-
-    cookie.setHttpOnly(true);
-    cookie.setSecure(true);
-    exchange.getResponseCookies().put(STATUS_COOKIE, cookie);
-    return retries;
-  }
-
-  /**
-   * Resets the authentication retry count in the session cookie.
-   * @param exchange the subject exchange
-   */
-  private void resetRetryCount(HttpServerExchange exchange) {
-    Cookie cookie = newCookie();
-    cookie.setValue("-1");
-    exchange.getResponseCookies().put(STATUS_COOKIE, cookie);
-  }
-
-  /**
-   * Creates a new cookie for the authentication retry count.
-   * @return cookie
-   */
-  private Cookie newCookie() {
-    Cookie cookie;
-    cookie = new CookieImpl(STATUS_COOKIE, "0");
-    cookie.setHttpOnly(true);
-    cookie.setSecure(true);
-    return cookie;
   }
 
   /**

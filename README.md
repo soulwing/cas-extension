@@ -156,6 +156,9 @@ can also view the description of these attributes using the
 * *security-realm* -- (Wildfly 9 only) specifies the name of a Security Realm
   to use to obtain SSL truststore and/or keystore configuration to use when
   communicating with the CAS server
+* *cas-status-cookie-enabled* -- whether tracking of the login attempts is
+  enabled and restricted. If you exceed the maximum number of attempts
+  the user will see a HTTP status 403. Can be true (default) or false.
 
 ### Profile Sub-Resources
 

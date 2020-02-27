@@ -79,7 +79,9 @@ public class Profile implements Configuration, Serializable {
   private long clockSkewTolerance;
   
   private boolean postAuthRedirect;
-    
+
+  private boolean casStatusCookieEnabled;
+
   /**
    * Gets the {@code sslContext} property.
    * @return property value
@@ -359,6 +361,21 @@ public class Profile implements Configuration, Serializable {
    * {@inheritDoc}
    */
   @Override
+  public boolean isCasStatusCookieEnabled() {
+    return casStatusCookieEnabled;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setCasStatusCookieEnabled(boolean set) {
+    this.casStatusCookieEnabled = set;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public Map<String, Transformer<Object, Object>> getAttributeTransformers() {
     return attributeTransformers;
   }
@@ -385,14 +402,16 @@ public class Profile implements Configuration, Serializable {
         + " proxyCallbackPath=%s acceptAnyProxy=%s allowEmptyProxyChain=%s"
         + " allowedProxyChains=%s"
         + " renew=%s clockSkewTolerance=%d postAuthRedirect=%s"
-        + " securityRealm=%s hostnameVerifier=%s attributeTransformers=%s }",
+        + " securityRealm=%s hostnameVerifier=%s attributeTransformers=%s "
+        + " casStatuscasStatusCookieEnabled=%s }",
         protocol, encoding, serverUrl, serviceUrl, proxyCallbackEnabled, 
         proxyCallbackPath, acceptAnyProxy, allowEmptyProxyChain, 
         allowedProxyChains, renew, clockSkewTolerance, postAuthRedirect,
         securityRealm != null ? securityRealm : "(none)", 
         hostnameVerifier != null ? 
             hostnameVerifier.getClass().getSimpleName() : "(none)",
-        attributeTransformers);
+        attributeTransformers,
+        casStatusCookieEnabled);
   }
 
 }
