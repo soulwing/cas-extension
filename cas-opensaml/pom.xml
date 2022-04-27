@@ -20,7 +20,7 @@
     <version.org.opensaml.opensaml>2.6.1</version.org.opensaml.opensaml>
     <version.org.opensaml.openws>1.5.1</version.org.opensaml.openws>
     <version.org.opensaml.xmltooling>1.4.1</version.org.opensaml.xmltooling>
-    <version.org.owasp.esapi>2.1.0</version.org.owasp.esapi>
+    <version.org.owasp.esapi>2.3.0.0</version.org.owasp.esapi>
   </properties>
   <build>
     <plugins>
